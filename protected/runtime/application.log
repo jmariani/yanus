@@ -1,0 +1,385 @@
+2012/04/18 17:06:52 [warning] [application] Failed to set unsafe attribute "masterAccountAttributes" of "MasterAccount".
+in /Applications/MAMP/public_html/yanus/protected/controllers/MasterAccountController.php (17)
+in /Applications/MAMP/public_html/yanus/index.php (13)
+2012/04/18 17:20:51 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "masterAccountAttributes/create".' in /Applications/MAMP/framework/web/CWebApplication.php:280
+Stack trace:
+#0 /Applications/MAMP/framework/web/CWebApplication.php(135): CWebApplication->runController('masterAccountAt...')
+#1 /Applications/MAMP/framework/base/CApplication.php(162): CWebApplication->processRequest()
+#2 /Applications/MAMP/public_html/yanus/index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/yanus/masterAccountAttributes/create
+HTTP_REFERER=http://localhost:8888/yanus/masterAccountAttributes
+---
+2012/04/18 17:36:31 [error] [php] include(MasterAccountAttributes.php) [<a href='function.include'>function.include</a>]: failed to open stream: No such file or directory (/Applications/MAMP/framework/YiiBase.php:418)
+Stack trace:
+#0 /Applications/MAMP/framework/db/ar/CActiveRecord.php(378): spl_autoload_call()
+#1 /Applications/MAMP/public_html/yanus/protected/extensions/giix-components/GxActiveRecord.php(26): model()
+#2 /Applications/MAMP/public_html/yanus/protected/extensions/giix-components/GxActiveRecord.php(152): model()
+#3 /Applications/MAMP/public_html/yanus/protected/views/masterAccount/view.php(28): MasterAccount->getRelationLabel()
+#4 /Applications/MAMP/framework/web/CBaseController.php(127): require()
+#5 /Applications/MAMP/framework/web/CBaseController.php(96): MasterAccountController->renderInternal()
+#6 /Applications/MAMP/framework/web/CController.php(870): MasterAccountController->renderFile()
+#7 /Applications/MAMP/framework/web/CController.php(783): MasterAccountController->renderPartial()
+#8 /Applications/MAMP/public_html/yanus/protected/controllers/MasterAccountController.php(9): MasterAccountController->render()
+#9 unknown(0): MasterAccountController->actionView()
+#10 /Applications/MAMP/framework/web/actions/CAction.php(107): ReflectionMethod->invokeArgs()
+#11 /Applications/MAMP/framework/web/actions/CInlineAction.php(48): CInlineAction->runWithParamsInternal()
+#12 /Applications/MAMP/framework/web/CController.php(309): CInlineAction->runWithParams()
+#13 /Applications/MAMP/framework/web/CController.php(287): MasterAccountController->runAction()
+#14 /Applications/MAMP/framework/web/CController.php(266): MasterAccountController->runActionWithFilters()
+#15 /Applications/MAMP/framework/web/CWebApplication.php(276): MasterAccountController->run()
+#16 /Applications/MAMP/framework/web/CWebApplication.php(135): CWebApplication->runController()
+#17 /Applications/MAMP/framework/base/CApplication.php(162): CWebApplication->processRequest()
+#18 /Applications/MAMP/public_html/yanus/index.php(13): CWebApplication->run()
+REQUEST_URI=/yanus/masterAccount/1
+in /Applications/MAMP/public_html/yanus/protected/extensions/giix-components/GxActiveRecord.php (26)
+in /Applications/MAMP/public_html/yanus/protected/extensions/giix-components/GxActiveRecord.php (152)
+in /Applications/MAMP/public_html/yanus/protected/views/masterAccount/view.php (28)
+2012/04/19 13:06:18 [error] [php] fopen(/Volumes/Macintosh HD/Users/jorgemariani/Documents/Office Projects/Tama/samples/prod/201202201010.xmlx): failed to open stream: No such file or directory (/Applications/MAMP/public_html/yanus/protected/commands/TamaProcessIncomingInvoiceFileCommand.php:59)
+Stack trace:
+#0 /Applications/MAMP/framework/console/CConsoleApplication.php(91): CConsoleCommandRunner->run()
+#1 /Applications/MAMP/framework/base/CApplication.php(162): CConsoleApplication->processRequest()
+#2 /Applications/MAMP/framework/yiic.php(33): CConsoleApplication->run()
+#3 /Applications/MAMP/public_html/yanus/protected/yiic.php(7): require_once()
+#4 /Applications/MAMP/public_html/yanus/protected/yiic(4): require_once()
+
+2012/04/19 13:15:40 [error] [php] fopen(/Volumes/Macintosh HD/Users/jorgemariani/Documents/Office Projects/Tama/samples/prod/201202201010.xmlx): failed to open stream: No such file or directory (/Applications/MAMP/public_html/yanus/protected/commands/TamaProcessIncomingInvoiceFileCommand.php:60)
+Stack trace:
+#0 /Applications/MAMP/framework/console/CConsoleApplication.php(91): CConsoleCommandRunner->run()
+#1 /Applications/MAMP/framework/base/CApplication.php(162): CConsoleApplication->processRequest()
+#2 /Applications/MAMP/framework/yiic.php(33): CConsoleApplication->run()
+#3 /Applications/MAMP/public_html/yanus/protected/yiic.php(7): require_once()
+#4 /Applications/MAMP/public_html/yanus/protected/yiic(4): require_once()
+
+2012/04/19 13:15:51 [error] [php] flock() expects parameter 1 to be resource, boolean given (/Applications/MAMP/public_html/yanus/protected/commands/TamaProcessIncomingInvoiceFileCommand.php:61)
+Stack trace:
+#0 /Applications/MAMP/framework/console/CConsoleApplication.php(91): CConsoleCommandRunner->run()
+#1 /Applications/MAMP/framework/base/CApplication.php(162): CConsoleApplication->processRequest()
+#2 /Applications/MAMP/framework/yiic.php(33): CConsoleApplication->run()
+#3 /Applications/MAMP/public_html/yanus/protected/yiic.php(7): require_once()
+#4 /Applications/MAMP/public_html/yanus/protected/yiic(4): require_once()
+
+2012/04/19 13:17:36 [error] [tamaprocessincominginvoicefile] File /Volumes/Macintosh HD/Users/jorgemariani/Documents/Office Projects/Tama/samples/prod/201202201010.xmlx not found.
+2012/04/19 13:18:38 [error] [tamaprocessincominginvoicefile] [201202201010][LIBXML] [68] error parsing attribute name
+
+
+2012/04/19 13:21:17 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML] [68] error parsing attribute name
+
+
+2012/04/19 13:21:33 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][68] error parsing attribute name
+
+
+2012/04/19 13:22:25 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][68] error parsing attribute name
+
+[201202201010.xml][LIBXML][65] attributes construct error
+
+[201202201010.xml][LIBXML][73] Couldn't find end of Start Tag invoices line 1
+
+[201202201010.xml][LIBXML][5] Extra content at the end of the document
+
+
+2012/04/19 13:23:44 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][68] error parsing attribute name
+
+2012/04/19 13:23:44 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][65] attributes construct error
+
+2012/04/19 13:23:44 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][73] Couldn't find end of Start Tag invoices line 1
+
+2012/04/19 13:23:44 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][5] Extra content at the end of the document
+
+2012/04/19 13:39:37 [warning] [application] Failed to set unsafe attribute "masterAccountAttributes" of "MasterAccount".
+in /Applications/MAMP/public_html/yanus/protected/controllers/MasterAccountController.php (35)
+in /Applications/MAMP/public_html/yanus/index.php (13)
+2012/04/19 13:39:42 [error] [php] include(GxActiveRecord.php): failed to open stream: No such file or directory (/Applications/MAMP/framework/YiiBase.php:418)
+Stack trace:
+#0 /Applications/MAMP/public_html/yanus/protected/models/_base/BaseMasterAccount.php(18): spl_autoload_call()
+#1 /Applications/MAMP/framework/YiiBase.php(397): include()
+#2 unknown(0): autoload()
+#3 /Applications/MAMP/public_html/yanus/protected/models/MasterAccount.php(6): spl_autoload_call()
+#4 /Applications/MAMP/framework/YiiBase.php(418): include()
+#5 unknown(0): autoload()
+#6 /Applications/MAMP/public_html/yanus/protected/commands/TamaProcessIncomingInvoiceFileCommand.php(59): spl_autoload_call()
+#7 /Applications/MAMP/framework/console/CConsoleCommandRunner.php(65): TamaProcessIncomingInvoiceFileCommand->run()
+#8 /Applications/MAMP/framework/console/CConsoleApplication.php(91): CConsoleCommandRunner->run()
+#9 /Applications/MAMP/framework/base/CApplication.php(162): CConsoleApplication->processRequest()
+#10 /Applications/MAMP/framework/yiic.php(33): CConsoleApplication->run()
+#11 /Applications/MAMP/public_html/yanus/protected/yiic.php(7): require_once()
+#12 /Applications/MAMP/public_html/yanus/protected/yiic(4): require_once()
+
+2012/04/19 13:40:16 [error] [tamaprocessincominginvoicefile] The table "MasterAccount" for active record class "MasterAccount" cannot be found in the database.
+2012/04/19 13:41:26 [error] [php] PDO::__construct(): [2002] No such file or directory (trying to connect via unix:///var/mysql/mysql.sock) (/Applications/MAMP/framework/db/CDbConnection.php:422)
+Stack trace:
+#0 /Applications/MAMP/framework/db/CDbConnection.php(331): CDbConnection->open()
+#1 /Applications/MAMP/framework/db/CDbConnection.php(309): CDbConnection->setActive()
+#2 /Applications/MAMP/framework/base/CModule.php(388): CDbConnection->init()
+#3 /Applications/MAMP/framework/base/CApplication.php(431): CConsoleApplication->getComponent()
+#4 /Applications/MAMP/framework/db/ar/CActiveRecord.php(615): CConsoleApplication->getDb()
+#5 /Applications/MAMP/framework/db/ar/CActiveRecord.php(2263): MasterAccount->getDbConnection()
+#6 /Applications/MAMP/framework/db/ar/CActiveRecord.php(379): CActiveRecordMetaData->__construct()
+#7 /Applications/MAMP/public_html/yanus/protected/extensions/giix-components/GxActiveRecord.php(26): model()
+#8 /Applications/MAMP/public_html/yanus/protected/models/_base/BaseMasterAccount.php(21): model()
+#9 /Applications/MAMP/public_html/yanus/protected/models/MasterAccount.php(8): model()
+#10 /Applications/MAMP/public_html/yanus/protected/commands/TamaProcessIncomingInvoiceFileCommand.php(59): model()
+#11 /Applications/MAMP/framework/console/CConsoleCommandRunner.php(65): TamaProcessIncomingInvoiceFileCommand->run()
+#12 /Applications/MAMP/framework/console/CConsoleApplication.php(91): CConsoleCommandRunner->run()
+#13 /Applications/MAMP/framework/base/CApplication.php(162): CConsoleApplication->processRequest()
+#14 /Applications/MAMP/framework/yiic.php(33): CConsoleApplication->run()
+#15 /Applications/MAMP/public_html/yanus/protected/yiic.php(7): require_once()
+#16 /Applications/MAMP/public_html/yanus/protected/yiic(4): require_once()
+
+2012/04/19 13:42:24 [error] [php] PDO::__construct(): [2002] No such file or directory (trying to connect via unix:///var/mysql/mysql.sock) (/Applications/MAMP/framework/db/CDbConnection.php:422)
+Stack trace:
+#0 /Applications/MAMP/framework/db/CDbConnection.php(331): CDbConnection->open()
+#1 /Applications/MAMP/framework/db/CDbConnection.php(309): CDbConnection->setActive()
+#2 /Applications/MAMP/framework/base/CModule.php(388): CDbConnection->init()
+#3 /Applications/MAMP/framework/base/CApplication.php(431): CConsoleApplication->getComponent()
+#4 /Applications/MAMP/framework/db/ar/CActiveRecord.php(615): CConsoleApplication->getDb()
+#5 /Applications/MAMP/framework/db/ar/CActiveRecord.php(2263): MasterAccount->getDbConnection()
+#6 /Applications/MAMP/framework/db/ar/CActiveRecord.php(379): CActiveRecordMetaData->__construct()
+#7 /Applications/MAMP/public_html/yanus/protected/extensions/giix-components/GxActiveRecord.php(26): model()
+#8 /Applications/MAMP/public_html/yanus/protected/models/_base/BaseMasterAccount.php(21): model()
+#9 /Applications/MAMP/public_html/yanus/protected/models/MasterAccount.php(8): model()
+#10 /Applications/MAMP/public_html/yanus/protected/commands/TamaProcessIncomingInvoiceFileCommand.php(59): model()
+#11 /Applications/MAMP/framework/console/CConsoleCommandRunner.php(65): TamaProcessIncomingInvoiceFileCommand->run()
+#12 /Applications/MAMP/framework/console/CConsoleApplication.php(91): CConsoleCommandRunner->run()
+#13 /Applications/MAMP/framework/base/CApplication.php(162): CConsoleApplication->processRequest()
+#14 /Applications/MAMP/framework/yiic.php(33): CConsoleApplication->run()
+#15 /Applications/MAMP/public_html/yanus/protected/yiic.php(7): require_once()
+#16 /Applications/MAMP/public_html/yanus/protected/yiic(4): require_once()
+
+2012/04/19 13:42:28 [error] [php] PDO::__construct(): [2002] No such file or directory (trying to connect via unix:///var/mysql/mysql.sock) (/Applications/MAMP/framework/db/CDbConnection.php:422)
+Stack trace:
+#0 /Applications/MAMP/framework/db/CDbConnection.php(331): CDbConnection->open()
+#1 /Applications/MAMP/framework/db/CDbConnection.php(309): CDbConnection->setActive()
+#2 /Applications/MAMP/framework/base/CModule.php(388): CDbConnection->init()
+#3 /Applications/MAMP/framework/base/CApplication.php(431): CConsoleApplication->getComponent()
+#4 /Applications/MAMP/framework/db/ar/CActiveRecord.php(615): CConsoleApplication->getDb()
+#5 /Applications/MAMP/framework/db/ar/CActiveRecord.php(2263): MasterAccount->getDbConnection()
+#6 /Applications/MAMP/framework/db/ar/CActiveRecord.php(379): CActiveRecordMetaData->__construct()
+#7 /Applications/MAMP/public_html/yanus/protected/extensions/giix-components/GxActiveRecord.php(26): model()
+#8 /Applications/MAMP/public_html/yanus/protected/models/_base/BaseMasterAccount.php(21): model()
+#9 /Applications/MAMP/public_html/yanus/protected/models/MasterAccount.php(8): model()
+#10 /Applications/MAMP/public_html/yanus/protected/commands/TamaProcessIncomingInvoiceFileCommand.php(59): model()
+#11 /Applications/MAMP/framework/console/CConsoleCommandRunner.php(65): TamaProcessIncomingInvoiceFileCommand->run()
+#12 /Applications/MAMP/framework/console/CConsoleApplication.php(91): CConsoleCommandRunner->run()
+#13 /Applications/MAMP/framework/base/CApplication.php(162): CConsoleApplication->processRequest()
+#14 /Applications/MAMP/framework/yiic.php(33): CConsoleApplication->run()
+#15 /Applications/MAMP/public_html/yanus/protected/yiic.php(7): require_once()
+#16 /Applications/MAMP/public_html/yanus/protected/yiic(4): require_once()
+
+2012/04/19 13:45:54 [error] [php] PDO::__construct(): [2002] No such file or directory (trying to connect via unix:///var/mysql/mysql.sock) (/Applications/MAMP/framework/db/CDbConnection.php:422)
+Stack trace:
+#0 /Applications/MAMP/framework/db/CDbConnection.php(331): CDbConnection->open()
+#1 /Applications/MAMP/framework/db/CDbConnection.php(309): CDbConnection->setActive()
+#2 /Applications/MAMP/framework/base/CModule.php(388): CDbConnection->init()
+#3 /Applications/MAMP/framework/base/CApplication.php(431): CConsoleApplication->getComponent()
+#4 /Applications/MAMP/framework/db/ar/CActiveRecord.php(615): CConsoleApplication->getDb()
+#5 /Applications/MAMP/framework/db/ar/CActiveRecord.php(2263): MasterAccount->getDbConnection()
+#6 /Applications/MAMP/framework/db/ar/CActiveRecord.php(379): CActiveRecordMetaData->__construct()
+#7 /Applications/MAMP/public_html/yanus/protected/extensions/giix-components/GxActiveRecord.php(26): model()
+#8 /Applications/MAMP/public_html/yanus/protected/models/_base/BaseMasterAccount.php(21): model()
+#9 /Applications/MAMP/public_html/yanus/protected/models/MasterAccount.php(8): model()
+#10 /Applications/MAMP/public_html/yanus/protected/commands/TamaProcessIncomingInvoiceFileCommand.php(59): model()
+#11 /Applications/MAMP/framework/console/CConsoleCommandRunner.php(65): TamaProcessIncomingInvoiceFileCommand->run()
+#12 /Applications/MAMP/framework/console/CConsoleApplication.php(91): CConsoleCommandRunner->run()
+#13 /Applications/MAMP/framework/base/CApplication.php(162): CConsoleApplication->processRequest()
+#14 /Applications/MAMP/framework/yiic.php(33): CConsoleApplication->run()
+#15 /Applications/MAMP/public_html/yanus/protected/yiic.php(7): require_once()
+#16 /Applications/MAMP/public_html/yanus/protected/yiic(4): require_once()
+
+2012/04/19 13:47:20 [error] [tamaprocessincominginvoicefile] Master Account alias "TAMA" not found.
+2012/04/19 14:05:00 [warning] [application] Failed to set unsafe attribute "masterAccountAttributes" of "MasterAccount".
+in /Applications/MAMP/public_html/yanus/protected/controllers/MasterAccountController.php (35)
+in /Applications/MAMP/public_html/yanus/index.php (13)
+2012/04/19 14:11:02 [error] [tamaprocessincominginvoicefile] Relation "MasterAccountAttribute" is not defined in active record class "MasterAccount".
+2012/04/19 14:12:23 [error] [tamaprocessincominginvoicefile] Relation "masterAccountAttribute" is not defined in active record class "MasterAccount".
+2012/04/19 14:21:55 [error] [tamaprocessincominginvoicefile] Relation "MasterAccountAttributes" is not defined in active record class "MasterAccount".
+2012/04/19 14:42:38 [error] [php] Trying to get property of non-object (/Applications/MAMP/public_html/yanus/protected/commands/TamaProcessIncomingInvoiceFileCommand.php:87)
+Stack trace:
+#0 /Applications/MAMP/framework/base/CApplication.php(162): CConsoleApplication->processRequest()
+#1 /Applications/MAMP/framework/yiic.php(33): CConsoleApplication->run()
+#2 /Applications/MAMP/public_html/yanus/protected/yiic.php(7): require_once()
+#3 /Applications/MAMP/public_html/yanus/protected/yiic(4): require_once()
+
+2012/04/19 14:50:32 [error] [php] Trying to get property of non-object (/Applications/MAMP/public_html/yanus/protected/commands/TamaProcessIncomingInvoiceFileCommand.php:88)
+Stack trace:
+#0 /Applications/MAMP/framework/base/CApplication.php(162): CConsoleApplication->processRequest()
+#1 /Applications/MAMP/framework/yiic.php(33): CConsoleApplication->run()
+#2 /Applications/MAMP/public_html/yanus/protected/yiic.php(7): require_once()
+#3 /Applications/MAMP/public_html/yanus/protected/yiic(4): require_once()
+
+2012/04/19 14:52:23 [error] [php] Undefined offset: 0 (/Applications/MAMP/public_html/yanus/protected/commands/TamaProcessIncomingInvoiceFileCommand.php:88)
+Stack trace:
+#0 /Applications/MAMP/framework/base/CApplication.php(162): CConsoleApplication->processRequest()
+#1 /Applications/MAMP/framework/yiic.php(33): CConsoleApplication->run()
+#2 /Applications/MAMP/public_html/yanus/protected/yiic.php(7): require_once()
+#3 /Applications/MAMP/public_html/yanus/protected/yiic(4): require_once()
+
+2012/04/19 14:53:49 [error] [tamaprocessincominginvoicefile] Master Account attribute "TAMA->INCOMING_INVOICE_FILE_XSD" not found.
+2012/04/19 15:06:34 [error] [tamaprocessincominginvoicefile] File INCOMING_INVOICE_FILE_XSD not found.
+2012/04/19 15:06:58 [error] [tamaprocessincominginvoicefile] File /Applications/MAMP/public_html/yanus/protected/files/tama/tama.xsdl not found.
+2012/04/19 15:09:04 [error] [tamaprocessincominginvoicefile] File /Applications/MAMP/public_html/yanus/protected/files/tama/tama.xsdl not found.
+2012/04/19 15:09:31 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'folio': '' is not a valid value of the atomic type 'xs:integer'.
+
+2012/04/19 15:09:31 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'discount': '' is not a valid value of the atomic type 'xs:decimal'.
+
+2012/04/19 15:10:09 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'folio': 'A300000' is not a valid value of the atomic type 'xs:integer'.
+
+2012/04/19 15:10:09 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'discount': '' is not a valid value of the atomic type 'xs:decimal'.
+
+2012/04/19 15:12:19 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'date': '2012-02-30T12:00:00' is not a valid value of the local atomic type.
+
+2012/04/19 15:12:19 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'discount': '' is not a valid value of the atomic type 'xs:decimal'.
+
+2012/04/19 15:14:11 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1840] Element 'invoice', attribute 'documentType': [facet 'enumeration'] The value '3' is not an element of the set {'0', '1', '2'}.
+
+2012/04/19 15:14:11 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'documentType': '3' is not a valid value of the local atomic type.
+
+2012/04/19 15:14:11 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'discount': '' is not a valid value of the atomic type 'xs:decimal'.
+
+2012/04/19 15:14:34 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'discount': '' is not a valid value of the atomic type 'xs:decimal'.
+
+2012/04/19 15:15:27 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'discount': '' is not a valid value of the atomic type 'xs:decimal'.
+
+2012/04/19 15:15:43 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'discount': '' is not a valid value of the atomic type 'xs:decimal'.
+
+2012/04/19 15:16:25 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'discount': '' is not a valid value of the atomic type 'xs:decimal'.
+
+2012/04/19 16:49:50 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'invoice', attribute 'shipDateActual': '' is not a valid value of the atomic type 'xs:dateTime'.
+
+2012/04/19 16:53:45 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1871] Element 'customer': This element is not expected. Expected is ( vendor ).
+
+2012/04/19 16:54:42 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1831] Element 'vendor', attribute 'rfc': [facet 'minLength'] The value 'TME1109123E' has a length of '11'; this underruns the allowed minimum length of '12'.
+
+2012/04/19 16:54:42 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'vendor', attribute 'rfc': 'TME1109123E' is not a valid value of the local atomic type.
+
+2012/04/19 16:55:17 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1832] Element 'vendor', attribute 'rfc': [facet 'maxLength'] The value 'TME1109123E9XX' has a length of '14'; this exceeds the allowed maximum length of '13'.
+
+2012/04/19 16:55:17 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'vendor', attribute 'rfc': 'TME1109123E9XX' is not a valid value of the local atomic type.
+
+2012/04/19 16:59:09 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1831] Element 'fiscalAddress', attribute 'zipCode': [facet 'minLength'] The value '8406' has a length of '4'; this underruns the allowed minimum length of '5'.
+
+2012/04/19 16:59:09 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'fiscalAddress', attribute 'zipCode': '8406' is not a valid value of the local atomic type.
+
+2012/04/19 17:00:06 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1830] Element 'fiscalAddress', attribute 'zipCode': [facet 'length'] The value '8406' has a length of '4'; this differs from the allowed length of '5'.
+
+2012/04/19 17:00:06 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'fiscalAddress', attribute 'zipCode': '8406' is not a valid value of the local atomic type.
+
+2012/04/19 17:07:44 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1830] Element 'fiscalAddress', attribute 'zipCode': [facet 'length'] The value '8406' has a length of '4'; this differs from the allowed length of '5'.
+
+2012/04/19 17:07:44 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'fiscalAddress', attribute 'zipCode': '8406' is not a valid value of the local atomic type.
+
+2012/04/19 17:17:02 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1839] Element 'customer', attribute 'email': [facet 'pattern'] The value '' is not accepted by the pattern '[A-Za-z0-9_]+([-+.'][A-Za-z0-9_]+)*@[A-Za-z0-9_]+([-.][A-Za-z0-9_]+)*\.[A-Za-z0-9_]+([-.][A-Za-z0-9_]+)*'.
+
+2012/04/19 17:17:02 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'customer', attribute 'email': '' is not a valid value of the atomic type 'email'.
+
+2012/04/19 17:18:43 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1826] Element 'customer', attribute 'email': '@gpo_reyes@hotmail.com' is not a valid value of the union type 'email-or-empty'.
+
+2012/04/19 17:41:33 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1839] Element 'vendor', attribute 'rfc': [facet 'pattern'] The value 'TME1109123EX' is not accepted by the pattern '[A-Z,Ñ,&]{3,4}[0-9]{2}[0-1][0-9][0-3][0-9][A-Z,0-9]?[A-Z,0-9]?[0-9,A]?'.
+
+2012/04/19 17:41:33 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'vendor', attribute 'rfc': 'TME1109123EX' is not a valid value of the atomic type 'rfc'.
+
+2012/04/19 17:42:24 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][23] EntityRef: expecting ';'
+
+2012/04/19 18:06:25 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1839] Element 'shipToCustomer', attribute 'rfc': [facet 'pattern'] The value '' is not accepted by the pattern '[A-Z,Ñ,&]{3,4}[0-9]{2}[0-1][0-9][0-3][0-9][A-Z,0-9]?[A-Z,0-9]?[0-9,A]?'.
+
+2012/04/19 18:06:25 [error] [tamaprocessincominginvoicefile] [201202201010.xml][LIBXML][1824] Element 'shipToCustomer', attribute 'rfc': '' is not a valid value of the atomic type 'rfc'.
+
+2012/04/24 19:53:12 [error] [php] include(CfdAddress.php) [<a href='function.include'>function.include</a>]: failed to open stream: No such file or directory (/Applications/MAMP/framework/YiiBase.php:418)
+Stack trace:
+#0 /Applications/MAMP/public_html/yanus/protected/views/cfdAddressType/_form.php(28): spl_autoload_call()
+#1 /Applications/MAMP/framework/web/CBaseController.php(127): require()
+#2 /Applications/MAMP/framework/web/CBaseController.php(96): CfdAddressTypeController->renderInternal()
+#3 /Applications/MAMP/framework/web/CController.php(870): CfdAddressTypeController->renderFile()
+#4 /Applications/MAMP/public_html/yanus/protected/views/cfdAddressType/create.php(19): CfdAddressTypeController->renderPartial()
+#5 /Applications/MAMP/framework/web/CBaseController.php(127): require()
+#6 /Applications/MAMP/framework/web/CBaseController.php(96): CfdAddressTypeController->renderInternal()
+#7 /Applications/MAMP/framework/web/CController.php(870): CfdAddressTypeController->renderFile()
+#8 /Applications/MAMP/framework/web/CController.php(783): CfdAddressTypeController->renderPartial()
+#9 /Applications/MAMP/public_html/yanus/protected/controllers/CfdAddressTypeController.php(27): CfdAddressTypeController->render()
+#10 /Applications/MAMP/framework/web/actions/CInlineAction.php(50): CfdAddressTypeController->actionCreate()
+#11 /Applications/MAMP/framework/web/CController.php(309): CInlineAction->runWithParams()
+#12 /Applications/MAMP/framework/web/CController.php(287): CfdAddressTypeController->runAction()
+#13 /Applications/MAMP/framework/web/CController.php(266): CfdAddressTypeController->runActionWithFilters()
+#14 /Applications/MAMP/framework/web/CWebApplication.php(276): CfdAddressTypeController->run()
+#15 /Applications/MAMP/framework/web/CWebApplication.php(135): CWebApplication->runController()
+#16 /Applications/MAMP/framework/base/CApplication.php(162): CWebApplication->processRequest()
+#17 /Applications/MAMP/public_html/yanus/index.php(13): CWebApplication->run()
+REQUEST_URI=/yanus/cfdAddressType/create
+in /Applications/MAMP/public_html/yanus/protected/views/cfdAddressType/_form.php (28)
+in /Applications/MAMP/public_html/yanus/protected/views/cfdAddressType/create.php (19)
+in /Applications/MAMP/public_html/yanus/protected/controllers/CfdAddressTypeController.php (27)
+2012/04/24 19:54:27 [warning] [application] Failed to set unsafe attribute "cfdAddresses" of "CfdAddressType".
+in /Applications/MAMP/public_html/yanus/protected/controllers/CfdAddressTypeController.php (17)
+in /Applications/MAMP/public_html/yanus/index.php (13)
+2012/04/24 19:58:30 [warning] [application] Failed to set unsafe attribute "cfdAddresses" of "CfdAddressType".
+in /Applications/MAMP/public_html/yanus/protected/controllers/CfdAddressTypeController.php (17)
+in /Applications/MAMP/public_html/yanus/index.php (13)
+2012/04/24 23:55:43 [warning] [application] Failed to set unsafe attribute "cfdAddresses" of "CfdAddressType".
+in /Applications/MAMP/public_html/yanus/protected/controllers/CfdAddressTypeController.php (17)
+in /Applications/MAMP/public_html/yanus/index.php (13)
+2012/04/24 23:55:56 [warning] [application] Failed to set unsafe attribute "cfdAddresses" of "CfdAddressType".
+in /Applications/MAMP/public_html/yanus/protected/controllers/CfdAddressTypeController.php (35)
+in /Applications/MAMP/public_html/yanus/index.php (13)
+2012/04/24 23:56:14 [warning] [application] Failed to set unsafe attribute "cfdAddresses" of "CfdAddressType".
+in /Applications/MAMP/public_html/yanus/protected/controllers/CfdAddressTypeController.php (35)
+in /Applications/MAMP/public_html/yanus/index.php (13)
+2012/04/25 13:28:58 [warning] [application] Failed to set unsafe attribute "cfdAddresses" of "CfdAddressType".
+in /Applications/MAMP/public_html/yanus/protected/controllers/CfdAddressTypeController.php (17)
+in /Applications/MAMP/public_html/yanus/index.php (13)
+2012/04/25 19:03:58 [error] [system.db.CDbCommand] CDbCommand::fetchColumn() failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'yanus.AuthItem' doesn't exist. The SQL statement executed was: SELECT COUNT(*) FROM AuthItem.
+in /Applications/MAMP/public_html/yanus/protected/modules/rights/components/RInstaller.php (180)
+in /Applications/MAMP/public_html/yanus/protected/modules/rights/controllers/InstallController.php (43)
+in /Applications/MAMP/public_html/yanus/index.php (13)
+2012/04/25 19:04:14 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'yanus.AuthAssignment' doesn't exist. The SQL statement executed was: SELECT *
+FROM `AuthAssignment`
+WHERE userid=:userid.
+in /Applications/MAMP/public_html/yanus/protected/modules/rights/components/RAuthorizer.php (341)
+in /Applications/MAMP/public_html/yanus/protected/modules/rights/components/RWebUser.php (21)
+in /Applications/MAMP/public_html/yanus/protected/modules/user/models/UserLogin.php (57)
+2012/04/25 19:04:14 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'yanus.AuthAssignment' doesn't exist. The SQL statement executed was: SELECT *
+FROM `AuthAssignment`
+WHERE userid=:userid' in /Applications/MAMP/framework/db/CDbCommand.php:528
+Stack trace:
+#0 /Applications/MAMP/framework/db/CDbCommand.php(390): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Applications/MAMP/framework/web/auth/CDbAuthManager.php(334): CDbCommand->queryAll()
+#2 /Applications/MAMP/public_html/yanus/protected/modules/rights/components/RAuthorizer.php(341): CDbAuthManager->getAuthAssignments('1')
+#3 /Applications/MAMP/public_html/yanus/protected/modules/rights/components/RWebUser.php(21): RAuthorizer->isSuperuser('1')
+#4 /Applications/MAMP/framework/web/auth/CWebUser.php(239): RWebUser->afterLogin(false)
+#5 /Applications/MAMP/public_html/yanus/protected/modules/user/models/UserLogin.php(57): CWebUser->login(Object(UserIdentity), 0)
+#6 /Applications/MAMP/framework/validators/CInlineValidator.php(43): UserLogin->authenticate('password', Array)
+#7 /Applications/MAMP/framework/validators/CValidator.php(197): CInlineValidator->validateAttribute(Object(UserLogin), 'password')
+#8 /Applications/MAMP/framework/base/CModel.php(158): CValidator->validate(Object(UserLogin), NULL)
+#9 /Applications/MAMP/public_html/yanus/protected/modules/user/controllers/LoginController.php(19): CModel->validate()
+#10 /Applications/MAMP/framework/web/actions/CInlineAction.php(50): LoginController->actionLogin()
+#11 /Applications/MAMP/framework/web/CController.php(309): CInlineAction->runWithParams(Array)
+#12 /Applications/MAMP/framework/web/CController.php(287): CController->runAction(Object(CInlineAction))
+#13 /Applications/MAMP/framework/web/CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#14 /Applications/MAMP/framework/web/CWebApplication.php(276): CController->run('')
+#15 /Applications/MAMP/framework/web/CWebApplication.php(135): CWebApplication->runController('user/login')
+#16 /Applications/MAMP/framework/base/CApplication.php(162): CWebApplication->processRequest()
+#17 /Applications/MAMP/public_html/yanus/index.php(13): CApplication->run()
+#18 {main}
+REQUEST_URI=/yanus/user/login
+HTTP_REFERER=http://localhost:8888/yanus/user/login
+---
+2012/04/25 19:10:08 [error] [system.db.CDbCommand] CDbCommand::fetchColumn() failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'yanus.AuthItem' doesn't exist. The SQL statement executed was: SELECT COUNT(*) FROM AuthItem.
+in /Applications/MAMP/public_html/yanus/protected/modules/rights/components/RInstaller.php (180)
+in /Applications/MAMP/public_html/yanus/protected/modules/rights/controllers/InstallController.php (43)
+in /Applications/MAMP/public_html/yanus/index.php (13)
+2012/04/25 19:22:07 [error] [exception.CHttpException.403] exception 'CHttpException' with message 'You are not authorized to perform this action.' in /Applications/MAMP/framework/web/auth/CAccessControlFilter.php:157
+Stack trace:
+#0 /Applications/MAMP/framework/web/auth/CAccessControlFilter.php(120): CAccessControlFilter->accessDenied(Object(RWebUser), 'You are not aut...')
+#1 /Applications/MAMP/framework/web/filters/CFilter.php(39): CAccessControlFilter->preFilter(Object(CFilterChain))
+#2 /Applications/MAMP/framework/web/CController.php(1146): CFilter->filter(Object(CFilterChain))
+#3 /Applications/MAMP/framework/web/filters/CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#4 /Applications/MAMP/framework/web/filters/CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#5 /Applications/MAMP/framework/web/CController.php(292): CFilterChain->run()
+#6 /Applications/MAMP/framework/web/CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#7 /Applications/MAMP/framework/web/CWebApplication.php(276): CController->run('')
+#8 /Applications/MAMP/framework/web/CWebApplication.php(135): CWebApplication->runController('rights')
+#9 /Applications/MAMP/framework/base/CApplication.php(162): CWebApplication->processRequest()
+#10 /Applications/MAMP/public_html/yanus/index.php(13): CApplication->run()
+#11 {main}
+REQUEST_URI=/yanus/rights
+HTTP_REFERER=http://localhost:8888/yanus/user/profile
+---

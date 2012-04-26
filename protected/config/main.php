@@ -14,6 +14,10 @@ return array(
         'application.models.*',
         'application.components.*',
         'ext.giix-components.*', // giix components
+        'application.modules.user.models.*',
+        'application.modules.user.components.*',
+        'application.modules.rights.*',
+        'application.modules.rights.components.*',
     ),
     'modules' => array(
         // uncomment the following to enable the Gii tool
@@ -26,12 +30,31 @@ return array(
                 'ext.giix-core', // giix generators
             ),
         ),
+        'user' => array(
+            'tableUsers' => 'users',
+            'tableProfiles' => 'profiles',
+            'tableProfileFields' => 'profiles_fields',
+        ),
+        'rights' => array(
+//            'install' => true,
+        ),
     ),
     // application components
     'components' => array(
+//        'user' => array(
+//            // enable cookie-based authentication
+//            'allowAutoLogin' => true,
+//        ),
         'user' => array(
+            'class' => 'RWebUser',
             // enable cookie-based authentication
             'allowAutoLogin' => true,
+            'loginUrl' => array('/user/login'),
+        ),
+        'authManager' => array(
+            'class' => 'RDbAuthManager',
+            'connectionID' => 'db',
+            'defaultRoles' => array('Authenticated', 'Guest'),
         ),
         // uncomment the following to enable URLs in path-format
         'urlManager' => array(
@@ -43,9 +66,9 @@ return array(
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ),
         ),
-        'db' => array(
-            'connectionString' => 'sqlite:' . dirname(__FILE__) . '/../data/testdrive.db',
-        ),
+//        'db' => array(
+//            'connectionString' => 'sqlite:' . dirname(__FILE__) . '/../data/testdrive.db',
+//        ),
         // uncomment the following to use a MySQL database
         'db' => array(
             'connectionString' => 'mysql:host=localhost;dbname=yanus;port=3306',
@@ -67,9 +90,9 @@ return array(
                     'levels' => 'error, warning',
                 ),
                 // uncomment the following to show log messages on web pages
-                array(
-                    'class' => 'CWebLogRoute',
-                ),
+//                array(
+//                    'class' => 'CWebLogRoute',
+//                ),
             ),
         ),
     ),
