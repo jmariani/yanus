@@ -20,7 +20,12 @@
  * @property string $state
  * @property string $country
  * @property string $zipCode
+ * @property integer $Country_id
+ * @property integer $State_id
+ * @property string $md5
  *
+ * @property Country $country0
+ * @property State $state0
  * @property CfdAddress[] $cfdAddresses
  */
 abstract class BaseAddress extends GxActiveRecord {
@@ -38,21 +43,25 @@ abstract class BaseAddress extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'street';
+		return 'country';
 	}
 
 	public function rules() {
 		return array(
-			array('street, municipality, state, country, zipCode', 'required'),
+			array('country, md5', 'required'),
+			array('Country_id, State_id', 'numerical', 'integerOnly'=>true),
 			array('zipCode', 'length', 'max'=>45),
-			array('extNbr, intNbr, neighbourhood, city, reference', 'safe'),
-			array('extNbr, intNbr, neighbourhood, city, reference', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, street, extNbr, intNbr, neighbourhood, city, reference, municipality, state, country, zipCode', 'safe', 'on'=>'search'),
+			array('md5', 'length', 'max'=>32),
+			array('street, extNbr, intNbr, neighbourhood, city, reference, municipality, state', 'safe'),
+			array('street, extNbr, intNbr, neighbourhood, city, reference, municipality, state, zipCode, Country_id, State_id', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, street, extNbr, intNbr, neighbourhood, city, reference, municipality, state, country, zipCode, Country_id, State_id, md5', 'safe', 'on'=>'search'),
 		);
 	}
 
 	public function relations() {
 		return array(
+			'country0' => array(self::BELONGS_TO, 'Country', 'Country_id'),
+			'state0' => array(self::BELONGS_TO, 'State', 'State_id'),
 			'cfdAddresses' => array(self::HAS_MANY, 'CfdAddress', 'Address_id'),
 		);
 	}
@@ -75,6 +84,11 @@ abstract class BaseAddress extends GxActiveRecord {
                 			'state' => yii::t('app', 'State'),
                 			'country' => yii::t('app', 'Country'),
                 			'zipCode' => yii::t('app', 'Zip Code'),
+                        			                        'Country_id' => yii::t('app', 'Country'),
+                        			                        'State_id' => yii::t('app', 'State'),
+                			'md5' => yii::t('app', 'Md5'),
+                        			                        'country0' => yii::t('app', 'Country0'),
+                        			                        'state0' => yii::t('app', 'State0'),
                         			                        'cfdAddresses' => yii::t('app', 'Cfd Addresses'),
 		);
 	}
@@ -93,6 +107,9 @@ abstract class BaseAddress extends GxActiveRecord {
 		$criteria->compare('state', $this->state, true);
 		$criteria->compare('country', $this->country, true);
 		$criteria->compare('zipCode', $this->zipCode, true);
+		$criteria->compare('Country_id', $this->Country_id);
+		$criteria->compare('State_id', $this->State_id);
+		$criteria->compare('md5', $this->md5, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,

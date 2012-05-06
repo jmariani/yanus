@@ -99,6 +99,200 @@ class TamaProcessIncomingInvoiceFileCommand extends CConsoleCommand {
                             yii::log('[' . $pathInfo['basename'] . '][LIBXML][' . $xmlError->code . '] ' . $xmlError->message, CLogger::LEVEL_ERROR, $this->name);
                         }
                     }
+                    // Get master account cfd version
+                    $cfdVersion = $masterAccount->masterAccountAttributes(array('condition' => "code = 'CFD_VERSION'"));
+                    // Process and create Native XML
+                    $xml = simplexml_load_file($args[0]);
+                    // Create XML file
+                    $nativeXml = new DOMDocument("1.0","UTF-8");
+                    $root = $nativeXml->createElement('invoices');
+                    $root = $nativeXml->appendChild($root);
+                    foreach ($xml->children() as $xmlInvoice) {
+                        $subTotal = 0;
+                        $invoice = $root->appendChild($nativeXml->createElement('invoice'));
+                        $invoice->setAttribute('version', $cfdVersion[0]->value);
+                        foreach ($xmlInvoice->attributes() as $attributeName => $attributeValue) {
+                            switch ($attributeName) {
+                                case 'documentType':
+                                    $invoice->setAttribute('voucherType', (string)$attributeValue);
+//                                    switch ($attributeValue) {
+//                                        case 0:
+//                                            $invoice->setAttribute('voucherType', 'ingreso');
+//                                            break;
+//                                        case 1:
+//                                            $invoice->setAttribute('voucherType', 'egreso');
+//                                            break;
+//                                        case 2:
+//                                            $invoice->setAttribute('voucherType', 'traslado');
+//                                            break;
+//                                    }
+                                    break;
+                                default:
+                                    $invoice->setAttribute($attributeName, $attributeValue);
+                            }
+                        }
+                        // Process nodes
+                        foreach ($xmlInvoice->children() as $xmlInvoiceNode) {
+                            switch ($xmlInvoiceNode->getName()) {
+                                case 'vendor':
+                                    foreach ($xmlInvoiceNode->attributes() as $attributeName => $attributeValue) {
+                                        switch ($attributeName) {
+                                            case 'rfc':
+                                                $invoice->setAttribute('vendorRfc', (string)$attributeValue);
+                                                break;
+                                            case 'name':
+                                                $invoice->setAttribute('vendorName', (string)$attributeValue);
+                                                break;
+                                        }
+                                    }
+                                    // Parse nodes
+                                    foreach ($xmlInvoiceNode->children() as $vendorNode) {
+                                        switch ($vendorNode->getName()) {
+                                            case 'fiscalAddress':
+                                                // Create vendorFiscalAddress node.
+                                                $vendorFiscalAddressNode = $invoice->appendChild($nativeXml->createElement('vendorFiscalAddress'));
+                                                foreach ($vendorNode->attributes() as $attributeName => $attributeValue) {
+                                                    switch ($attributeName) {
+                                                        case 'colony':
+                                                            $vendorFiscalAddressNode->setAttribute('neighbourhood', (string)$attributeValue);
+                                                            break;
+                                                        case 'county':
+                                                            $vendorFiscalAddressNode->setAttribute('municipality', (string)$attributeValue);
+                                                            break;
+                                                        default:
+                                                            $vendorFiscalAddressNode->setAttribute($attributeName, (string)$attributeValue);
+                                                    }
+                                                }
+                                                break;
+                                        }
+                                    }
+                                    break;
+                                case 'customer':
+                                    foreach ($xmlInvoiceNode->attributes() as $attributeName => $attributeValue) {
+                                        switch ($attributeName) {
+                                            case 'rfc':
+                                                $invoice->setAttribute('customerRfc', (string)$attributeValue);
+                                                break;
+                                            case 'name':
+                                                $invoice->setAttribute('customerName', (string)$attributeValue);
+                                                break;
+                                            default:
+                                                // everything else will be attributes.
+                                                $invoice->setAttribute('customer' . ucwords($attributeName), (string)$attributeValue);
+                                                break;
+                                        }
+                                    }
+                                    // Parse nodes
+                                    foreach ($xmlInvoiceNode->children() as $customerNode) {
+                                        switch ($customerNode->getName()) {
+                                            case 'customerFiscalAddress':
+                                                // Create vendorFiscalAddress node.
+                                                $customerBillToAddressNode = $invoice->appendChild($nativeXml->createElement('customerBillToAddress'));
+                                                foreach ($customerNode->attributes() as $attributeName => $attributeValue) {
+                                                    switch ($attributeName) {
+                                                        case 'colony':
+                                                            $customerBillToAddressNode->setAttribute('neighbourhood', (string)$attributeValue);
+                                                            break;
+                                                        case 'county':
+                                                            $customerBillToAddressNode->setAttribute('municipality', (string)$attributeValue);
+                                                            break;
+                                                        default:
+                                                            $customerBillToAddressNode->setAttribute($attributeName, (string)$attributeValue);
+                                                    }
+                                                }
+                                                break;
+                                            case 'shipToAddress':
+                                                // Create vendorFiscalAddress node.
+                                                $customerShipToAddressNode = $invoice->appendChild($nativeXml->createElement('customerShipToAddress'));
+                                                foreach ($customerNode->attributes() as $attributeName => $attributeValue) {
+                                                    switch ($attributeName) {
+                                                        case 'colony':
+                                                            $customerShipToAddressNode->setAttribute('neighbourhood', (string)$attributeValue);
+                                                            break;
+                                                        case 'county':
+                                                            $customerShipToAddressNode->setAttribute('municipality', (string)$attributeValue);
+                                                            break;
+                                                        default:
+                                                            $customerShipToAddressNode->setAttribute($attributeName, (string)$attributeValue);
+                                                    }
+                                                }
+                                                // Find additional information
+                                                foreach ($customerNode->children() as $customerShipToAddressNode) {
+                                                    switch ($customerShipToAddressNode->getName()) {
+                                                        case 'shipToCustomer':
+                                                            foreach ($customerShipToAddressNode->attributes() as $attributeName => $attributeValue) {
+                                                                $invoice->setAttribute('customerShipTo' . ucwords($attributeName), (string)$attributeValue);
+                                                            }
+                                                            break;
+                                                    }
+                                                }
+                                                break;
+                                        }
+                                    }
+                                    break;
+                                case 'items':
+                                    $items = $invoice->appendChild($nativeXml->createElement('items'));
+                                    // Process invoice items.
+                                    foreach ($xmlInvoiceNode->children() as $invoiceItem) {
+                                        $item = $items->appendChild($nativeXml->createElement('item'));
+                                        foreach ($invoiceItem->attributes() as $attributeName => $attributeValue) {
+                                            switch ($attributeName) {
+                                                case 'amount':
+                                                    $subTotal += (float)$attributeValue;
+                                                    $item->setAttribute($attributeName, (string)$attributeValue);
+                                                    break;
+                                                default:
+                                                    $item->setAttribute($attributeName, (string)$attributeValue);
+                                            }
+                                            $item->setAttribute($attributeName, (string)$attributeValue);
+                                        }
+                                        // Customs permit
+                                        foreach ($invoiceItem->children() as $invoiceItemNode) {
+                                            switch ($invoiceItemNode->getName()) {
+                                                case 'customsPermit':
+                                                    $customsPermit = $item->appendChild($nativeXml->createElement('customsPermit'));
+                                                    foreach ($invoiceItemNode->attributes() as $attributeName => $attributeValue) {
+                                                        switch ($attributeName) {
+                                                            case 'customsPermitNbr':
+                                                                $customsPermit->setAttribute('nbr', (string)$attributeValue);
+                                                                break;
+                                                            case 'customsOffice':
+                                                                $customsPermit->setAttribute('custom', (string)$attributeValue);
+                                                                break;
+                                                            case 'customsPermitDate':
+                                                                $customsPermit->setAttribute('date', (string)$attributeValue);
+                                                                break;
+                                                        }
+                                                    }
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case 'taxes':
+                                    $taxes = $invoice->appendChild($nativeXml->createElement('taxes'));
+                                    // Process invoice taxes.
+                                    foreach ($xmlInvoiceNode->children() as $invoiceTax) {
+                                        $tax = $taxes->appendChild($nativeXml->createElement('tax'));
+                                        foreach ($invoiceTax->attributes() as $attributeName => $attributeValue) {
+                                            switch ($attributeName) {
+                                                case 'taxName':
+                                                    $tax->setAttribute('name', yii::t('app', (string)$attributeValue));
+                                                    break;
+                                                case 'taxRate':
+                                                    $tax->setAttribute('rate', (float)$attributeValue);
+                                                    break;
+                                                case 'taxAmount':
+                                                    $tax->setAttribute('amt', (float)$attributeValue);
+                                                    break;
+                                            }
+                                        }
+                                    }
+                            }
+                        }
+                        $invoice->setAttribute('subTotal', $subTotal);
+                    }
+                    $nativeXmlPath = $masterAccount->masterAccountAttributes(array('condition' => "code = 'NATIVE_XML_PATH'"));
+                    $nativeXml->save($nativeXmlPath[0]->value . DIRECTORY_SEPARATOR . $pathInfo['basename']);
                 }
                 // Get TAMA xsd.
 //                foreach ($xml->children() as $xmlInvoice) {

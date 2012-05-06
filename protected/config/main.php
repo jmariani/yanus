@@ -8,7 +8,10 @@ return array(
     'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
     'name' => 'Yanus',
     // preloading 'log' component
-    'preload' => array('log'),
+    'preload' => array(
+        'log',
+        'bootstrap', // preload the bootstrap component
+    ),
     // autoloading model and component classes
     'import' => array(
         'application.models.*',
@@ -28,6 +31,9 @@ return array(
             'ipFilters' => array('127.0.0.1', '::1'),
             'generatorPaths' => array(
                 'ext.giix-core', // giix generators
+                'ext.wsdl2php', // wsdl2pgp generators
+                'bootstrap.gii', // since 0.9.1
+                'application.gii'
             ),
         ),
         'user' => array(
@@ -41,30 +47,13 @@ return array(
     ),
     // application components
     'components' => array(
-//        'user' => array(
-//            // enable cookie-based authentication
-//            'allowAutoLogin' => true,
-//        ),
-        'user' => array(
-            'class' => 'RWebUser',
-            // enable cookie-based authentication
-            'allowAutoLogin' => true,
-            'loginUrl' => array('/user/login'),
-        ),
         'authManager' => array(
             'class' => 'RDbAuthManager',
             'connectionID' => 'db',
             'defaultRoles' => array('Authenticated', 'Guest'),
         ),
-        // uncomment the following to enable URLs in path-format
-        'urlManager' => array(
-            'urlFormat' => 'path',
-            'showScriptName' => false,
-            'rules' => array(
-                '<controller:\w+>/<id:\d+>' => '<controller>/view',
-                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
-                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
-            ),
+        'bootstrap'=>array(
+                'class'=>'ext.bootstrap.components.Bootstrap', // assuming you extracted bootstrap under extensions
         ),
 //        'db' => array(
 //            'connectionString' => 'sqlite:' . dirname(__FILE__) . '/../data/testdrive.db',
@@ -94,6 +83,26 @@ return array(
 //                    'class' => 'CWebLogRoute',
 //                ),
             ),
+        ),
+        // uncomment the following to enable URLs in path-format
+        'urlManager' => array(
+            'urlFormat' => 'path',
+            'showScriptName' => false,
+            'rules' => array(
+                '<controller:\w+>/<id:\d+>' => '<controller>/view',
+                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+            ),
+        ),
+//        'user' => array(
+//            // enable cookie-based authentication
+//            'allowAutoLogin' => true,
+//        ),
+        'user' => array(
+            'class' => 'RWebUser',
+            // enable cookie-based authentication
+            'allowAutoLogin' => true,
+            'loginUrl' => array('/user/login'),
         ),
     ),
     // application-level parameters that can be accessed

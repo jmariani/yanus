@@ -72,10 +72,12 @@ $('#{$class}_model').bind('keyup change', function(){
 					'auth_filter_default' => 'Yii access control(default ruleset)',
 					'auth_filter_strict' => 'Yii access control(more strict ruleset)',
 					'auth_yum' => 'Yii User Management access control',
-					'auth_none' => 'No access control')); ?>
+					'auth_none' => 'No access control',
+                                        'auth_rights' => 'Rights',
+                    )); ?>
 		<div class="tooltip">
-				The Authentication method to be used in the Controller. Yii access Control is the 
-				default accessControl of Yii using the Controller accessRules() method. No access 
+				The Authentication method to be used in the Controller. Yii access Control is the
+				default accessControl of Yii using the Controller accessRules() method. No access
 				Control provides no Access control. In the future we will provide srbac and
     		possibly other authtypes.
 		</div>

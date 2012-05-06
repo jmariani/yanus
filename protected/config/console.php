@@ -25,6 +25,12 @@ return array(
                 ),
                 array(
                     'class' => 'CFileLogRoute',
+//                'levels' => 'trace, info',
+                    'categories' => 'processincominginvoicenativexml',
+                    'logFile' => 'processincominginvoicenativexml.log'
+                ),
+                array(
+                    'class' => 'CFileLogRoute',
                     'levels' => 'error, warning',
                 ),
                 // uncomment the following to show log messages on web pages
