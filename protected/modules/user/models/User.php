@@ -5,7 +5,7 @@ class User extends CActiveRecord
 	const STATUS_NOACTIVE=0;
 	const STATUS_ACTIVE=1;
 	const STATUS_BANED=-1;
-	
+
 	/**
 	 * The followings are the available columns in table 'users':
 	 * @var integer $id
@@ -43,7 +43,7 @@ class User extends CActiveRecord
 	{
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
-		
+
 		return ((Yii::app()->getModule('user')->isAdmin())?array(
 			#array('username, password, email', 'required'),
 			array('username', 'length', 'max'=>20, 'min' => 3,'message' => UserModule::t("Incorrect username (length between 3 and 20 characters).")),
@@ -97,14 +97,14 @@ class User extends CActiveRecord
 			'status' => UserModule::t("Status"),
 		);
 	}
-	
+
 	public function scopes()
     {
         return array(
             'active'=>array(
                 'condition'=>'status='.self::STATUS_ACTIVE,
             ),
-            'notactvie'=>array(
+            'notactive'=>array(
                 'condition'=>'status='.self::STATUS_NOACTIVE,
             ),
             'banned'=>array(
@@ -118,14 +118,14 @@ class User extends CActiveRecord
             ),
         );
     }
-	
+
 	public function defaultScope()
     {
         return array(
             'select' => 'id, username, email, createtime, lastvisit, superuser, status',
         );
     }
-	
+
 	public static function itemAlias($type,$code=NULL) {
 		$_items = array(
 			'UserStatus' => array(

@@ -13,7 +13,7 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
 	<?php echo $form->errorSummary($model); ?>
         <?php // echo CHtml::link('Hover me', '#', array('class'=>'btn btn-primary btn-danger', 'data-title'=>'Heading', 'data-content'=>'Content ...', 'rel'=>'popover')); ?>
 
-        <?php echo $form->textFieldRow($model, 'rfc', array('maxlength' => 13,'data-title'=>'Heading', 'data-content'=>'Content ...', 'rel'=>'popover')); ?>
+        <?php echo $form->textFieldRow($model, 'rfc', array('maxlength' => 13,'hint'=>yii::t('app', 'Please enter your RFC without spaces or hyphens'))); ?>
         <?php echo $form->textAreaRow($model, 'businessName', array('class'=>'span8', 'rows' => 2)); ?>
         <?php echo $form->textFieldRow($model, 'userName', array('maxlength' => 20)); ?>
         <?php echo $form->passwordFieldRow($model, 'password', array('maxlength' => 128)); ?>
