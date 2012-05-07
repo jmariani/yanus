@@ -95,9 +95,9 @@ return array(
             'class' => 'application.extensions.yii-mail.YiiMail',
             'transportType' => 'smtp',
             'transportOptions' => array(
-                'host' => 'xxx.xxx.xxx.xxx',
-                'username' => 'username',
-                'password' => 'password',
+                'host' => 'localhost',
+//                'username' => 'username',
+//                'password' => 'password',
             ),
             'viewPath' => 'application.views.mail',
             'logging' => true,
