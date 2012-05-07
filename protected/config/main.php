@@ -101,7 +101,7 @@ return array(
             ),
             'viewPath' => 'application.views.mail',
             'logging' => true,
-            'dryRun' => true
+            'dryRun' => false
         ),
         // uncomment the following to enable URLs in path-format
         'urlManager' => array(
