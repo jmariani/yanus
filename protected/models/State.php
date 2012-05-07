@@ -15,8 +15,5 @@ class State extends BaseState {
         return parent::beforeSave();
     }
 
-    public function defaultScope() {
-        return array('order' => 't.name ASC');
-    }
 
 }

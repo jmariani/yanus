@@ -29,9 +29,9 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
                     array('country' => array(
                         'select' => false,
                         'joinType' => 'LEFT JOIN',
-                        'condition' => 'country.code = "MX"'
+                        'condition' => 'country.code = "MX"',
                     ))
-                    )->findAllAttributes(null, true))); ?>
+                    )->findAllAttributes(null, true, array('order' => 't.name asc')))); ?>
             <?php echo $form->textAreaRow($model, 'street', array('class'=>'span8', 'rows' => 2)); ?>
             <?php echo $form->textAreaRow($model, 'extNbr', array('class'=>'span8', 'rows' => 1)); ?>
             <?php echo $form->textAreaRow($model, 'intNbr', array('class'=>'span8', 'rows' => 1)); ?>

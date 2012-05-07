@@ -234,6 +234,8 @@ abstract class GxActiveRecord extends CActiveRecord {
 	 */
 	public function findAllAttributes($attributes = null, $withPk = false, $condition='', $params=array()) {
 		$criteria = $this->getCommandBuilder()->createCriteria($condition, $params);
+//                if ($criteria->order == null AND $this->hasAttribute($this->representingColumn()))
+//			$criteria->order = $this->representingColumn();
 		if ($attributes === null)
 			$attributes = $this->representingColumn();
 		if ($withPk) {
