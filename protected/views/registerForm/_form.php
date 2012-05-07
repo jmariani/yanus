@@ -4,7 +4,8 @@
 $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
     'id' => 'register-form-form',
     'htmlOptions'=>array('class'=>'well'),
-    'type' => 'horizontal'
+    'type' => 'horizontal',
+    'enableAjaxValidation' => true,
 )); ?>
 
 	<p class="note">
@@ -16,7 +17,13 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
         <?php echo $form->textFieldRow($model, 'rfc', array('maxlength' => 13,'hint'=>yii::t('app', 'Please enter your RFC without spaces or hyphens'))); ?>
         <?php echo $form->textAreaRow($model, 'businessName', array('class'=>'span8', 'rows' => 2)); ?>
         <?php echo $form->textFieldRow($model, 'userName', array('maxlength' => 20)); ?>
-        <?php echo $form->passwordFieldRow($model, 'password', array('maxlength' => 128)); ?>
+        <?php // echo $form->passwordFieldRow($model, 'password', array('maxlength' => 128)); ?>
+        <?php $this->widget('ext.EStrongPassword.EStrongPassword',
+                array('form'=>$form, 'model'=>$model, 'attribute'=>'password', 'useBootstrapField' => true,
+                'requirementOptions'=>array('minChar'=>16,'one_special_char'=>true,
+                'verdicts' => array(yii::t('app', 'Weak'), yii::t('app', 'Normal'), yii::t('app', 'Medium'), yii::t('app', 'Strong'), yii::t('app', 'Very Strong')),
+                'minCharText' => yii::t('app', 'You must enter a minimum of %d characters'),)
+        ));?>
         <fieldset>
             <legend><?php echo yii::t('app', 'Contact information');?></legend>
             <?php echo $form->textAreaRow($model, 'contactName', array('class'=>'span8', 'rows' => 2)); ?>
