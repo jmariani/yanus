@@ -191,7 +191,6 @@ class YiiMail extends CApplicationComponent
 			$message->body
 		;
 		Yii::log($msg, CLogger::LEVEL_INFO, 'ext.yii-mail.YiiMail'); // TODO: attempt to determine alias/category at runtime
-                error_log($msg);
 		return $msg;
 	}
 

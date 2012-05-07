@@ -79,6 +79,12 @@ return array(
                     'class' => 'CFileLogRoute',
                     'levels' => 'error, warning',
                 ),
+                array(
+                    'class' => 'CFileLogRoute',
+//                'levels' => 'trace, info',
+                    'categories' => 'ext.yii-mail.YiiMail',
+                    'logFile' => 'yii-mail.log'
+                ),
             // uncomment the following to show log messages on web pages
 //                array(
 //                    'class' => 'CWebLogRoute',
