@@ -28,6 +28,7 @@
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.BootButton', array(
 			'type'=>'primary',
+                        'buttonType' => 'submit',
 			'label'=>yii::t('app', 'Search'),
 		)); ?>
 	</div>

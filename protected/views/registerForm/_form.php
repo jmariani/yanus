@@ -48,6 +48,10 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
             <?php echo $form->textFieldRow($model, 'zipCode', array('maxlength' => 5)); ?>
             <?php echo $form->textAreaRow($model, 'reference', array('class'=>'span8', 'rows' => 2)); ?>
         </fieldset>
+<?php $this->widget('application.extensions.recaptcha.EReCaptcha',
+   array('model'=>$model, 'attribute'=>'captcha',
+         'theme'=>'red', 'language'=> yii::app()->getLanguage(),
+         'publicKey'=>'6LeSJ9ESAAAAAC9XmTk28mJphYPulXDCIUjQ1C0g')) ?>
 <?php
 $this->widget('bootstrap.widgets.BootButton', array(
     'label'=>Yii::t('app', 'Submit'),

@@ -24,11 +24,14 @@ class RegisterFormController extends GxController {
         if (isset($_POST['RegisterForm'])) {
             $model->setAttributes($_POST['RegisterForm']);
 
-            if ($model->save()) {
-                if (Yii::app()->getRequest()->getIsAjaxRequest())
-                    Yii::app()->end();
-                else
-                    $this->redirect(array('success', 'id' => $model->id));
+            $model->scenario = 'registerwcaptcha';
+            if ($model->validate()) {
+                if ($model->save(false)) {
+                    if (Yii::app()->getRequest()->getIsAjaxRequest())
+                        Yii::app()->end();
+                    else
+                        $this->redirect(array('success', 'id' => $model->id));
+                }
             }
         }
 
