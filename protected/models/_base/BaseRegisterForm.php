@@ -49,14 +49,14 @@ abstract class BaseRegisterForm extends GxActiveRecord {
 
 	public function rules() {
 		return array(
-			array('businessName, rfc, userName, password, street, zipCode, State_id, contactName, contactPhone, contactEmail', 'required'),
+			array('businessName, rfc, userName, password, contactName, contactPhone, contactEmail', 'required'),
 			array('State_id', 'numerical', 'integerOnly'=>true),
 			array('rfc', 'length', 'max'=>13),
 			array('userName', 'length', 'max'=>20),
 			array('password', 'length', 'max'=>128),
 			array('zipCode', 'length', 'max'=>5),
-			array('extNbr, intNbr, colony, city, municipality, reference', 'safe'),
-			array('extNbr, intNbr, colony, city, municipality, reference', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('street, extNbr, intNbr, colony, city, municipality, reference', 'safe'),
+			array('street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id', 'default', 'setOnEmpty' => true, 'value' => null),
 			array('id, businessName, rfc, userName, password, street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, contactName, contactPhone, contactEmail', 'safe', 'on'=>'search'),
 		);
 	}

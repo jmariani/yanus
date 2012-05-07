@@ -30,7 +30,7 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
             <?php echo $form->textAreaRow($model, 'contactPhone', array('class'=>'span8', 'rows' => 1)); ?>
             <?php echo $form->textAreaRow($model, 'contactEmail', array('class'=>'span8', 'rows' => 1)); ?>
         </fieldset>
-        <fieldset>
+<!--        <fieldset>
             <legend><?php echo yii::t('app', 'Fiscal address');?></legend>
             <?php echo $form->dropDownListRow($model, 'State_id', GxHtml::listDataEx(State::model()->with(
                     array('country' => array(
@@ -47,7 +47,7 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
             <?php echo $form->textAreaRow($model, 'municipality', array('class'=>'span8', 'rows' => 1)); ?>
             <?php echo $form->textFieldRow($model, 'zipCode', array('maxlength' => 5)); ?>
             <?php echo $form->textAreaRow($model, 'reference', array('class'=>'span8', 'rows' => 2)); ?>
-        </fieldset>
+        </fieldset>-->
         <?php $this->widget('application.extensions.recaptcha.EReCaptcha',
         array('model'=>$model, 'attribute'=>'captcha',
                 'theme'=>'red', 'language'=> yii::app()->getLanguage(),
