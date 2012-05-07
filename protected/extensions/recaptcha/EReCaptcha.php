@@ -122,7 +122,7 @@ class EReCaptcha extends CInputWidget
     */
    public function setPublicKey($value)
    {
-      if (empty($value)||!is_string($value)) throw new CException(Yii::t('yii','EReCaptcha.publicKey must contain your reCAPTCHA public key.'));
+      if (empty($value)||!is_string($value)) throw new CException(Yii::t('app','EReCaptcha.publicKey must contain your reCAPTCHA public key.'));
       $this->publicKey = $value;
    }
 

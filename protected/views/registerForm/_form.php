@@ -20,7 +20,7 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
         <?php // echo $form->passwordFieldRow($model, 'password', array('maxlength' => 128)); ?>
         <?php $this->widget('ext.EStrongPassword.EStrongPassword',
                 array('form'=>$form, 'model'=>$model, 'attribute'=>'password', 'useBootstrapField' => true,
-                'requirementOptions'=>array('minChar'=>16,'one_special_char'=>true,
+                'requirementOptions'=>array('minChar'=>8,'one_special_char'=>true,
                 'verdicts' => array(yii::t('app', 'Weak'), yii::t('app', 'Normal'), yii::t('app', 'Medium'), yii::t('app', 'Strong'), yii::t('app', 'Very Strong')),
                 'minCharText' => yii::t('app', 'You must enter a minimum of %d characters'),)
         ));?>
@@ -48,11 +48,11 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
             <?php echo $form->textFieldRow($model, 'zipCode', array('maxlength' => 5)); ?>
             <?php echo $form->textAreaRow($model, 'reference', array('class'=>'span8', 'rows' => 2)); ?>
         </fieldset>
-<?php $this->widget('application.extensions.recaptcha.EReCaptcha',
-   array('model'=>$model, 'attribute'=>'captcha',
-         'theme'=>'red', 'language'=> yii::app()->getLanguage(),
-         'publicKey'=>'6LeSJ9ESAAAAAC9XmTk28mJphYPulXDCIUjQ1C0g')) ?>
-<?php
+        <?php $this->widget('application.extensions.recaptcha.EReCaptcha',
+        array('model'=>$model, 'attribute'=>'captcha',
+                'theme'=>'red', 'language'=> yii::app()->getLanguage(),
+                'publicKey'=>'6LeSJ9ESAAAAAC9XmTk28mJphYPulXDCIUjQ1C0g')) ?>
+        <?php
 $this->widget('bootstrap.widgets.BootButton', array(
     'label'=>Yii::t('app', 'Submit'),
     'buttonType' => 'submit',

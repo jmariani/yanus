@@ -67,7 +67,7 @@ class EReCaptchaValidator extends CValidator
     */
    public function setPrivateKey($value)
    {
-      if (empty($value)||!is_string($value)) throw new CException(Yii::t('yii','EReCaptchaValidator.privateKey must contain your reCAPTCHA private key.'));
+      if (empty($value)||!is_string($value)) throw new CException(Yii::t('app','EReCaptchaValidator.privateKey must contain your reCAPTCHA private key.'));
       $this->privateKey = $value;
    }
 
@@ -94,7 +94,7 @@ class EReCaptchaValidator extends CValidator
 	                                  $_POST['recaptcha_challenge_field'],
 	                                  $_POST['recaptcha_response_field']);
 		if (!$resp->is_valid) {
-			$message = $this->message !== null ? $this->message : Yii::t('yii','The verification code is incorrect.');
+			$message = $this->message !== null ? $this->message : Yii::t('app','The verification code is incorrect.');
 			$this->addError($object, $attribute, $message);
 		}
 	}
