@@ -21,6 +21,7 @@ return array(
         'application.modules.user.components.*',
         'application.modules.rights.*',
         'application.modules.rights.components.*',
+        'application.extensions.yii-mail.*',
     ),
     'modules' => array(
         // uncomment the following to enable the Gii tool
@@ -52,8 +53,8 @@ return array(
             'connectionID' => 'db',
             'defaultRoles' => array('Authenticated', 'Guest'),
         ),
-        'bootstrap'=>array(
-                'class'=>'ext.bootstrap.components.Bootstrap', // assuming you extracted bootstrap under extensions
+        'bootstrap' => array(
+            'class' => 'ext.bootstrap.components.Bootstrap', // assuming you extracted bootstrap under extensions
         ),
 //        'db' => array(
 //            'connectionString' => 'sqlite:' . dirname(__FILE__) . '/../data/testdrive.db',
@@ -78,11 +79,23 @@ return array(
                     'class' => 'CFileLogRoute',
                     'levels' => 'error, warning',
                 ),
-                // uncomment the following to show log messages on web pages
+            // uncomment the following to show log messages on web pages
 //                array(
 //                    'class' => 'CWebLogRoute',
 //                ),
             ),
+        ),
+        'mail' => array(
+            'class' => 'application.extensions.yii-mail.YiiMail',
+            'transportType' => 'smtp',
+            'transportOptions' => array(
+                'host' => 'xxx.xxx.xxx.xxx',
+                'username' => 'username',
+                'password' => 'password',
+            ),
+            'viewPath' => 'application.views.mail',
+            'logging' => true,
+            'dryRun' => true
         ),
         // uncomment the following to enable URLs in path-format
         'urlManager' => array(

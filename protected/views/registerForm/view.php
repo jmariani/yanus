@@ -22,7 +22,10 @@ $this->menu=array(
 'businessName',
 'rfc',
 'userName',
-'password',
+//'password',
+'contactName',
+'contactPhone',
+'contactEmail',
 'street',
 'extNbr',
 'intNbr',
@@ -32,10 +35,10 @@ $this->menu=array(
 'zipCode',
 'reference',
 array(
-			'name' => 'state',
-			'type' => 'raw',
-			'value' => $model->state !== null ? GxHtml::link(GxHtml::encode(GxHtml::valueEx($model->state)), array('state/view', 'id' => GxActiveRecord::extractPkValue($model->state, true))) : null,
-			),
-	),
+        'name' => 'state',
+        'type' => 'raw',
+        'value' => $model->state !== null ? GxHtml::link(GxHtml::encode(GxHtml::valueEx($model->state)), array('state/view', 'id' => GxActiveRecord::extractPkValue($model->state, true))) : null,
+        ),
+    ),
 )); ?>
 

@@ -5,9 +5,19 @@ class RegisterFormController extends GxController {
     public $defaultAction = 'create';
 
     public function actionSuccess($id) {
+        $model = $this->loadModel($id, 'RegisterForm');
+
         // Here we're going to send an activation mail to the newly created user.
+        $mail = new YiiMailMessage();
+        $mail->setTo(array('jorgemariani@gmail.com' => 'Jorge Mariani'));
+        $mail->setFrom(array('jorgemariani@gmail.com' => 'Jorge Mariani'));
+        $mail->setSubject('Test');
+        $mail->view = 'activateRegisterForm';
+        $mail->setBody(array('model' => $model), 'text/html');
+        yii::app()->mail->send($mail);
+
         $this->render('success', array(
-            'model' => $this->loadModel($id, 'RegisterForm'),
+            'model' => $model,
         ));
     }
 
