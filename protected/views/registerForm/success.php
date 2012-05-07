@@ -10,12 +10,11 @@ $this->breadcrumbs = array(
 //);
 ?>
 
-<h1><?php echo Yii::t('app', 'Registration form');?></h1>
 <?php
     $this->layout='column1';
 ?>
-<?php
-$this->renderPartial('_form', array(
-		'model' => $model,
-		'buttons' => 'create'));
-?>
+<?php $this->beginWidget('bootstrap.widgets.BootHero', array(
+    'heading'=>yii::t('app', 'Thank you!'),
+)); ?>
+    <p><?php echo '<br/>';echo yii::t('app', 'Your registration was successfully fulfilled. Please check your email for your activation instructions.');?></p>
+<?php $this->endWidget(); ?>
