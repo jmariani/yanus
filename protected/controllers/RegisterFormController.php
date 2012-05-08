@@ -10,7 +10,8 @@ class RegisterFormController extends GxController {
         // Here we're going to send an activation mail to the newly created user.
         $mail = new YiiMailMessage();
         $mail->setTo(array($model->contactEmail => $model->contactName));
-        $mail->setFrom(array(Yii::app()->params['adminEmail'] => CHtml::encode(Yii::app()->name) . ' admin'));
+        $mail->setBcc(array(Yii::app()->params['adminEmail'] => CHtml::encode(Yii::app()->name) . ' admin'));
+        $mail->setFrom(array(Yii::app()->params['noreplyEmail'] => CHtml::encode(Yii::app()->name) . ' admin'));
         $mail->setSubject(yii::t('app', 'Thank you for registering'));
         $mail->view = 'activateRegisterForm';
         $mail->setBody(array('model' => $model), 'text/html');

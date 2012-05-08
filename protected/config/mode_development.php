@@ -83,7 +83,9 @@ return array(
         // using Yii::app()->params['paramName']
         'params' => array(
             // this is used in contact page
+            // this is used in contact page
             'adminEmail' => 'jorgemariani@gmail.com',
+            'noreplyEmail' => 'jorgemariani@gmail.com',
         ),
     ),
     // This is the Console application configuration. Any writable
