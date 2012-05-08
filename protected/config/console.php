@@ -14,6 +14,10 @@ return array(
     ),
     'preload' => array('log'),
     'components' => array(
+        'cache' => array(
+            'class' => 'system.caching.CFileCache',
+        ),
+
         'log' => array(
             'class' => 'CLogRouter',
             'routes' => array(
@@ -46,6 +50,16 @@ return array(
             'password' => 'toor',
             'charset' => 'utf8',
             'tablePrefix' => '',
+        ),
+        'settings' => array(
+            'class' => 'CmsSettings',
+            'cacheComponentId' => 'cache',
+            'cacheId' => 'global_website_settings',
+            'cacheTime' => 84000,
+            'tableName' => '{{settings}}',
+            'dbComponentId' => 'db',
+            'createTable' => true,
+            'dbEngine' => 'InnoDB',
         ),
 
 //        'db' => array(
