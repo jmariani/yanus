@@ -6,9 +6,10 @@
  */
 return array(
     // Set yiiPath (relative to Environment.php)
-    'yiiPath' => dirname(__FILE__) . '/../../../yii/framework/yii.php',
-    'yiicPath' => dirname(__FILE__) . '/../../../yii/framework/yiic.php',
-    'yiitPath' => dirname(__FILE__) . '/../../../yii/framework/yiit.php',
+    //$yii=dirname(__FILE__).'/../../framework/yii.php';
+    'yiiPath' => dirname(__FILE__).'/../../framework/yii.php',
+    'yiicPath' => dirname(__FILE__).'/../../framework/yiic.php',
+    'yiitPath' => dirname(__FILE__).'/../../framework/yiit.php',
     // Set YII_DEBUG and YII_TRACE_LEVEL flags
     'yiiDebug' => true,
     'yiiTraceLevel' => 0,
