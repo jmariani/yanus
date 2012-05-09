@@ -1,12 +1,15 @@
 <p><?php echo yii::t('app', 'Dear {name}:', array('{name}' => $model->contactName));?></p>
-<p><?php echo yii::t('app', 'Thank you for registering. Please review your information below and follow the activation link to activate tour account.');?></p>
-<?php $this->widget('zii.widgets.CDetailView', array(
+<p><?php echo yii::t('app', 'Thank you for registering. Please review your information below and follow the activation link to activate your account.');?></p>
+<?php $this->widget('bootstrap.widgets.BootDetailView', array(
 	'data' => $model,
 	'attributes' => array(
             'businessName',
             'rfc',
             'userName',
-            'contactName',
+            'lastName',
+            'motherName',
+            'firstName',
+            'secondName',
             'contactPhone',
             'contactEmail',
             'activationUrl'

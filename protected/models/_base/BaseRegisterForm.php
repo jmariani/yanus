@@ -23,11 +23,14 @@
  * @property string $zipCode
  * @property string $reference
  * @property integer $State_id
- * @property string $contactName
  * @property string $contactPhone
  * @property string $contactEmail
  * @property string $activationKey
  * @property string $activationUrl
+ * @property string $lastName
+ * @property string $motherName
+ * @property string $firstName
+ * @property string $secondName
  *
  * @property State $state
  */
@@ -51,15 +54,15 @@ abstract class BaseRegisterForm extends GxActiveRecord {
 
 	public function rules() {
 		return array(
-			array('businessName, rfc, userName, password, contactName, contactPhone, contactEmail', 'required'),
+			array('businessName, rfc, userName, password, contactPhone, contactEmail, lastName, firstName', 'required'),
 			array('State_id', 'numerical', 'integerOnly'=>true),
 			array('rfc', 'length', 'max'=>13),
 			array('userName', 'length', 'max'=>20),
-			array('password, activationKey', 'length', 'max'=>128),
+			array('password, activationKey, lastName, motherName, firstName, secondName', 'length', 'max'=>128),
 			array('zipCode', 'length', 'max'=>5),
 			array('street, extNbr, intNbr, colony, city, municipality, reference, activationUrl', 'safe'),
-			array('street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, activationKey, activationUrl', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, businessName, rfc, userName, password, street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, contactName, contactPhone, contactEmail, activationKey, activationUrl', 'safe', 'on'=>'search'),
+			array('street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, activationKey, activationUrl, motherName, secondName', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, businessName, rfc, userName, password, street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, contactPhone, contactEmail, activationKey, activationUrl, lastName, motherName, firstName, secondName', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -90,11 +93,14 @@ abstract class BaseRegisterForm extends GxActiveRecord {
                 			'zipCode' => yii::t('app', 'Zip Code'),
                 			'reference' => yii::t('app', 'Reference'),
                         			                        'State_id' => yii::t('app', 'State'),
-                			'contactName' => yii::t('app', 'Contact Name'),
                 			'contactPhone' => yii::t('app', 'Contact Phone'),
                 			'contactEmail' => yii::t('app', 'Contact Email'),
                 			'activationKey' => yii::t('app', 'Activation Key'),
                 			'activationUrl' => yii::t('app', 'Activation Url'),
+                			'lastName' => yii::t('app', 'Last Name'),
+                			'motherName' => yii::t('app', 'Mother Name'),
+                			'firstName' => yii::t('app', 'First Name'),
+                			'secondName' => yii::t('app', 'Second Name'),
                         			                        'state' => yii::t('app', 'State'),
 		);
 	}
@@ -116,11 +122,14 @@ abstract class BaseRegisterForm extends GxActiveRecord {
 		$criteria->compare('zipCode', $this->zipCode, true);
 		$criteria->compare('reference', $this->reference, true);
 		$criteria->compare('State_id', $this->State_id);
-		$criteria->compare('contactName', $this->contactName, true);
 		$criteria->compare('contactPhone', $this->contactPhone, true);
 		$criteria->compare('contactEmail', $this->contactEmail, true);
 		$criteria->compare('activationKey', $this->activationKey, true);
 		$criteria->compare('activationUrl', $this->activationUrl, true);
+		$criteria->compare('lastName', $this->lastName, true);
+		$criteria->compare('motherName', $this->motherName, true);
+		$criteria->compare('firstName', $this->firstName, true);
+		$criteria->compare('secondName', $this->secondName, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,

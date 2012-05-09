@@ -16,7 +16,7 @@ $this->menu=array(
 
 <h1><?php echo Yii::t('app', 'View') . ' ' . GxHtml::encode($model->label()) . ' ' . GxHtml::encode(GxHtml::valueEx($model)); ?></h1>
 
-<?php $this->widget('zii.widgets.CDetailView', array(
+<?php $this->widget('bootstrap.widgets.BootDetailView', array(
 	'data' => $model,
 	'attributes' => array(
 'businessName',

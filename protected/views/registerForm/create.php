@@ -1,8 +1,8 @@
 <?php
 
-$this->breadcrumbs = array(
-	Yii::t('app', 'Registration form'),
-);
+//$this->breadcrumbs = array(
+//	Yii::t('app', 'Registration form'),
+//);
 
 //$this->menu = array(
 //	array('label'=>Yii::t('app', 'List') . ' ' . $model->label(2), 'url' => array('index')),

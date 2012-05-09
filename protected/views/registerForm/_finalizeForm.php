@@ -14,27 +14,18 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
 	</p>
 	<?php echo $form->errorSummary($model); ?>
         <?php // echo CHtml::link('Hover me', '#', array('class'=>'btn btn-primary btn-danger', 'data-title'=>'Heading', 'data-content'=>'Content ...', 'rel'=>'popover')); ?>
-
-        <?php echo $form->textFieldRow($model, 'rfc', array('minlength' => 12, 'maxlength' => 13,'hint'=>yii::t('app', 'Please enter your RFC without spaces or hyphens.'))); ?>
-        <?php echo $form->textAreaRow($model, 'businessName', array('class'=>'span8', 'rows' => 2)); ?>
-        <?php echo $form->textFieldRow($model, 'userName', array('maxlength' => 20, 'hint'=>yii::t('app', "This is your administrator's username. Please choose one carefully."))); ?>
-        <?php // echo $form->passwordFieldRow($model, 'password', array('maxlength' => 128)); ?>
-        <?php $this->widget('ext.EStrongPassword.EStrongPassword',
-                array('form'=>$form, 'model'=>$model, 'attribute'=>'password', 'useBootstrapField' => true,
-                'requirementOptions'=>array('minChar'=>8,'one_special_char'=>true,
-                'verdicts' => array(yii::t('app', 'Weak'), yii::t('app', 'Normal'), yii::t('app', 'Medium'), yii::t('app', 'Strong'), yii::t('app', 'Very Strong')),
-                'minCharText' => yii::t('app', 'You must enter a minimum of %d characters'),)
-        ));?>
+<?php $this->widget('bootstrap.widgets.BootDetailView', array(
+	'data' => $model,
+	'attributes' => array(
+'businessName',
+'rfc',
+'userName',
+//'password',
+'contactName',
+'contactPhone',
+'contactEmail',
+))); ?>
         <fieldset>
-            <legend><?php echo yii::t('app', 'Contact information');?></legend>
-            <?php echo $form->textFieldRow($model, 'lastName', array('class'=>'span8')); ?>
-            <?php echo $form->textFieldRow($model, 'motherName', array('class'=>'span8')); ?>
-            <?php echo $form->textFieldRow($model, 'firstName', array('class'=>'span8')); ?>
-            <?php echo $form->textFieldRow($model, 'secondName', array('class'=>'span8')); ?>
-            <?php echo $form->textAreaRow($model, 'contactPhone', array('class'=>'span8', 'rows' => 1)); ?>
-            <?php echo $form->textAreaRow($model, 'contactEmail', array('class'=>'span8', 'rows' => 1)); ?>
-        </fieldset>
-<!--        <fieldset>
             <legend><?php echo yii::t('app', 'Fiscal address');?></legend>
             <?php echo $form->dropDownListRow($model, 'State_id', GxHtml::listDataEx(State::model()->with(
                     array('country' => array(
@@ -73,7 +64,6 @@ $this->widget('bootstrap.widgets.BootButton', array(
     'size'=>'large', // '', 'large', 'small' or 'mini'
     )
 );
-
 
 $this->endWidget();
 ?>

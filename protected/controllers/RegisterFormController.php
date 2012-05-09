@@ -4,20 +4,67 @@ class RegisterFormController extends GxController {
 
     public $defaultAction = 'create';
 
-    public function actionSuccess($id) {
+    public function actionActivate() {
+        if (isset($_GET['activateKey'])) {
+            $activationKey = $_GET['activateKey'];
+            if ($activationKey) {
+                $model = RegisterForm::model()->findByAttributes(array('activationKey' => $activationKey));
+                if ($model) {
+                    // Redirect to finalize activation
+                    $this->redirect(array('finalize', 'id' => $model->id));
+                } else {
+                    Yii::app()->user->setFlash('error', 'Incorrect activation key');
+                    $this->render('/registerForm/message', array('title' => yii::t('app', 'Account activation')));
+                }
+//                if (isset($find) && $find->status) {
+//                    $this->render('/user/message', array('title' => UserModule::t("User activation"), 'content' => UserModule::t("You account is active.")));
+//                } elseif (isset($find->activkey) && ($find->activkey == $activkey)) {
+//                    $find->activkey = UserModule::encrypting(microtime());
+//                    $find->status = 1;
+//                    $find->save();
+//                    $this->render('/user/message', array('title' => UserModule::t("User activation"), 'content' => UserModule::t("You account is activated.")));
+//                } else {
+//                    $this->render('/user/message', array('title' => UserModule::t("User activation"), 'content' => UserModule::t("Incorrect activation URL.")));
+//                }
+            } else {
+                Yii::app()->user->setFlash('error', 'Incorrect activation key');
+                $this->render('/registerForm/message', array('title' => yii::t('app', 'Account activation')));
+            }
+        } else {
+            Yii::app()->user->setFlash('error', 'Incorrect activation key');
+            $this->render('/registerForm/message', array('title' => yii::t('app', 'Account activation')));
+        }
+
+//        $model = $this->loadModel($id, 'RegisterForm');
+//
+//        // Here we're going to send an activation mail to the newly created user.
+//        $mail = new YiiMailMessage();
+//        $mail->setTo(array($model->contactEmail => $model->contactName));
+//        $mail->setBcc(array(Yii::app()->params['adminEmail'] => CHtml::encode(Yii::app()->name) . ' admin'));
+//        $mail->setFrom(array(Yii::app()->params['noreplyEmail'] => CHtml::encode(Yii::app()->name) . ' admin'));
+//        $mail->setSubject(yii::t('app', 'Thank you for registering'));
+//        $mail->view = 'activateRegisterForm';
+//        $mail->setBody(array('model' => $model), 'text/html');
+//        yii::app()->mail->send($mail);
+//
+//        $this->render('success', array(
+//            'model' => $model,
+//        ));
+    }
+
+    public function actionFinalize($id) {
         $model = $this->loadModel($id, 'RegisterForm');
 
-        // Here we're going to send an activation mail to the newly created user.
-        $mail = new YiiMailMessage();
-        $mail->setTo(array($model->contactEmail => $model->contactName));
-        $mail->setBcc(array(Yii::app()->params['adminEmail'] => CHtml::encode(Yii::app()->name) . ' admin'));
-        $mail->setFrom(array(Yii::app()->params['noreplyEmail'] => CHtml::encode(Yii::app()->name) . ' admin'));
-        $mail->setSubject(yii::t('app', 'Thank you for registering'));
-        $mail->view = 'activateRegisterForm';
-        $mail->setBody(array('model' => $model), 'text/html');
-        yii::app()->mail->send($mail);
 
-        $this->render('success', array(
+        if (isset($_POST['RegisterForm'])) {
+            $model->setAttributes($_POST['RegisterForm']);
+
+            if ($model->save()) {
+                $this->redirect(array('view', 'id' => $model->id));
+            }
+        }
+
+        $this->render('finalize', array(
             'model' => $model,
         ));
     }
@@ -40,13 +87,15 @@ class RegisterFormController extends GxController {
                 if ($model->save(false)) {
                     if (Yii::app()->getRequest()->getIsAjaxRequest())
                         Yii::app()->end();
-                    else
-                        $this->redirect(array('success', 'id' => $model->id));
+                    $model->sendActivationMail();
+                    $this->render('success');
                 }
+            } else {
+                $this->render('create', array('model' => $model));
             }
+        } else {
+            $this->render('create', array('model' => $model));
         }
-
-        $this->render('create', array('model' => $model));
     }
 
     public function actionUpdate($id) {

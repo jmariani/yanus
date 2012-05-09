@@ -1,0 +1,17 @@
+------------------------------------
+EActiveForm
+By: Loren
+TigerPaw Productions
+Clemson University
+------------------------------------
+
+------------------------------------
+1.0.1
+------------------------------------
+Bug Fix: Fields that are not validated don't register changes
+Change: No longer uses beforechangevalidate function now registers another keydown and change handler.
+
+------------------------------------
+1.0
+------------------------------------
+Initial Release
