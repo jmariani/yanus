@@ -31,6 +31,7 @@
  * @property string $motherName
  * @property string $firstName
  * @property string $secondName
+ * @property string $fiscalRegime
  *
  * @property State $state
  */
@@ -60,9 +61,9 @@ abstract class BaseRegisterForm extends GxActiveRecord {
 			array('userName', 'length', 'max'=>20),
 			array('password, activationKey, lastName, motherName, firstName, secondName', 'length', 'max'=>128),
 			array('zipCode', 'length', 'max'=>5),
-			array('street, extNbr, intNbr, colony, city, municipality, reference, activationUrl', 'safe'),
-			array('street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, activationKey, activationUrl, motherName, secondName', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, businessName, rfc, userName, password, street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, contactPhone, contactEmail, activationKey, activationUrl, lastName, motherName, firstName, secondName', 'safe', 'on'=>'search'),
+			array('street, extNbr, intNbr, colony, city, municipality, reference, activationUrl, fiscalRegime', 'safe'),
+			array('street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, activationKey, activationUrl, motherName, secondName, fiscalRegime', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, businessName, rfc, userName, password, street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, contactPhone, contactEmail, activationKey, activationUrl, lastName, motherName, firstName, secondName, fiscalRegime', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -101,6 +102,7 @@ abstract class BaseRegisterForm extends GxActiveRecord {
                 			'motherName' => yii::t('app', 'Mother Name'),
                 			'firstName' => yii::t('app', 'First Name'),
                 			'secondName' => yii::t('app', 'Second Name'),
+                			'fiscalRegime' => yii::t('app', 'Fiscal Regime'),
                         			                        'state' => yii::t('app', 'State'),
 		);
 	}
@@ -130,6 +132,7 @@ abstract class BaseRegisterForm extends GxActiveRecord {
 		$criteria->compare('motherName', $this->motherName, true);
 		$criteria->compare('firstName', $this->firstName, true);
 		$criteria->compare('secondName', $this->secondName, true);
+		$criteria->compare('fiscalRegime', $this->fiscalRegime, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,

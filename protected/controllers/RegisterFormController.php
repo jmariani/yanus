@@ -57,8 +57,8 @@ class RegisterFormController extends GxController {
 
 
         if (isset($_POST['RegisterForm'])) {
+            $model->scenario = 'finalize';
             $model->setAttributes($_POST['RegisterForm']);
-
             if ($model->save()) {
                 $this->redirect(array('view', 'id' => $model->id));
             }

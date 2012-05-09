@@ -1,6 +1,7 @@
 <div class="form">
 
 <?php /** @var BootActiveForm $form */
+$model->scenario = 'finalize';
 $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
     'id' => 'register-form-form',
     'htmlOptions'=>array('class'=>'well'),
@@ -8,6 +9,9 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
     'enableAjaxValidation' => true,
 ));
     ?>
+	<p class="note">
+		<?php echo Yii::t('app', 'Please fill the required information to complete your registration.'); ?>
+	</p>
 
 	<p class="note">
 		<?php echo Yii::t('app', 'Fields with'); ?> <span class="required">*</span> <?php echo Yii::t('app', 'are required'); ?>.
@@ -25,6 +29,7 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
 'contactPhone',
 'contactEmail',
 ))); ?>
+        <?php echo $form->textAreaRow($model, 'fiscalRegime', array('class'=>'span8', 'rows' => 2, 'hint' => yii::t('app', 'Please enter your fiscal regime as registered with tax authority.'))); ?>
         <fieldset>
             <legend><?php echo yii::t('app', 'Fiscal address');?></legend>
             <?php echo $form->dropDownListRow($model, 'State_id', GxHtml::listDataEx(State::model()->with(
@@ -34,7 +39,7 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
                         'condition' => 'country.code = "MX"',
                     ))
                     )->findAllAttributes(null, true, array('order' => 't.name asc')))); ?>
-            <?php echo $form->textAreaRow($model, 'street', array('class'=>'span8', 'rows' => 2)); ?>
+            <?php echo $form->textAreaRow($model, 'street', array('class'=>'span8', 'rows' => 2,), array('required' => true)); ?>
             <?php echo $form->textAreaRow($model, 'extNbr', array('class'=>'span8', 'rows' => 1)); ?>
             <?php echo $form->textAreaRow($model, 'intNbr', array('class'=>'span8', 'rows' => 1)); ?>
             <?php echo $form->textAreaRow($model, 'colony', array('class'=>'span8', 'rows' => 1)); ?>
@@ -42,7 +47,7 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
             <?php echo $form->textAreaRow($model, 'municipality', array('class'=>'span8', 'rows' => 1)); ?>
             <?php echo $form->textFieldRow($model, 'zipCode', array('maxlength' => 5)); ?>
             <?php echo $form->textAreaRow($model, 'reference', array('class'=>'span8', 'rows' => 2)); ?>
-        </fieldset>-->
+        </fieldset>
         <?php $this->widget('application.extensions.recaptcha.EReCaptcha',
         array('model'=>$model, 'attribute'=>'captcha',
                 'theme'=>'red', 'language'=> yii::app()->getLanguage(),

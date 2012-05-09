@@ -32,11 +32,12 @@ class RegisterForm extends BaseRegisterForm {
         $rules[] = array('rfc, businessName', 'unique');
         $rules[] = array('contactEmail', 'email');
         $rules[] = array('captcha', 'safe');
+        $rules[] = array('street, zipCode, fiscalRegime', 'required', 'on' => 'finalize');
         $rules[] = array(
             'captcha',
             'application.extensions.recaptcha.EReCaptchaValidator',
             'privateKey' => '6LeSJ9ESAAAAABs28mTOtb1-0XvM0--u05CS5w_V',
-            'on' => 'registerwcaptcha'
+            'on' => 'registerwcaptcha, finalize'
         );
         return $rules;
     }
