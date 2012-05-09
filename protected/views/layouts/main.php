@@ -19,7 +19,7 @@
 
 <body>
 
-<div class="container" id="page">
+
 <!--
 	<div id="header">
 		<div id="logo"><?php echo CHtml::encode(Yii::app()->name); ?></div>
@@ -91,7 +91,8 @@
 		)); ?>
 	</div> mainmenu
         -->
-	<?php if(isset($this->breadcrumbs)):?>
+        <div class="container" id="page">
+            <?php if(isset($this->breadcrumbs)):?>
                 <?php $this->widget('bootstrap.widgets.BootBreadcrumbs', array(
                     'links'=>$this->breadcrumbs,
                 )); ?>
