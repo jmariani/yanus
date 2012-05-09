@@ -27,6 +27,7 @@
  * @property string $contactPhone
  * @property string $contactEmail
  * @property string $activationKey
+ * @property string $activationUrl
  *
  * @property State $state
  */
@@ -56,9 +57,9 @@ abstract class BaseRegisterForm extends GxActiveRecord {
 			array('userName', 'length', 'max'=>20),
 			array('password, activationKey', 'length', 'max'=>128),
 			array('zipCode', 'length', 'max'=>5),
-			array('street, extNbr, intNbr, colony, city, municipality, reference', 'safe'),
-			array('street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, activationKey', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, businessName, rfc, userName, password, street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, contactName, contactPhone, contactEmail, activationKey', 'safe', 'on'=>'search'),
+			array('street, extNbr, intNbr, colony, city, municipality, reference, activationUrl', 'safe'),
+			array('street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, activationKey, activationUrl', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, businessName, rfc, userName, password, street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, contactName, contactPhone, contactEmail, activationKey, activationUrl', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -93,6 +94,7 @@ abstract class BaseRegisterForm extends GxActiveRecord {
                 			'contactPhone' => yii::t('app', 'Contact Phone'),
                 			'contactEmail' => yii::t('app', 'Contact Email'),
                 			'activationKey' => yii::t('app', 'Activation Key'),
+                			'activationUrl' => yii::t('app', 'Activation Url'),
                         			                        'state' => yii::t('app', 'State'),
 		);
 	}
@@ -118,6 +120,7 @@ abstract class BaseRegisterForm extends GxActiveRecord {
 		$criteria->compare('contactPhone', $this->contactPhone, true);
 		$criteria->compare('contactEmail', $this->contactEmail, true);
 		$criteria->compare('activationKey', $this->activationKey, true);
+		$criteria->compare('activationUrl', $this->activationUrl, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,

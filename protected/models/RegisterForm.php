@@ -12,7 +12,13 @@ class RegisterForm extends BaseRegisterForm {
 
     public function beforeSave() {
         $this->activationKey = md5(time() . $this->password);
+        $this->activationUrl = yii::app()->createAbsoluteUrl('/registerForm/activate', array("activateKey" => $this->activationKey));
         return parent::beforeSave();
+    }
+    public function beforeValidate() {
+        $this->rfc = strtoupper($this->rfc);
+        $this->businessName = mb_strtoupper($this->businessName);
+        return parent::beforeValidate();
     }
     public function rules() {
         $rules = parent::rules();
