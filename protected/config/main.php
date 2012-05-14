@@ -22,7 +22,7 @@ return array(
     // This is the main Web application configuration. Any writable
     // CWebApplication properties can be configured here.
     'configWeb' => array(
-        'theme' => 'shadow_dancer',
+        'theme' => 'yanus',
         'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
         'name' => 'Yanus',
         // Preloading 'log' component
@@ -107,6 +107,39 @@ return array(
                 // enable cookie-based authentication
                 'allowAutoLogin' => true,
                 'loginUrl' => array('/user/login'),
+            ),
+            'widgetFactory' => array(
+                'widgets' => array(
+                    'CGridView' => array(
+                        'htmlOptions' => array('cellspacing' => '0', 'cellpadding' => '0'),
+                        'itemsCssClass' => 'item-class',
+                        'pagerCssClass' => 'pager-class'
+                    ),
+                    'CJuiTabs' => array(
+                        'htmlOptions' => array('class' => 'shadowtabs'),
+                    ),
+                    'CJuiAccordion' => array(
+                        'htmlOptions' => array('class' => 'shadowaccordion'),
+                    ),
+                    'CJuiProgressBar' => array(
+                        'htmlOptions' => array('class' => 'shadowprogressbar'),
+                    ),
+                    'CJuiSlider' => array(
+                        'htmlOptions' => array('class' => 'shadowslider'),
+                    ),
+                    'CJuiSliderInput' => array(
+                        'htmlOptions' => array('class' => 'shadowslider'),
+                    ),
+                    'CJuiButton' => array(
+                        'htmlOptions' => array('class' => 'shadowbutton'),
+                    ),
+                    'CJuiButton' => array(
+                        'htmlOptions' => array('class' => 'shadowbutton'),
+                    ),
+                    'CJuiButton' => array(
+                        'htmlOptions' => array('class' => 'button green'),
+                    ),
+                ),
             ),
         ),
         // autoloading model and component classes

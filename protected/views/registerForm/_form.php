@@ -9,10 +9,12 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
     'enableAjaxValidation' => true,
 ));
     ?>
-        <?php $this->widget('YanusBootAlert', array('closable' => false)); ?>
+        <div class="flash-notice"><?php echo yii::t('app', 'Please fill in the required information');?>.</div>
+        <?php // $this->widget('YanusBootAlert', array('closable' => false)); ?>
 	<?php echo $form->errorSummary($model); ?>
-
-        <?php echo $form->textFieldRow($model, 'rfc', array('minlength' => 12, 'maxlength' => 13,'hint'=>yii::t('app', 'Please enter your RFC without spaces or hyphens.'))); ?>
+        <?php echo $form->textFieldRow($model, 'rfc', array('minlength' => 12, 'maxlength' => 13,
+            'hint'=>yii::t('app', 'Please enter your RFC without spaces or hyphens.')
+            )); ?>
         <?php echo $form->textAreaRow($model, 'businessName', array('class'=>'span8', 'rows' => 2)); ?>
         <?php echo $form->textFieldRow($model, 'userName',
                 array('maxlength' => 20,
