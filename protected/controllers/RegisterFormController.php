@@ -5,68 +5,38 @@ class RegisterFormController extends GxController {
     public $defaultAction = 'create';
 
     public function actionActivate() {
-        if (isset($_GET['activateKey'])) {
+        try {
+            if (!isset($_GET['activateKey'])) throw new Exception(yii::t('app', 'Invalid activation key'));
             $activationKey = $_GET['activateKey'];
-            if ($activationKey) {
-                $model = RegisterForm::model()->findByAttributes(array('activationKey' => $activationKey));
-                if ($model) {
-                    // Redirect to finalize activation
-                    $this->redirect(array('finalize', 'id' => $model->id));
-                } else {
-                    Yii::app()->user->setFlash('error', 'Incorrect activation key');
-                    $this->render('/registerForm/message', array('title' => yii::t('app', 'Account activation')));
-                }
-//                if (isset($find) && $find->status) {
-//                    $this->render('/user/message', array('title' => UserModule::t("User activation"), 'content' => UserModule::t("You account is active.")));
-//                } elseif (isset($find->activkey) && ($find->activkey == $activkey)) {
-//                    $find->activkey = UserModule::encrypting(microtime());
-//                    $find->status = 1;
-//                    $find->save();
-//                    $this->render('/user/message', array('title' => UserModule::t("User activation"), 'content' => UserModule::t("You account is activated.")));
-//                } else {
-//                    $this->render('/user/message', array('title' => UserModule::t("User activation"), 'content' => UserModule::t("Incorrect activation URL.")));
-//                }
-            } else {
-                Yii::app()->user->setFlash('error', 'Incorrect activation key');
-                $this->render('/registerForm/message', array('title' => yii::t('app', 'Account activation')));
-            }
-        } else {
-            Yii::app()->user->setFlash('error', 'Incorrect activation key');
+            if (!$activationKey) throw new Exception(yii::t('app', 'Invalid activation key'));
+            $model = RegisterForm::model()->findByAttributes(array('activationKey' => $activationKey));
+            if (!$model) throw new Exception(yii::t('app', 'Invalid activation key'));
+            if (!$model->swIsInitialStatus()) throw new Exception(yii::t('app', 'Invalid activation key'));
+
+            $this->redirect(array('finalize', 'id' => $model->id));
+
+        } catch (Exception$e) {
+            Yii::app()->user->setFlash('error', $e->getMessage());
             $this->render('/registerForm/message', array('title' => yii::t('app', 'Account activation')));
         }
-
-//        $model = $this->loadModel($id, 'RegisterForm');
-//
-//        // Here we're going to send an activation mail to the newly created user.
-//        $mail = new YiiMailMessage();
-//        $mail->setTo(array($model->contactEmail => $model->contactName));
-//        $mail->setBcc(array(Yii::app()->params['adminEmail'] => CHtml::encode(Yii::app()->name) . ' admin'));
-//        $mail->setFrom(array(Yii::app()->params['noreplyEmail'] => CHtml::encode(Yii::app()->name) . ' admin'));
-//        $mail->setSubject(yii::t('app', 'Thank you for registering'));
-//        $mail->view = 'activateRegisterForm';
-//        $mail->setBody(array('model' => $model), 'text/html');
-//        yii::app()->mail->send($mail);
-//
-//        $this->render('success', array(
-//            'model' => $model,
-//        ));
     }
 
     public function actionFinalize($id) {
         $model = $this->loadModel($id, 'RegisterForm');
 
-
+        Yii::app()->user->setFlash('info', yii::t('app', 'Please fill in the required information') . '<br/>' .
+	'<p class="note">' . Yii::t('app', 'Fields with') . ' <span class="required">*</span> ' . Yii::t('app', 'are required') . '</p>');
         if (isset($_POST['RegisterForm'])) {
             $model->scenario = 'finalize';
             $model->setAttributes($_POST['RegisterForm']);
+            $model->status = 'activated';
             if ($model->save()) {
+                // Create user and other stuff...
                 $this->redirect(array('view', 'id' => $model->id));
             }
         }
 
-        $this->render('finalize', array(
-            'model' => $model,
-        ));
+        $this->render('finalize', array('model' => $model,));
     }
 
     public function actionView($id) {
@@ -78,18 +48,17 @@ class RegisterFormController extends GxController {
     public function actionCreate() {
         $model = new RegisterForm;
 
+        Yii::app()->user->setFlash('info', yii::t('app', 'Please fill in the required information') . '<br/>' .
+	'<p class="note">' . Yii::t('app', 'Fields with') . ' <span class="required">*</span> ' . Yii::t('app', 'are required') . '</p>');
 
         if (isset($_POST['RegisterForm'])) {
             $model->setAttributes($_POST['RegisterForm']);
 
             $model->scenario = 'registerwcaptcha';
-            if ($model->validate()) {
-                if ($model->save(false)) {
-                    if (Yii::app()->getRequest()->getIsAjaxRequest())
-                        Yii::app()->end();
-                    $model->sendActivationMail();
-                    $this->render('success');
-                }
+            if ($model->save()) {
+                if (Yii::app()->getRequest()->getIsAjaxRequest())
+                    Yii::app()->end();
+                $this->render('success');
             } else {
                 $this->render('create', array('model' => $model));
             }

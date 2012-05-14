@@ -6,15 +6,18 @@
             'businessName',
             'rfc',
             'userName',
-            'lastName',
-            'motherName',
-            'firstName',
-            'secondName',
+            'contactName',
+//            'contactLastName',
+//            'motherName',
+//            'firstName',
+//            'secondName',
             'contactPhone',
             'contactEmail',
-            'activationUrl'
+            array('type' => 'raw',
+                'label' => $model->getAttributeLabel('activationKey'),
+                'value' => yii::app()->createAbsoluteUrl('/registerForm/activate', array('activateKey' => $model->activationKey))
         ),
-)); ?>
+))); ?>
 <hr/>
 <?php echo yii::t('app', 'Please do not answer this message. It was sent from an unattended account');?>
 

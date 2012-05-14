@@ -9,13 +9,7 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
     'enableAjaxValidation' => true,
 ));
     ?>
-	<p class="note">
-		<?php echo Yii::t('app', 'Please fill the required information to complete your registration.'); ?>
-	</p>
-
-	<p class="note">
-		<?php echo Yii::t('app', 'Fields with'); ?> <span class="required">*</span> <?php echo Yii::t('app', 'are required'); ?>.
-	</p>
+    <?php $this->widget('YanusBootAlert', array('closable' => false)); ?>
 	<?php echo $form->errorSummary($model); ?>
         <?php // echo CHtml::link('Hover me', '#', array('class'=>'btn btn-primary btn-danger', 'data-title'=>'Heading', 'data-content'=>'Content ...', 'rel'=>'popover')); ?>
 <?php $this->widget('bootstrap.widgets.BootDetailView', array(
@@ -40,8 +34,12 @@ $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
                     ))
                     )->findAllAttributes(null, true, array('order' => 't.name asc')))); ?>
             <?php echo $form->textAreaRow($model, 'street', array('class'=>'span8', 'rows' => 2,), array('required' => true)); ?>
-            <?php echo $form->textAreaRow($model, 'extNbr', array('class'=>'span8', 'rows' => 1)); ?>
-            <?php echo $form->textAreaRow($model, 'intNbr', array('class'=>'span8', 'rows' => 1)); ?>
+            <table border="1" class="span8">
+                <tr>
+                    <td><?php echo $form->textAreaRow($model, 'extNbr', array('rows' => 1)); ?></td>
+                    <td><?php echo $form->textAreaRow($model, 'intNbr', array('rows' => 1)); ?></td>
+                </tr>
+            </table>
             <?php echo $form->textAreaRow($model, 'colony', array('class'=>'span8', 'rows' => 1)); ?>
             <?php echo $form->textAreaRow($model, 'city', array('class'=>'span8', 'rows' => 1)); ?>
             <?php echo $form->textAreaRow($model, 'municipality', array('class'=>'span8', 'rows' => 1)); ?>

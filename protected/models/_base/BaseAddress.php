@@ -15,7 +15,6 @@
  * @property string $intNbr
  * @property string $neighbourhood
  * @property string $city
- * @property string $reference
  * @property string $municipality
  * @property string $state
  * @property string $country
@@ -27,6 +26,7 @@
  * @property Country $country0
  * @property State $state0
  * @property CfdAddress[] $cfdAddresses
+ * @property PartyAddress[] $partyAddresses
  */
 abstract class BaseAddress extends GxActiveRecord {
 
@@ -43,18 +43,18 @@ abstract class BaseAddress extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'country';
+		return 'md5';
 	}
 
 	public function rules() {
 		return array(
-			array('country, md5', 'required'),
+			array('md5', 'required'),
 			array('Country_id, State_id', 'numerical', 'integerOnly'=>true),
 			array('zipCode', 'length', 'max'=>45),
 			array('md5', 'length', 'max'=>32),
-			array('street, extNbr, intNbr, neighbourhood, city, reference, municipality, state', 'safe'),
-			array('street, extNbr, intNbr, neighbourhood, city, reference, municipality, state, zipCode, Country_id, State_id', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, street, extNbr, intNbr, neighbourhood, city, reference, municipality, state, country, zipCode, Country_id, State_id, md5', 'safe', 'on'=>'search'),
+			array('street, extNbr, intNbr, neighbourhood, city, municipality, state, country', 'safe'),
+			array('street, extNbr, intNbr, neighbourhood, city, municipality, state, country, zipCode, Country_id, State_id', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, street, extNbr, intNbr, neighbourhood, city, municipality, state, country, zipCode, Country_id, State_id, md5', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -63,6 +63,7 @@ abstract class BaseAddress extends GxActiveRecord {
 			'country0' => array(self::BELONGS_TO, 'Country', 'Country_id'),
 			'state0' => array(self::BELONGS_TO, 'State', 'State_id'),
 			'cfdAddresses' => array(self::HAS_MANY, 'CfdAddress', 'Address_id'),
+			'partyAddresses' => array(self::HAS_MANY, 'PartyAddress', 'Address_id'),
 		);
 	}
 
@@ -79,7 +80,6 @@ abstract class BaseAddress extends GxActiveRecord {
                 			'intNbr' => yii::t('app', 'Int Nbr'),
                 			'neighbourhood' => yii::t('app', 'Neighbourhood'),
                 			'city' => yii::t('app', 'City'),
-                			'reference' => yii::t('app', 'Reference'),
                 			'municipality' => yii::t('app', 'Municipality'),
                 			'state' => yii::t('app', 'State'),
                 			'country' => yii::t('app', 'Country'),
@@ -90,6 +90,7 @@ abstract class BaseAddress extends GxActiveRecord {
                         			                        'country0' => yii::t('app', 'Country0'),
                         			                        'state0' => yii::t('app', 'State0'),
                         			                        'cfdAddresses' => yii::t('app', 'Cfd Addresses'),
+                        			                        'partyAddresses' => yii::t('app', 'Party Addresses'),
 		);
 	}
 
@@ -102,7 +103,6 @@ abstract class BaseAddress extends GxActiveRecord {
 		$criteria->compare('intNbr', $this->intNbr, true);
 		$criteria->compare('neighbourhood', $this->neighbourhood, true);
 		$criteria->compare('city', $this->city, true);
-		$criteria->compare('reference', $this->reference, true);
 		$criteria->compare('municipality', $this->municipality, true);
 		$criteria->compare('state', $this->state, true);
 		$criteria->compare('country', $this->country, true);

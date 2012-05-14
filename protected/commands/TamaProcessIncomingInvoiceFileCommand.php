@@ -276,7 +276,10 @@ class TamaProcessIncomingInvoiceFileCommand extends CConsoleCommand {
                                         foreach ($invoiceTax->attributes() as $attributeName => $attributeValue) {
                                             switch ($attributeName) {
                                                 case 'taxName':
-                                                    $tax->setAttribute('name', yii::t('app', (string)$attributeValue));
+                                                    if ((string)$attributeValue == 'VAT')
+                                                        $tax->setAttribute('name', 'IVA');
+                                                    else
+                                                        $tax->setAttribute('name', yii::t('app', (string)$attributeValue));
                                                     break;
                                                 case 'taxRate':
                                                     $tax->setAttribute('rate', (float)$attributeValue);

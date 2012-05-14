@@ -27,11 +27,12 @@
  * @property string $contactEmail
  * @property string $activationKey
  * @property string $activationUrl
- * @property string $lastName
- * @property string $motherName
- * @property string $firstName
- * @property string $secondName
+ * @property string $contactLastName
+ * @property string $contactMotherName
+ * @property string $contactFirstName
+ * @property string $contactSecondName
  * @property string $fiscalRegime
+ * @property string $status
  *
  * @property State $state
  */
@@ -55,15 +56,16 @@ abstract class BaseRegisterForm extends GxActiveRecord {
 
 	public function rules() {
 		return array(
-			array('businessName, rfc, userName, password, contactPhone, contactEmail, lastName, firstName', 'required'),
+			array('businessName, rfc, userName, password, contactPhone, contactEmail, contactLastName, contactFirstName', 'required'),
 			array('State_id', 'numerical', 'integerOnly'=>true),
 			array('rfc', 'length', 'max'=>13),
 			array('userName', 'length', 'max'=>20),
-			array('password, activationKey, lastName, motherName, firstName, secondName', 'length', 'max'=>128),
+			array('password, activationKey, contactLastName, contactMotherName, contactFirstName, contactSecondName', 'length', 'max'=>128),
 			array('zipCode', 'length', 'max'=>5),
+			array('status', 'length', 'max'=>50),
 			array('street, extNbr, intNbr, colony, city, municipality, reference, activationUrl, fiscalRegime', 'safe'),
-			array('street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, activationKey, activationUrl, motherName, secondName, fiscalRegime', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, businessName, rfc, userName, password, street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, contactPhone, contactEmail, activationKey, activationUrl, lastName, motherName, firstName, secondName, fiscalRegime', 'safe', 'on'=>'search'),
+			array('street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, activationKey, activationUrl, contactMotherName, contactSecondName, fiscalRegime, status', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, businessName, rfc, userName, password, street, extNbr, intNbr, colony, city, municipality, zipCode, reference, State_id, contactPhone, contactEmail, activationKey, activationUrl, contactLastName, contactMotherName, contactFirstName, contactSecondName, fiscalRegime, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -98,11 +100,12 @@ abstract class BaseRegisterForm extends GxActiveRecord {
                 			'contactEmail' => yii::t('app', 'Contact Email'),
                 			'activationKey' => yii::t('app', 'Activation Key'),
                 			'activationUrl' => yii::t('app', 'Activation Url'),
-                			'lastName' => yii::t('app', 'Last Name'),
-                			'motherName' => yii::t('app', 'Mother Name'),
-                			'firstName' => yii::t('app', 'First Name'),
-                			'secondName' => yii::t('app', 'Second Name'),
+                			'contactLastName' => yii::t('app', 'Contact Last Name'),
+                			'contactMotherName' => yii::t('app', 'Contact Mother Name'),
+                			'contactFirstName' => yii::t('app', 'Contact First Name'),
+                			'contactSecondName' => yii::t('app', 'Contact Second Name'),
                 			'fiscalRegime' => yii::t('app', 'Fiscal Regime'),
+                			'status' => yii::t('app', 'Status'),
                         			                        'state' => yii::t('app', 'State'),
 		);
 	}
@@ -128,11 +131,12 @@ abstract class BaseRegisterForm extends GxActiveRecord {
 		$criteria->compare('contactEmail', $this->contactEmail, true);
 		$criteria->compare('activationKey', $this->activationKey, true);
 		$criteria->compare('activationUrl', $this->activationUrl, true);
-		$criteria->compare('lastName', $this->lastName, true);
-		$criteria->compare('motherName', $this->motherName, true);
-		$criteria->compare('firstName', $this->firstName, true);
-		$criteria->compare('secondName', $this->secondName, true);
+		$criteria->compare('contactLastName', $this->contactLastName, true);
+		$criteria->compare('contactMotherName', $this->contactMotherName, true);
+		$criteria->compare('contactFirstName', $this->contactFirstName, true);
+		$criteria->compare('contactSecondName', $this->contactSecondName, true);
 		$criteria->compare('fiscalRegime', $this->fiscalRegime, true);
+		$criteria->compare('status', $this->status, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,

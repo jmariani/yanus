@@ -54,8 +54,8 @@
                     'items'=>array(
                                 array('label'=>'Rights', 'url'=>array('/rights'), 'visible'=>!Yii::app()->user->isGuest),
                                 array('url'=>Yii::app()->getModule('user')->loginUrl, 'label'=>Yii::app()->getModule('user')->t("Login"), 'visible'=>Yii::app()->user->isGuest),
-//                                array('url'=>Yii::app()->getModule('user')->registrationUrl, 'label'=>Yii::app()->getModule('user')->t("Register"), 'visible'=>Yii::app()->user->isGuest),
-                                array('url'=>array('/RegisterForm'), 'label'=>yii::t('app', 'Register'), 'visible'=>Yii::app()->user->isGuest),
+                                array('url'=>Yii::app()->getModule('user')->registrationUrl, 'label'=>Yii::app()->getModule('user')->t("Register"), 'visible'=>Yii::app()->user->isGuest),
+//                                array('url'=>array('/RegisterForm'), 'label'=>yii::t('app', 'Register'), 'visible'=>Yii::app()->user->isGuest),
                                 array('url'=>Yii::app()->getModule('user')->profileUrl, 'label'=>Yii::app()->getModule('user')->t("Profile"), 'visible'=>!Yii::app()->user->isGuest),
                                 array('url'=>Yii::app()->getModule('user')->logoutUrl, 'label'=>Yii::app()->getModule('user')->t("Logout").' ('.Yii::app()->user->name.')', 'visible'=>!Yii::app()->user->isGuest),
 //                        array('label'=>'Link', 'url'=>'#'),
@@ -103,9 +103,9 @@
 	<div class="clear"></div>
 
 	<div id="footer">
-		Copyright &copy; <?php echo date('Y'); ?> by My Company.<br/>
+		Copyright &copy; <?php echo date('Y'); ?> by Ata Integrant S.A. de C.V..<br/>
 		All Rights Reserved.<br/>
-		<?php echo Yii::powered(); ?>
+		<?php // echo Yii::powered(); ?>
 	</div><!-- footer -->
 
 </div><!-- page -->

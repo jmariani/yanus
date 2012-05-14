@@ -14,6 +14,7 @@
  * @author jmariani
  */
 class ProcessIncomingInvoiceNativeXmlCommand extends CConsoleCommand {
+
     const MASTER_ACCOUNT_ALIAS = 'TAMA';
     const DEFAULT_PAYMENT_TYPE_VALUE = 'PAGO EN UNA SOLA EXHIBICION';
     const DEFAULT_PAYMENT_METHOD = 'NO DEFINIDO';
@@ -28,7 +29,7 @@ class ProcessIncomingInvoiceNativeXmlCommand extends CConsoleCommand {
     private function log($msg, $logFile = NULL) {
         // Always save to process log.
         yii::log($msg, CLogger::LEVEL_INFO, $this->name);
-        error_log('[' . date(DateTime::ISO8601) . '] ' . $msg . PHP_EOL, 3, (($logFile) ?:'/tmp/' . $this->name . '.log'));
+        error_log('[' . date(DateTime::ISO8601) . '] ' . $msg . PHP_EOL, 3, (($logFile) ? : '/tmp/' . $this->name . '.log'));
     }
 
     public function run($args) {
@@ -38,7 +39,6 @@ class ProcessIncomingInvoiceNativeXmlCommand extends CConsoleCommand {
         // 3) File is a XML file.
         // 4) Run additional validations that cannot be performed with the schema.
         // 5) Produce a native XML and save it to NATIVE_XML_PATH
-
 //        print_r($args);
 
         libxml_use_internal_errors(true);
@@ -88,88 +88,88 @@ class ProcessIncomingInvoiceNativeXmlCommand extends CConsoleCommand {
                     foreach ($invoice->attributes() as $attributeName => $attributeValue) {
                         switch ($attributeName) {
                             case 'version':
-                                $cfd->version = (string)$attributeValue;
+                                $cfd->version = (string) $attributeValue;
                                 break;
                             case 'serial':
-                                if ((string)$attributeValue)
-                                    $cfd->serial = (string)$attributeValue;
+                                if ((string) $attributeValue)
+                                    $cfd->serial = (string) $attributeValue;
                                 break;
                             case 'folio':
-                                if ((string)$attributeValue)
-                                    $cfd->folio = (string)$attributeValue;
+                                if ((string) $attributeValue)
+                                    $cfd->folio = (string) $attributeValue;
                                 break;
                             case 'date':
-                                $cfd->dttm = (string)$attributeValue;
+                                $cfd->dttm = (string) $attributeValue;
                                 break;
                             case 'paymentType':
-                                $cfd->paymentType = (string)$attributeValue;
+                                $cfd->paymentType = (string) $attributeValue;
                                 break;
                             case 'paymentTerm':
-                                if ((string)$attributeValue)
-                                    $cfd->paymentTerm = (string)$attributeValue;
+                                if ((string) $attributeValue)
+                                    $cfd->paymentTerm = (string) $attributeValue;
                                 break;
                             case 'subTotal':
-                                $cfd->subTotal = (float)$attributeValue;
+                                $cfd->subTotal = (float) $attributeValue;
                                 break;
                             case 'discount':
-                                $cfd->discount = (float)$attributeValue;
+                                $cfd->discount = (float) $attributeValue;
                                 break;
                             case 'discountReason':
-                                $cfd->discountReason = (string)$attributeValue;
+                                $cfd->discountReason = (string) $attributeValue;
                                 break;
                             case 'exchangeRate':
-                                $cfd->exchangeRate = (float)$attributeValue;
+                                $cfd->exchangeRate = (float) $attributeValue;
                                 break;
                             case 'currency':
-                                $cfd->currency = (string)$attributeValue;
+                                $cfd->currency = (string) $attributeValue;
                                 break;
                             case 'total':
-                                $cfd->total = (float)$attributeValue;
+                                $cfd->total = (float) $attributeValue;
                                 break;
                             case 'voucherType':
-                                $cfd->voucherType = (string)$attributeValue;
+                                $cfd->voucherType = (string) $attributeValue;
                                 break;
                             case 'paymentMethod':
-                                $cfd->paymentType = (string)$attributeValue;
+                                $cfd->paymentType = (string) $attributeValue;
                                 break;
                             case 'expeditionPlace':
-                                $cfd->expeditionPlace = (string)$attributeValue;
+                                $cfd->expeditionPlace = (string) $attributeValue;
                                 break;
                             case 'paymentAcctNbr':
-                                $cfd->paymentAcctNbr = (string)$attributeValue;
+                                $cfd->paymentAcctNbr = (string) $attributeValue;
                                 break;
                             case 'sourceFolio':
                                 $cfd->sourceFolio = $attributeValue;
                                 break;
                             case 'sourceSerial':
-                                $cfd->sourceSerial = (string)$attributeValue;
+                                $cfd->sourceSerial = (string) $attributeValue;
                                 break;
                             case 'sourceDttm':
-                                $cfd->sourceDttm = (string)$attributeValue;
+                                $cfd->sourceDttm = (string) $attributeValue;
                                 break;
                             case 'sourceAmt':
-                                $cfd->sourceAmt = (float)$attributeValue;
+                                $cfd->sourceAmt = (float) $attributeValue;
                                 break;
                             case 'vendorRfc':
-                                $cfd->vendorRfc = (string)$attributeValue;
+                                $cfd->vendorRfc = (string) $attributeValue;
                                 break;
                             case 'vendorName':
-                                $cfd->vendorName = (string)$attributeValue;
+                                $cfd->vendorName = (string) $attributeValue;
                                 break;
                             case 'customerRfc':
-                                $cfd->customerRfc = (string)$attributeValue;
+                                $cfd->customerRfc = (string) $attributeValue;
                                 break;
                             case 'customerName':
-                                $cfd->customerName = (string)$attributeValue;
+                                $cfd->customerName = (string) $attributeValue;
                                 break;
                             case 'subTotal':
-                                $cfd->subTotal = (float)$attributeValue;
+                                $cfd->subTotal = (float) $attributeValue;
                                 break;
                             default:
                                 // everything else is extra information.
                                 $cfdAttribute = new CfdAttribute();
                                 $cfdAttribute->code = $attributeName;
-                                $cfdAttribute->value = (string)$attributeValue;
+                                $cfdAttribute->value = (string) $attributeValue;
                                 $cfdAttributes[] = $cfdAttribute;
                                 break;
                         }
@@ -182,24 +182,18 @@ class ProcessIncomingInvoiceNativeXmlCommand extends CConsoleCommand {
                         switch ($invoiceNode->getName()) {
                             case 'vendorFiscalAddress':
                                 $vendorFiscalAddress = $this->mapAddress($invoiceNode);
-                                $cfdAddress = new CfdAddress();
-                                $cfdAddress->Address_id = $vendorFiscalAddress->id;
-                                $cfdAddress->type = AddressTypeBehavior::FISCAL;
-                                $cfdAddresses[] = $cfdAddress;
+                                $vendorFiscalAddress->type = AddressTypeBehavior::FISCAL;
+                                $cfdAddresses[] = $vendorFiscalAddress;
                                 break;
                             case 'customerBillToAddress':
                                 $customerBillToAddress = $this->mapAddress($invoiceNode);
-                                $cfdAddress = new CfdAddress();
-                                $cfdAddress->Address_id = $customerBillToAddress->id;
-                                $cfdAddress->type = AddressTypeBehavior::BILL_TO;
-                                $cfdAddresses[] = $cfdAddress;
+                                $customerBillToAddress->type = AddressTypeBehavior::BILL_TO;
+                                $cfdAddresses[] = $customerBillToAddress;
                                 break;
                             case 'customerShipToAddress':
                                 $customerShipToAddress = $this->mapAddress($invoiceNode);
-                                $cfdAddress = new CfdAddress();
-                                $cfdAddress->Address_id = $customerShipToAddress->id;
-                                $cfdAddress->type = AddressTypeBehavior::SHIP_TO;
-                                $cfdAddresses[] = $cfdAddress;
+                                $customerShipToAddress->type = AddressTypeBehavior::SHIP_TO;
+                                $cfdAddresses[] = $customerShipToAddress;
                                 break;
                             case 'items':
                                 foreach ($invoiceNode->children() as $invoiceItem) {
@@ -209,32 +203,32 @@ class ProcessIncomingInvoiceNativeXmlCommand extends CConsoleCommand {
                                     foreach ($invoiceItem->attributes() as $attributeName => $attributeValue) {
                                         switch ($attributeName) {
                                             case 'qty':
-                                                $cfdItem->qty = (float)$attributeValue;
+                                                $cfdItem->qty = (float) $attributeValue;
                                                 break;
                                             case 'uom':
-                                                $cfdItem->uom = (string)$attributeValue;
+                                                $cfdItem->uom = (string) $attributeValue;
                                                 break;
                                             case 'productCode':
-                                                $cfdItem->productCode = (string)$attributeValue;
+                                                $cfdItem->productCode = (string) $attributeValue;
                                                 break;
                                             case 'description':
-                                                $cfdItem->description = (string)$attributeValue;
+                                                $cfdItem->description = (string) $attributeValue;
                                                 break;
                                             case 'productCode':
-                                                $cfdItem->productCode = (string)$attributeValue;
+                                                $cfdItem->productCode = (string) $attributeValue;
                                                 break;
                                             case 'unitPrice':
-                                                $cfdItem->unitPrice = (float)$attributeValue;
+                                                $cfdItem->unitPrice = (float) $attributeValue;
                                                 break;
                                             case 'amount':
-                                                $cfdItem->amt = (float)$attributeValue;
-                                                $subTotal += (float)$attributeValue;
+                                                $cfdItem->amt = (float) $attributeValue;
+                                                $subTotal += (float) $attributeValue;
                                                 break;
                                             default:
                                                 // Everything else is attribute.
                                                 $cfdItemAttribute = new CfdItemAttribute();
                                                 $cfdItemAttribute->code = $attributeName;
-                                                $cfdItemAttribute->value = (string)$attributeValue;
+                                                $cfdItemAttribute->value = (string) $attributeValue;
                                                 $cfdItemAttributes[] = $cfdItemAttribute;
                                         }
                                     }
@@ -264,14 +258,14 @@ class ProcessIncomingInvoiceNativeXmlCommand extends CConsoleCommand {
                                     foreach ($invoiceTax->attributes() as $attributeName => $attributeValue) {
                                         switch ($attributeName) {
                                             case 'name':
-                                                $cfdTax->name = (string)$attributeValue;
+                                                $cfdTax->name = (string) $attributeValue;
                                                 break;
                                             case 'rate':
-                                                $cfdTax->rate = (float)$attributeValue;
+                                                $cfdTax->rate = (float) $attributeValue;
                                                 break;
                                             case 'amt':
-                                                $cfdTax->amt = (float)$attributeValue;
-                                                $tax += (float)$attributeValue;
+                                                $cfdTax->amt = (float) $attributeValue;
+                                                $tax += (float) $attributeValue;
                                                 break;
                                         }
                                     }
@@ -285,6 +279,60 @@ class ProcessIncomingInvoiceNativeXmlCommand extends CConsoleCommand {
 
                     // Create the Cfd
                     $transaction = $cfd->model()->dbConnection->beginTransaction();
+                    // Find or create vendor using RFC.
+                    // Find RFC
+                    $vendorRfc = PartyAttribute::model()
+                            ->current()
+                            ->find('code = :code and value = :rfc', array(':code' => 'RFC', ':rfc' => $cfd->vendorRfc));
+                    if (!$vendorRfc) {
+                        // RFC not found.
+                        // Create vendor
+                        $vendorParty = new Party();
+                        $vendorParty->name = mb_strtoupper($cfd->vendorName);
+                        $vendorParty->type = (strlen($cfd->vendorRfc) == 13 ? PartyTypeBehavior::PERSON : PartyTypeBehavior::COMPANY);
+                        $vendorParty->save();
+                        // Create vendor name
+                        $vendorName = new PartyName();
+                        $vendorName->surName = mb_strtoupper($cfd->vendorName);
+                        $vendorName->Party_id = $vendorParty->id;
+                        if (!$vendorName->save(false)) print_r($vendorName->getErrors());
+                        // Create RFC attribute
+                        $vendorRfc = new PartyAttribute();
+                        $vendorRfc->Party_id = $vendorParty->id;
+                        $vendorRfc->code = 'RFC';
+                        $vendorRfc->value = $cfd->vendorRfc;
+                        if (!$vendorRfc->save()) print_r($vendorRfc->getErrors());
+                    } else {
+                        $vendorParty = Party::model()->findByPk($vendorRfc->Party_id);
+                    }
+                    $cfd->vendorParty_id = $vendorParty->id;
+                    // Find or create customer using RFC.
+                    // Find RFC
+                    $customerRfc = PartyAttribute::model()
+                            ->current()
+                            ->find('code = :code and value = :rfc', array(':code' => 'RFC', ':rfc' => $cfd->customerRfc));
+                    if (!$customerRfc) {
+                        // RFC not found.
+                        // Create customer
+                        $customerParty = new Party();
+                        $customerParty->name = mb_strtoupper($cfd->customerName);
+                        $customerParty->type = (strlen($cfd->customerRfc) == 13 ? PartyTypeBehavior::PERSON : PartyTypeBehavior::COMPANY);
+                        $customerParty->save();
+                        // Create customes name
+                        $customerName = new PartyName();
+                        $customerName->surName = mb_strtoupper($cfd->customerName);
+                        $customerName->Party_id = $customerParty->id;
+                        $customerName->save(false);
+                        // Create RFC attribute
+                        $customerRfc = new PartyAttribute();
+                        $customerRfc->Party_id = $customerParty->id;
+                        $customerRfc->code = 'RFC';
+                        $customerRfc->value = $cfd->customerRfc;
+                        $customerRfc->save();
+                    } else {
+                        $customerParty = Party::model()->findByPk($customerRfc->Party_id);
+                    }
+                    $cfd->customerParty_id = $customerParty->id;
                     if (!$cfd->save()) {
                         print_r($cfd->getErrors());
                         $transaction->rollback();
@@ -297,7 +345,7 @@ class ProcessIncomingInvoiceNativeXmlCommand extends CConsoleCommand {
                         // Attach adresses
                         foreach ($cfdAddresses as $cfdAddress) {
                             $cfdAddress->Cfd_id = $cfd->id;
-                            $cfdAddress->save();
+                            if (!$cfdAddress->save()) print_r($cfdAddress->getErrors());
                         }
                         // Save items
                         foreach ($cfdItems as $cfdItem) {
@@ -318,7 +366,9 @@ class ProcessIncomingInvoiceNativeXmlCommand extends CConsoleCommand {
                                     $cfdCustomsPermit->Cfd_id = $cfd->id;
                                     $cfdCustomsPermit->CustomsPermit_id = $cfdItemCustomsPermit->CustomsPermit_id;
                                     $cfdCustomsPermit->save();
-                                } catch (Exception $e){}
+                                } catch (Exception $e) {
+
+                                }
                             }
                         }
                         // Save taxes
@@ -328,8 +378,25 @@ class ProcessIncomingInvoiceNativeXmlCommand extends CConsoleCommand {
                         }
                         $transaction->commit();
                         // Create XML
-                        echo $cfd->createXml() . PHP_EOL;
+                        $cfdXml = $cfd->createXml();
+                        $processInvoiceDttm = new DateTime($cfd->dttm);
+                        $cfdBasePath = dirname(__FILE__) . '/../files/cfd/' . $cfd->vendorRfc . '/' .
+                                $processInvoiceDttm->format('Y') . '/' .
+                                $processInvoiceDttm->format('m') . '/' .
+                                $processInvoiceDttm->format('d');
 
+                        echo $cfdBasePath . PHP_EOL;
+
+                        // Create dir for rfc if not exists
+                        if (!file_exists($cfdBasePath))
+                            mkdir($cfdBasePath, 0777, true);
+
+                        $xmlFileName = $cfd->vendorRfc . '_' .
+                                ($cfd->serial ? $cfd->serial . '_' : '') .
+                                ($cfd->folio ? $cfd->folio . '_' : '') .
+                                $cfd->uuid . '_' .
+                                $cfd->customerRfc . '.xml';
+                        file_put_contents($cfdBasePath . '/' . $xmlFileName, $cfdXml);
                     }
                 }
             }
@@ -343,48 +410,58 @@ class ProcessIncomingInvoiceNativeXmlCommand extends CConsoleCommand {
     }
 
     private function mapAddress($node) {
+        $addressReference = '';
         $address = new Address();
         foreach ($node->attributes() as $attributeName => $attributeValue) {
             switch ($attributeName) {
                 case 'street':
-                    $address->street = (string)$attributeValue;
+                    $address->street = (string) $attributeValue;
                     break;
                 case 'extNbr':
-                    $address->extNbr = (string)$attributeValue;
+                    $address->extNbr = (string) $attributeValue;
                     break;
                 case 'intNbr':
-                    $address->intNbr = (string)$attributeValue;
+                    $address->intNbr = (string) $attributeValue;
                     break;
                 case 'neighbourhood':
-                    $address->neighbourhood = (string)$attributeValue;
+                    $address->neighbourhood = (string) $attributeValue;
                     break;
                 case 'city':
-                    $address->city = (string)$attributeValue;
+                    $address->city = (string) $attributeValue;
                     break;
                 case 'reference':
-                    $address->reference = (string)$attributeValue;
+                    $addressReference = (string) $attributeValue;
                     break;
                 case 'municipality':
-                    $address->municipality = (string)$attributeValue;
+                    $address->municipality = (string) $attributeValue;
                     break;
                 case 'state':
-                    $address->state = (string)$attributeValue;
+                    $address->state = (string) $attributeValue;
                     break;
                 case 'country':
-                    $address->country = (string)$attributeValue;
+                    $address->country = (string) $attributeValue;
                     break;
                 case 'zipCode':
-                    $address->zipCode = (string)$attributeValue;
+                    $address->zipCode = (string) $attributeValue;
                     break;
             }
         }
-        $addressRec = Address::model()->find('md5 = :md5', array(':md5' => md5($address->getHash())));
+        if ($node->getName() == 'vendorFiscalAddress') {
+            // Find Mexico
+            $mexico = Country::model()->find('code = :code', array(':code' => 'MX'));
+            $address->Country_id = $mexico->id;
+        }
+        $addressRec = Address::model()->find('md5 = :md5', array(':md5' => $address->Md5));
         if (!$addressRec) {
-            $address->save();
+            if (!$address->save()) print_r($address->getErrors());
             $addressRec = $address;
         }
-        return $addressRec;
+        $cfdAddress = new CfdAddress();
+        $cfdAddress->Address_id = $addressRec->id;
+        if ($addressReference) $cfdAddress->reference = $addressReference;
+        return $cfdAddress;
     }
+
 }
 
 ?>

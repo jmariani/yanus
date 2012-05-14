@@ -45,13 +45,20 @@
  * @property string $dtsDttm
  * @property string $dtsSatCertNbr
  * @property string $dtsSatSeal
+ * @property string $dtsOriginalString
  * @property integer $approvalNbr
  * @property integer $approvalYear
  * @property string $md5
  * @property string $creationDt
  * @property string $updateDt
  * @property integer $status
+ * @property integer $vendorParty_id
+ * @property integer $customerParty_id
+ * @property string $originalString
+ * @property string $cbb
  *
+ * @property Party $vendorParty
+ * @property Party $customerParty
  * @property CfdAddress[] $cfdAddresses
  * @property CfdAttribute[] $cfdAttributes
  * @property CfdItem[] $cfdItems
@@ -80,8 +87,8 @@ abstract class BaseCfd extends GxActiveRecord {
 
 	public function rules() {
 		return array(
-			array('version', 'required'),
-			array('folio, voucherType, sourceFolio, approvalNbr, approvalYear, status', 'numerical', 'integerOnly'=>true),
+			array('version, vendorParty_id, customerParty_id', 'required'),
+			array('folio, voucherType, sourceFolio, approvalNbr, approvalYear, status, vendorParty_id, customerParty_id', 'numerical', 'integerOnly'=>true),
 			array('version, discount, dtsVersion, dtsSatCertNbr', 'length', 'max'=>45),
 			array('serial, sourceSerial', 'length', 'max'=>25),
 			array('uuid', 'length', 'max'=>36),
@@ -90,14 +97,16 @@ abstract class BaseCfd extends GxActiveRecord {
 			array('paymentAcctNbr', 'length', 'max'=>4),
 			array('vendorRfc, customerRfc', 'length', 'max'=>13),
 			array('md5', 'length', 'max'=>32),
-			array('invoice, dttm, seal, paymentType, certificate, paymentTerm, discountReason, currency, paymentMethod, expeditionPlace, sourceDttm, vendorName, customerName, dtsDttm, dtsSatSeal, creationDt, updateDt', 'safe'),
-			array('invoice, serial, folio, uuid, dttm, seal, paymentType, certNbr, certificate, paymentTerm, subTotal, discount, discountReason, exchangeRate, currency, total, voucherType, paymentMethod, expeditionPlace, paymentAcctNbr, sourceFolio, sourceSerial, sourceDttm, sourceAmt, vendorRfc, vendorName, customerRfc, customerName, taxAmt, wthAmt, dtsVersion, dtsDttm, dtsSatCertNbr, dtsSatSeal, approvalNbr, approvalYear, md5, creationDt, updateDt, status', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, invoice, version, serial, folio, uuid, dttm, seal, paymentType, certNbr, certificate, paymentTerm, subTotal, discount, discountReason, exchangeRate, currency, total, voucherType, paymentMethod, expeditionPlace, paymentAcctNbr, sourceFolio, sourceSerial, sourceDttm, sourceAmt, vendorRfc, vendorName, customerRfc, customerName, taxAmt, wthAmt, dtsVersion, dtsDttm, dtsSatCertNbr, dtsSatSeal, approvalNbr, approvalYear, md5, creationDt, updateDt, status', 'safe', 'on'=>'search'),
+			array('invoice, dttm, seal, paymentType, certificate, paymentTerm, discountReason, currency, paymentMethod, expeditionPlace, sourceDttm, vendorName, customerName, dtsDttm, dtsSatSeal, dtsOriginalString, creationDt, updateDt, originalString, cbb', 'safe'),
+			array('invoice, serial, folio, uuid, dttm, seal, paymentType, certNbr, certificate, paymentTerm, subTotal, discount, discountReason, exchangeRate, currency, total, voucherType, paymentMethod, expeditionPlace, paymentAcctNbr, sourceFolio, sourceSerial, sourceDttm, sourceAmt, vendorRfc, vendorName, customerRfc, customerName, taxAmt, wthAmt, dtsVersion, dtsDttm, dtsSatCertNbr, dtsSatSeal, dtsOriginalString, approvalNbr, approvalYear, md5, creationDt, updateDt, status, originalString, cbb', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, invoice, version, serial, folio, uuid, dttm, seal, paymentType, certNbr, certificate, paymentTerm, subTotal, discount, discountReason, exchangeRate, currency, total, voucherType, paymentMethod, expeditionPlace, paymentAcctNbr, sourceFolio, sourceSerial, sourceDttm, sourceAmt, vendorRfc, vendorName, customerRfc, customerName, taxAmt, wthAmt, dtsVersion, dtsDttm, dtsSatCertNbr, dtsSatSeal, dtsOriginalString, approvalNbr, approvalYear, md5, creationDt, updateDt, status, vendorParty_id, customerParty_id, originalString, cbb', 'safe', 'on'=>'search'),
 		);
 	}
 
 	public function relations() {
 		return array(
+			'vendorParty' => array(self::BELONGS_TO, 'Party', 'vendorParty_id'),
+			'customerParty' => array(self::BELONGS_TO, 'Party', 'customerParty_id'),
 			'cfdAddresses' => array(self::HAS_MANY, 'CfdAddress', 'Cfd_id'),
 			'cfdAttributes' => array(self::HAS_MANY, 'CfdAttribute', 'Cfd_id'),
 			'cfdItems' => array(self::HAS_MANY, 'CfdItem', 'Cfd_id'),
@@ -152,12 +161,19 @@ abstract class BaseCfd extends GxActiveRecord {
                 			'dtsDttm' => yii::t('app', 'Dts Dttm'),
                 			'dtsSatCertNbr' => yii::t('app', 'Dts Sat Cert Nbr'),
                 			'dtsSatSeal' => yii::t('app', 'Dts Sat Seal'),
+                			'dtsOriginalString' => yii::t('app', 'Dts Original String'),
                 			'approvalNbr' => yii::t('app', 'Approval Nbr'),
                 			'approvalYear' => yii::t('app', 'Approval Year'),
                 			'md5' => yii::t('app', 'Md5'),
                 			'creationDt' => yii::t('app', 'Creation Dt'),
                 			'updateDt' => yii::t('app', 'Update Dt'),
                 			'status' => yii::t('app', 'Status'),
+                        			                        'vendorParty_id' => yii::t('app', 'Vendor Party'),
+                        			                        'customerParty_id' => yii::t('app', 'Customer Party'),
+                			'originalString' => yii::t('app', 'Original String'),
+                			'cbb' => yii::t('app', 'Cbb'),
+                        			                        'vendorParty' => yii::t('app', 'Vendor Party'),
+                        			                        'customerParty' => yii::t('app', 'Customer Party'),
                         			                        'cfdAddresses' => yii::t('app', 'Cfd Addresses'),
                         			                        'cfdAttributes' => yii::t('app', 'Cfd Attributes'),
                         			                        'cfdItems' => yii::t('app', 'Cfd Items'),
@@ -207,12 +223,17 @@ abstract class BaseCfd extends GxActiveRecord {
 		$criteria->compare('dtsDttm', $this->dtsDttm, true);
 		$criteria->compare('dtsSatCertNbr', $this->dtsSatCertNbr, true);
 		$criteria->compare('dtsSatSeal', $this->dtsSatSeal, true);
+		$criteria->compare('dtsOriginalString', $this->dtsOriginalString, true);
 		$criteria->compare('approvalNbr', $this->approvalNbr);
 		$criteria->compare('approvalYear', $this->approvalYear);
 		$criteria->compare('md5', $this->md5, true);
 		$criteria->compare('creationDt', $this->creationDt, true);
 		$criteria->compare('updateDt', $this->updateDt, true);
 		$criteria->compare('status', $this->status);
+		$criteria->compare('vendorParty_id', $this->vendorParty_id);
+		$criteria->compare('customerParty_id', $this->customerParty_id);
+		$criteria->compare('originalString', $this->originalString, true);
+		$criteria->compare('cbb', $this->cbb, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,

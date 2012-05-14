@@ -13,6 +13,7 @@
  * @property integer $type
  * @property integer $Cfd_id
  * @property integer $Address_id
+ * @property string $reference
  *
  * @property Cfd $cfd
  * @property Address $address
@@ -32,14 +33,16 @@ abstract class BaseCfdAddress extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'id';
+		return 'reference';
 	}
 
 	public function rules() {
 		return array(
 			array('type, Cfd_id, Address_id', 'required'),
 			array('type, Cfd_id, Address_id', 'numerical', 'integerOnly'=>true),
-			array('id, type, Cfd_id, Address_id', 'safe', 'on'=>'search'),
+			array('reference', 'safe'),
+			array('reference', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, type, Cfd_id, Address_id, reference', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -61,6 +64,7 @@ abstract class BaseCfdAddress extends GxActiveRecord {
                 			'type' => yii::t('app', 'Type'),
                         			                        'Cfd_id' => yii::t('app', 'Cfd'),
                         			                        'Address_id' => yii::t('app', 'Address'),
+                			'reference' => yii::t('app', 'Reference'),
                         			                        'cfd' => yii::t('app', 'Cfd'),
                         			                        'address' => yii::t('app', 'Address'),
 		);
@@ -73,6 +77,7 @@ abstract class BaseCfdAddress extends GxActiveRecord {
 		$criteria->compare('type', $this->type);
 		$criteria->compare('Cfd_id', $this->Cfd_id);
 		$criteria->compare('Address_id', $this->Address_id);
+		$criteria->compare('reference', $this->reference, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,

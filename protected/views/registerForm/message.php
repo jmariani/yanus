@@ -6,7 +6,7 @@
 ?>
 
 <br/>
-<?php $this->widget('bootstrap.widgets.BootAlert'); ?>
+<?php $this->widget('YanusBootAlert', array('showCloseButton' => false)); ?>
 
 <div class="form">
 <?php // echo $content; ?>

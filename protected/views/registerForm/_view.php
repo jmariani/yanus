@@ -2,7 +2,11 @@
 	<?php echo GxHtml::encode($data->getAttributeLabel($data->representingColumn())); ?>:
 	<?php echo GxHtml::link(GxHtml::encode($data->__toString()), array('view', 'id' => $data->id)); ?>
 	<br />
-
+        <?php $this->widget('bootstrap.widgets.BootLabel', array(
+            'type'=>'success', // '', 'success', 'warning', 'important', 'info' or 'inverse'
+            'label'=>$data->Status->getText(),
+        )); ?>
+        <?php echo GxHtml::encode($data->Status->getText()); ?>
 	<?php echo GxHtml::encode($data->getAttributeLabel('rfc')); ?>:
 	<?php echo GxHtml::encode($data->rfc); ?>
 	<br />

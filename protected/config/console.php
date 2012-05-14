@@ -10,14 +10,19 @@ return array(
     'import' => array(
         'application.models.*',
         'application.components.*',
+        'application.extensions.yii-environment.*',
         'ext.giix-components.*', // giix components
+            'application.vendors.*',
+
     ),
-    'preload' => array('log'),
+    'preload' => array('log', 'chilkat',),
     'components' => array(
         'cache' => array(
             'class' => 'system.caching.CFileCache',
         ),
-
+        'chilkat' => array(
+            'class' => 'ext.EChilkatLibrary'
+        ),
         'log' => array(
             'class' => 'CLogRouter',
             'routes' => array(
@@ -61,7 +66,6 @@ return array(
             'createTable' => true,
             'dbEngine' => 'InnoDB',
         ),
-
 //        'db' => array(
 //            'connectionString' => 'sqlite:' . dirname(__FILE__) . '/../data/testdrive.db',
 //        ),

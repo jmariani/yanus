@@ -86,6 +86,12 @@ return array(
             // this is used in contact page
             'adminEmail' => 'jorgemariani@gmail.com',
             'noreplyEmail' => 'jorgemariani@gmail.com',
+            'runmode' => 'DEVELOPMENT',
+            'MYSUITE_WSDL' => 'https://www.mysuitetest.com/mx.com.fact.wsfront/factwsfront.asmx?wsdl',
+            'MYSUITE_COUNTRY' => 'MX',
+            'MYSUITE_ENTITY' => 'CME9504181V9',
+            'MYSUITE_REQUESTOR' => '1166077e-218f-4375-8983-03e136774ca9',
+            'MYSUITE_USERNAME' => 'MX.CME9504181V9.Castrol',
         ),
     ),
     // This is the Console application configuration. Any writable
@@ -93,5 +99,6 @@ return array(
     // Leave array empty if not used.
     // Use value 'inherit' to copy from generated configWeb.
     'configConsole' => array(
+        'params' => 'inherit',
     ),
 );

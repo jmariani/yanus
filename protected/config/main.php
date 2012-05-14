@@ -7,9 +7,9 @@
 return array(
     // Set yiiPath (relative to Environment.php)
     //$yii=dirname(__FILE__).'/../../framework/yii.php';
-    'yiiPath' => dirname(__FILE__).'/../../../../framework/yii.php',
-    'yiicPath' => dirname(__FILE__).'/../../../../framework/yiic.php',
-    'yiitPath' => dirname(__FILE__).'/../../../../framework/yiit.php',
+    'yiiPath' => dirname(__FILE__) . '/../../../../framework/yii.php',
+    'yiicPath' => dirname(__FILE__) . '/../../../../framework/yiic.php',
+    'yiitPath' => dirname(__FILE__) . '/../../../../framework/yiit.php',
     // Set YII_DEBUG and YII_TRACE_LEVEL flags
     'yiiDebug' => true,
     'yiiTraceLevel' => 0,
@@ -17,28 +17,20 @@ return array(
     'yiiSetPathOfAlias' => array(
     // uncomment the following to define a path alias
     //'local' => 'path/to/local-folder'
+//        'cfd' => dirname(__FILE__) . '/files/cfd'
     ),
     // This is the main Web application configuration. Any writable
     // CWebApplication properties can be configured here.
     'configWeb' => array(
+        'theme' => 'shadow_dancer',
         'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
         'name' => 'Yanus',
         // Preloading 'log' component
         'preload' => array(
-            'log',
             'bootstrap', // preload the bootstrap component
-        ),
-        // Autoloading model and component classes
-        // autoloading model and component classes
-        'import' => array(
-            'application.models.*',
-            'application.components.*',
-            'ext.giix-components.*', // giix components
-            'application.modules.user.models.*',
-            'application.modules.user.components.*',
-            'application.modules.rights.*',
-            'application.modules.rights.components.*',
-            'application.extensions.yii-mail.*',
+            'chilkat',
+            'log',
+            'nusoap',
         ),
         // application components
         'components' => array(
@@ -53,7 +45,9 @@ return array(
             'cache' => array(
                 'class' => 'system.caching.CFileCache',
             ),
-
+            'chilkat' => array(
+                'class' => 'ext.EChilkatLibrary'
+            ),
             'errorHandler' => array(
                 // use 'site/error' action to display errors
                 'errorAction' => 'site/error',
@@ -77,6 +71,9 @@ return array(
 //                ),
                 ),
             ),
+            'nusoap' => array(
+                'class' => 'ext.ENuSoapLibrary'
+            ),
             'settings' => array(
                 'class' => 'CmsSettings',
                 'cacheComponentId' => 'cache',
@@ -86,6 +83,10 @@ return array(
                 'dbComponentId' => 'db',
                 'createTable' => true,
                 'dbEngine' => 'InnoDB',
+            ),
+            // adding the simple Workflow source component
+            'swSource' => array(
+                'class' => 'application.extensions.simpleWorkflow.SWPhpWorkflowSource',
             ),
             // uncomment the following to enable URLs in path-format
             'urlManager' => array(
@@ -108,6 +109,21 @@ return array(
                 'loginUrl' => array('/user/login'),
             ),
         ),
+        // autoloading model and component classes
+        'import' => array(
+            'application.models.*',
+            'ext.bootstrap.widgets.*',
+            'application.components.*',
+            'application.vendors.*',
+            'ext.giix-components.*', // giix components
+            'application.modules.user.*',
+            'application.modules.user.models.*',
+            'application.modules.user.components.*',
+            'application.modules.rights.*',
+            'application.modules.rights.components.*',
+            'application.extensions.yii-mail.*',
+            'application.extensions.simpleWorkflow.*', // Import simpleWorkflow extension
+        ),
         'modules' => array(
             // uncomment the following to enable the Gii tool
             'gii' => array(
@@ -126,6 +142,7 @@ return array(
                 'tableUsers' => 'users',
                 'tableProfiles' => 'profiles',
                 'tableProfileFields' => 'profiles_fields',
+                'registrationUrl' => '/yanus/RegisterForm'
             ),
             'rights' => array(
 //            'install' => true,
@@ -134,7 +151,11 @@ return array(
         // application-level parameters that can be accessed
         // using Yii::app()->params['paramName']
         'params' => array(
-            // this is used in contact page
+            'demorfc' => 'AAA010101AAA',
+            'ORIGINAL_STRING_XSLT_3.0' => 'ftp://ftp2.sat.gob.mx/asistencia_servicio_ftp/publicaciones/solcedi/cadenaoriginal_3_0.xslt',
+            'ORIGINAL_STRING_XSLT_3.2' => 'http://www.sat.gob.mx/sitio_internet/cfd/3/cadenaoriginal_3_0/cadenaoriginal_3_2.xslt',
+            'ORIGINAL_STRING_TFD_XSLT_1.0' => 'ftp://ftp2.sat.gob.mx/asistencia_ftp/publicaciones/solcedi/cadenaoriginal_TFD_1_0.xslt',
+        // this is used in contact page
 //            'adminEmail' => 'webmaster@example.com',
         ),
     ),
@@ -146,24 +167,11 @@ return array(
         'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
         'name' => 'My Console Application',
         // Preloading 'log' component
-        'preload' => array('log'),
+        'preload' => 'inherit',
         // Autoloading model and component classes
         'import' => 'inherit',
         // Application componentshome
-        'components' => array(
-            // Database
-            'db' => 'inherit',
-            // Application Log
-            'log' => array(
-                'class' => 'CLogRouter',
-                'routes' => array(
-                    // Save log messages on file
-                    array(
-                        'class' => 'CFileLogRoute',
-                        'levels' => 'error, warning, trace, info',
-                    ),
-                ),
-            ),
-        ),
+        'components' => 'inherit',
+        'params' => 'inherit'
     ),
 );

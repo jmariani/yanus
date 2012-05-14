@@ -107,11 +107,11 @@
 
 	<div class="row">
 <!--
-		<?php echo $form->label($model, 'paymentTerms'); ?>
+		<?php echo $form->label($model, 'paymentTerm'); ?>
             -->
-                <?php echo $form->textAreaRow($model,'paymentTerms',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
+                <?php echo $form->textAreaRow($model,'paymentTerm',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
 <!--
-		<?php echo $form->textArea($model, 'paymentTerms'); ?>
+		<?php echo $form->textArea($model, 'paymentTerm'); ?>
             -->
 	</div>
 
