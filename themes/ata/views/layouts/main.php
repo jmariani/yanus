@@ -8,11 +8,11 @@
 <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/form.css" />
 <link href="<?php echo Yii::app()->theme->baseUrl ?>/css/style.css" rel="stylesheet" type="text/css" />
 <link href="<?php echo Yii::app()->theme->baseUrl ?>/css/layout.css" rel="stylesheet" type="text/css" />
-<script src="<?php echo Yii::app()->theme->baseUrl ?>/js/js/jquery-1.4.2.min.js" type="text/javascript"></script>
-<script src="<?php echo Yii::app()->theme->baseUrl ?>/js/js/cufon-yui.js" type="text/javascript"></script>
-<script src="<?php echo Yii::app()->theme->baseUrl ?>/js/js/cufon-replace.js" type="text/javascript"></script>
-<script src="<?php echo Yii::app()->theme->baseUrl ?>/js/js/Myriad_Pro_400.font.js" type="text/javascript"></script>
-<script src="<?php echo Yii::app()->theme->baseUrl ?>/js/js/Myriad_Pro_600.font.js" type="text/javascript"></script>
+<script src="<?php echo Yii::app()->theme->baseUrl ?>/js/jquery-1.4.2.min.js" type="text/javascript"></script>
+<script src="<?php echo Yii::app()->theme->baseUrl ?>/js/cufon-yui.js" type="text/javascript"></script>
+<script src="<?php echo Yii::app()->theme->baseUrl ?>/js/cufon-replace.js" type="text/javascript"></script>
+<script src="<?php echo Yii::app()->theme->baseUrl ?>/js/Myriad_Pro_400.font.js" type="text/javascript"></script>
+<script src="<?php echo Yii::app()->theme->baseUrl ?>/js/Myriad_Pro_600.font.js" type="text/javascript"></script>
 <!--[if lt IE 7]>
 	<link href="ie_style.css" rel="stylesheet" type="text/css" />
 <![endif]-->
@@ -23,7 +23,7 @@
 	<div class="container">
 <!-- .logo -->
 		<div class="logo">
-			<a href="index.html"><img src="<?php echo Yii::app()->theme->baseUrl ?>/images/logo.gif" alt="" /></a>
+			<a href="/site/index"><img src="<?php echo Yii::app()->theme->baseUrl ?>/images/logo.gif" alt="" /></a>
 		</div>
 <!-- /.logo -->
 		<form action="" id="search-form">

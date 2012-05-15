@@ -22,7 +22,7 @@ return array(
     // This is the main Web application configuration. Any writable
     // CWebApplication properties can be configured here.
     'configWeb' => array(
-        'theme' => 'yanus',
+        'theme' => 'ata',
         'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
         'name' => 'Yanus',
         // Preloading 'log' component
