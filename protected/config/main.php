@@ -158,6 +158,9 @@ return array(
             'application.extensions.simpleWorkflow.*', // Import simpleWorkflow extension
         ),
         'modules' => array(
+            'erp' => array(
+//            'install' => true,
+            ),
             // uncomment the following to enable the Gii tool
             'gii' => array(
                 'class' => 'system.gii.GiiModule',
@@ -171,6 +174,7 @@ return array(
                     'application.gii'
                 ),
             ),
+            'institutional',
             'user' => array(
                 'tableUsers' => 'users',
                 'tableProfiles' => 'profiles',

@@ -49,7 +49,9 @@
     $this->widget('zii.widgets.jui.CJuiButton',
             array(
                     'name'=>'button',
-                            'caption'=>yii::t('app', 'Learn more about or services'),
+                    'buttonType' => 'link',
+                    'url' => '../institutional',
+                    'caption'=>yii::t('app', 'Learn more about or services'),
                     'value'=>'asd',
                     'htmlOptions'=>array(
             'style'=>'height:40px;',
