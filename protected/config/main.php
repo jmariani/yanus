@@ -158,6 +158,7 @@ return array(
             'application.extensions.simpleWorkflow.*', // Import simpleWorkflow extension
         ),
         'modules' => array(
+            'ataintegrant',
             'erp' => array(
 //            'install' => true,
             ),

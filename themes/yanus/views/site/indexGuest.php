@@ -21,7 +21,9 @@
     $this->widget('zii.widgets.jui.CJuiButton',
             array(
                     'name'=>'button',
-                            'caption'=>yii::t('app', 'Become a member!'),
+                    'buttonType' => 'link',
+                    'url' => '../registerForm',
+                    'caption'=>yii::t('app', 'Become a member!'),
                     'value'=>'asd',
                     'htmlOptions'=>array(
                         'style'=>'height:40px;',
@@ -35,7 +37,9 @@
     $this->widget('zii.widgets.jui.CJuiButton',
             array(
                     'name'=>'button',
-                            'caption'=>yii::t('app', 'Log in!'),
+                    'caption'=>yii::t('app', 'Log in!'),
+                    'buttonType' => 'link',
+                    'url' => 'login',
                     'value'=>'asd',
                     'htmlOptions'=>array(
                         'style'=>'height:40px;',
