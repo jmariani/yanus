@@ -1,24 +1,26 @@
 <div class="view">
-	<?php echo GxHtml::encode($data->getAttributeLabel($data->representingColumn())); ?>:
-	<?php echo GxHtml::link(GxHtml::encode($data->__toString()), array('view', 'id' => $data->id)); ?>
+	<?php echo GxHtml::encode(yii::t('app', 'Invoice')); ?>:
+	<?php echo GxHtml::link(GxHtml::encode($data->serial . $data->folio), array('view', 'id' => $data->id)); ?>
 	<br />
-
-	<?php echo GxHtml::encode($data->getAttributeLabel('version')); ?>:
-	<?php echo GxHtml::encode($data->version); ?>
-	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('serial')); ?>:
-	<?php echo GxHtml::encode($data->serial); ?>
-	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('folio')); ?>:
-	<?php echo GxHtml::encode($data->folio); ?>
-	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('uuid')); ?>:
-	<?php echo GxHtml::encode($data->uuid); ?>
-	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('dttm')); ?>:
-	<?php echo GxHtml::encode($data->dttm); ?>
-	<br />
-	<?php /*
+        <?php $this->widget('bootstrap.widgets.BootDetailView', array(
+	'data' => $data,
+        'type' => array('striped','bordered'),
+	'attributes' => array(
+//            'invoice',
+            'voucherType',
+            'uuid',
+            'dttm',
+            'vendorRfc',
+            'vendorName',
+            'customerRfc',
+            'customerName',
+            'total:number',
+            'currency',
+            'exchangeRate',
+	),
+        )); ?>
+	<?php
+        /*
 	<?php echo GxHtml::encode($data->getAttributeLabel('seal')); ?>:
 	<?php echo GxHtml::encode($data->seal); ?>
 	<br />
@@ -34,12 +36,6 @@
 	<?php echo GxHtml::encode($data->getAttributeLabel('paymentTerms')); ?>:
 	<?php echo GxHtml::encode($data->paymentTerms); ?>
 	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('subTotal')); ?>:
-	<?php echo GxHtml::encode($data->subTotal); ?>
-	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('discount')); ?>:
-	<?php echo GxHtml::encode($data->discount); ?>
-	<br />
 	<?php echo GxHtml::encode($data->getAttributeLabel('discountReason')); ?>:
 	<?php echo GxHtml::encode($data->discountReason); ?>
 	<br />
@@ -48,9 +44,6 @@
 	<br />
 	<?php echo GxHtml::encode($data->getAttributeLabel('currency')); ?>:
 	<?php echo GxHtml::encode($data->currency); ?>
-	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('total')); ?>:
-	<?php echo GxHtml::encode($data->total); ?>
 	<br />
 	<?php echo GxHtml::encode($data->getAttributeLabel('voucherType')); ?>:
 	<?php echo GxHtml::encode($data->voucherType); ?>
@@ -75,24 +68,6 @@
 	<br />
 	<?php echo GxHtml::encode($data->getAttributeLabel('sourceAmt')); ?>:
 	<?php echo GxHtml::encode($data->sourceAmt); ?>
-	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('vendorRfc')); ?>:
-	<?php echo GxHtml::encode($data->vendorRfc); ?>
-	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('vendorName')); ?>:
-	<?php echo GxHtml::encode($data->vendorName); ?>
-	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('customerRfc')); ?>:
-	<?php echo GxHtml::encode($data->customerRfc); ?>
-	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('customerName')); ?>:
-	<?php echo GxHtml::encode($data->customerName); ?>
-	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('taxAmt')); ?>:
-	<?php echo GxHtml::encode($data->taxAmt); ?>
-	<br />
-	<?php echo GxHtml::encode($data->getAttributeLabel('wthAmt')); ?>:
-	<?php echo GxHtml::encode($data->wthAmt); ?>
 	<br />
 	<?php echo GxHtml::encode($data->getAttributeLabel('dtsVersion')); ?>:
 	<?php echo GxHtml::encode($data->dtsVersion); ?>

@@ -26,38 +26,39 @@ $this->menu=array(
 'folio',
 'uuid',
 'dttm',
-'seal',
+            'vendorRfc',
+'vendorName',
+'customerRfc',
+'customerName',
+
+//'seal',
 'paymentType',
-'certNbr',
-'certificate',
-'paymentTerms',
+//'certNbr',
+//'certificate',
+'paymentTerm',
 'subTotal',
 'discount',
 'discountReason',
-'exchangeRate',
-'currency',
+'taxAmt',
+'wthAmt',
 'total',
+'currency',
+'exchangeRate',
 'voucherType',
 'paymentMethod',
 'expeditionPlace',
 'paymentAcctNbr',
-'sourceFolio',
-'sourceSerial',
-'sourceDttm',
-'sourceAmt',
-'vendorRfc',
-'vendorName',
-'customerRfc',
-'customerName',
-'taxAmt',
-'wthAmt',
-'dtsVersion',
-'dtsDttm',
-'dtsSatCertNbr',
-'dtsSatSeal',
-'approvalNbr',
-'approvalYear',
-'md5',
+//'sourceFolio',
+//'sourceSerial',
+//'sourceDttm',
+//'sourceAmt',
+//'dtsVersion',
+//'dtsDttm',
+//'dtsSatCertNbr',
+//'dtsSatSeal',
+//'approvalNbr',
+//'approvalYear',
+//'md5',
 	),
 )); ?>
 
@@ -88,16 +89,18 @@ $this->menu=array(
 		echo GxHtml::closeTag('li');
 	}
 	echo GxHtml::closeTag('ul');
-?><h2><?php echo GxHtml::encode($model->getRelationLabel('cfdTaxRegimes')); ?></h2>
-<?php
-	echo GxHtml::openTag('ul');
-	foreach($model->cfdTaxRegimes as $relatedModel) {
-		echo GxHtml::openTag('li');
-		echo GxHtml::link(GxHtml::encode(GxHtml::valueEx($relatedModel)), array('cfdTaxRegime/view', 'id' => GxActiveRecord::extractPkValue($relatedModel, true)));
-		echo GxHtml::closeTag('li');
-	}
-	echo GxHtml::closeTag('ul');
-?><h2><?php echo GxHtml::encode($model->getRelationLabel('cfdWithholdings')); ?></h2>
+//
+//        ?><h2><?php echo GxHtml::encode($model->getRelationLabel('cfdTaxRegimes')); ?></h2>
+//<?php
+//	echo GxHtml::openTag('ul');
+//	foreach($model->cfdTaxRegimes as $relatedModel) {
+//		echo GxHtml::openTag('li');
+//		echo GxHtml::link(GxHtml::encode(GxHtml::valueEx($relatedModel)), array('cfdTaxRegime/view', 'id' => GxActiveRecord::extractPkValue($relatedModel, true)));
+//		echo GxHtml::closeTag('li');
+//	}
+//	echo GxHtml::closeTag('ul');
+
+        ?><h2><?php echo GxHtml::encode($model->getRelationLabel('cfdWithholdings')); ?></h2>
 <?php
 	echo GxHtml::openTag('ul');
 	foreach($model->cfdWithholdings as $relatedModel) {

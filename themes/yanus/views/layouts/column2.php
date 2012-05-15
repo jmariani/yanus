@@ -17,7 +17,7 @@
 			));
 			$this->endWidget();
 		?>
-		
+<!--
 		<?php
 			$this->beginWidget('zii.widgets.CPortlet', array(
 				'title'=>'<span class="icon icon-user">Account Details</span>',
@@ -56,7 +56,7 @@
 			));
 			?>
             <br />
-            Conversion rate: 25%            
+            Conversion rate: 25%
             <?php
 			$this->widget('zii.widgets.jui.CJuiProgressBar', array(
 				'value'=>25,
@@ -69,7 +69,7 @@
 			<?php
 			$this->endWidget();
 		?>
-		
+		-->
 		</div><!-- sidebar -->
 	</div>
 </div>

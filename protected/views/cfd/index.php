@@ -11,8 +11,14 @@ $this->menu = array(
 ?>
 
 <h1><?php echo GxHtml::encode(Cfd::label(2)); ?></h1>
-
-<?php $this->widget('bootstrap.widgets.BootListView',array(
-	'dataProvider'=>$dataProvider,
-	'itemView'=>'_view',
-)); 
+<?php
+//$this->beginWidget('zii.widgets.CPortlet', array(
+//	'title'=>'<span>' . GxHtml::encode(Cfd::label(2)) . '</span>',
+//));
+?>
+    <?php $this->widget('bootstrap.widgets.BootListView',array(
+            'dataProvider'=>$dataProvider,
+            'itemView'=>'_view',
+    ));
+    ?>
+<?php // $this->endWidget();?>

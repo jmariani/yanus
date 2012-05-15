@@ -5,10 +5,10 @@ $this->breadcrumbs = array(
 	Yii::t('app', 'Manage'),
 );
 
-$this->menu = array(
-		array('label'=>Yii::t('app', 'List') . ' ' . $model->label(2), 'url'=>array('index')),
-		array('label'=>Yii::t('app', 'Create') . ' ' . $model->label(), 'url'=>array('create')),
-	);
+//$this->menu = array(
+//		array('label'=>Yii::t('app', 'List') . ' ' . $model->label(2), 'url'=>array('index')),
+//		array('label'=>Yii::t('app', 'Create') . ' ' . $model->label(), 'url'=>array('create')),
+//	);
 
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){
@@ -26,12 +26,10 @@ $('.search-form form').submit(function(){
 ?>
 
 <h1><?php echo Yii::t('app', 'Manage') . ' ' . GxHtml::encode($model->label(2)); ?></h1>
+<div class="flash-notice"><?php echo yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done.');?>.</div>
 
-<p>
-You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
-
-<?php echo GxHtml::link(Yii::t('app', 'Advanced Search'), '#', array('class' => 'search-button btn')); ?><div class="search-form" style="display:none">
+<?php echo GxHtml::link(Yii::t('app', 'Advanced Search'), '#', array('class' => 'search-button btn')); ?>
+<div class="search-form" style="display:none">
 <?php $this->renderPartial('_search', array(
 	'model' => $model,
 )); ?>
@@ -42,12 +40,38 @@ You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&g
         'type'=>'striped bordered condensed',
 	'filter'=>$model,
 	'columns'=>array(
-		'invoice',
-		'version',
-		'serial',
-		'folio',
+                array(
+                    'name' => 'invoice',
+                    'type'=>'raw',
+                    'value' => 'GxHtml::link($data->invoice, array("cfd/view", "id" => $data->id))'
+                ),
+                'voucherType',
 		'uuid',
-		'dttm',
+                array(
+                    'name' => 'dttm',
+                    'htmlOptions'=>array('style'=>'text-align: center'),
+                    'value'=>'date_format(date_create($data->dttm), "d/m/Y H:i:s")',
+                    'headerHtmlOptions'=>array('style'=>'text-align: center'),
+                ),
+		'customerRfc',
+		'customerName',
+                array(
+                    'name' => 'total',
+                    'htmlOptions'=>array('style'=>'text-align: right'),
+                    'headerHtmlOptions'=>array('style'=>'text-align: right'),
+                    'type' => 'number'
+                ),
+                array(
+                    'name' => 'currency',
+                    'htmlOptions'=>array('style'=>'text-align: center'),
+                    'headerHtmlOptions'=>array('style'=>'text-align: center'),
+                ),
+                array(
+                    'name' => 'exchangeRate',
+                    'htmlOptions'=>array('style'=>'text-align: right'),
+                    'headerHtmlOptions'=>array('style'=>'text-align: right'),
+                    'type' => 'number'
+                ),
 		/*
 		'seal',
 		'paymentType',
@@ -57,10 +81,7 @@ You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&g
 		'subTotal',
 		'discount',
 		'discountReason',
-		'exchangeRate',
-		'currency',
-		'total',
-		'voucherType',
+
 		'paymentMethod',
 		'expeditionPlace',
 		'paymentAcctNbr',
@@ -70,8 +91,6 @@ You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&g
 		'sourceAmt',
 		'vendorRfc',
 		'vendorName',
-		'customerRfc',
-		'customerName',
 		'taxAmt',
 		'wthAmt',
 		'dtsVersion',
@@ -82,9 +101,11 @@ You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&g
 		'approvalYear',
 		'md5',
 		*/
-                array(
-                    'class'=>'bootstrap.widgets.BootButtonColumn',
-                    'htmlOptions'=>array('style'=>'width: 50px'),
-                ),
+//                array(
+//                    'class'=>'bootstrap.widgets.BootButtonColumn',
+//                    'template' => '{view}',
+//                    'viewButtonUrl'=>'Yii::app()->createUrl("/cfd/view", array("id" => $data["id"]))',
+//                    'htmlOptions'=>array('style'=>'width: 10px'),
+//                ),
 	),
 )); ?>
