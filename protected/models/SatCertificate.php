@@ -121,9 +121,9 @@ class SatCertificate extends BaseSatCertificate {
 
     public function rules() {
         $rules = parent::rules();
-        $rules[] = array('keyFile, certificateFile', 'safe');
-        $rules[] = array('certificateFile', 'file', 'types' => 'cer', 'allowEmpty' => false);
-        $rules[] = array('keyFile', 'file', 'types' => 'key', 'allowEmpty' => false);
+//        $rules[] = array('keyFile, certificateFile', 'safe');
+        $rules[] = array('certificateFile', 'file', 'types' => 'cer', 'on' => 'upload');
+        $rules[] = array('keyFile', 'file', 'types' => 'key', 'on' => 'upload');
         $rules[] = array('keyPassword', 'required');
         return $rules;
     }

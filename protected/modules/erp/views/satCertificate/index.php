@@ -5,7 +5,7 @@ $this->breadcrumbs = array(
 );
 
 $this->menu = array(
-	array('label'=>Yii::t('app', 'Create') . ' ' . SatCertificate::label(), 'url' => array('create')),
+	array('label'=>Yii::t('app', 'Upload') . ' ' . SatCertificate::label(), 'url' => array('upload')),
 	array('label'=>Yii::t('app', 'Manage') . ' ' . SatCertificate::label(2), 'url' => array('admin')),
 );
 ?>
@@ -15,4 +15,4 @@ $this->menu = array(
 <?php $this->widget('bootstrap.widgets.BootListView',array(
 	'dataProvider'=>$dataProvider,
 	'itemView'=>'_view',
-)); 
+));

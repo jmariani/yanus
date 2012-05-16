@@ -9,10 +9,8 @@ class SatCertificateController extends GxController {
     }
 
     public function actionCreate() {
-        $model = new SatCertificate;
-        Yii::app()->user->setFlash('info', yii::t('app', 'Please fill in the required information') . '<br/>' .
-                '<p class="note">' . Yii::t('app', 'Fields with') . ' <span class="required">*</span> ' . Yii::t('app', 'are required') . '</p>');
 
+        $model = new SatCertificate;
 
         if (isset($_POST['SatCertificate'])) {
             $file = CUploadedFile::getInstance($model, 'certificateFile');
@@ -82,6 +80,39 @@ class SatCertificateController extends GxController {
         $this->render('admin', array(
             'model' => $model,
         ));
+    }
+
+    public function actionUpload() {
+
+        $model = new SatCertificate;
+
+        if (isset($_POST['SatCertificate'])) {
+            $file = CUploadedFile::getInstance($model, 'certificateFile');
+            if ($file) {
+                $model->loadFromFile($file->tempName);
+                $keyFile = CUploadedFile::getInstance($model, 'keyFile');
+                if ($keyFile)
+                    $model->loadKeyFromFile($keyFile->tempName);
+                    $model->setAttributes($_POST['SatCertificate']);
+                    $model->scenario = 'upload';
+                    if ($model->validate()) {
+                        if ($model->save(false)) {
+                            if (Yii::app()->getRequest()->getIsAjaxRequest())
+                                Yii::app()->end();
+                            else
+                                $this->redirect(array('view', 'id' => $model->id));
+                        }
+                    }
+                else {
+                    if ($keyFile->hasError)
+                        $model->addError('keyFile', $keyFile->getError());
+                }
+            } else {
+                if ($file->hasError)
+                    $model->addError('certificateFile', $file->getError());
+            }
+        }
+        $this->render('create', array('model' => $model));
     }
 
 }

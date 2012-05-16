@@ -43,12 +43,11 @@ abstract class BaseSatCertificate extends GxActiveRecord {
 
 	public function rules() {
 		return array(
-			array('nbr', 'required'),
 			array('nbr, keyPassword', 'length', 'max'=>45),
 			array('serial', 'length', 'max'=>50),
 			array('rfc', 'length', 'max'=>13),
 			array('validFrom, validTo, name, pem, keyPem, issuerName', 'safe'),
-			array('serial, validFrom, validTo, name, rfc, pem, keyPem, keyPassword, issuerName', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('nbr, serial, validFrom, validTo, name, rfc, pem, keyPem, keyPassword, issuerName', 'default', 'setOnEmpty' => true, 'value' => null),
 			array('id, nbr, serial, validFrom, validTo, name, rfc, pem, keyPem, keyPassword, issuerName', 'safe', 'on'=>'search'),
 		);
 	}

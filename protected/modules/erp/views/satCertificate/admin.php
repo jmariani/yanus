@@ -7,7 +7,7 @@ $this->breadcrumbs = array(
 
 $this->menu = array(
 		array('label'=>Yii::t('app', 'List') . ' ' . $model->label(2), 'url'=>array('index')),
-		array('label'=>Yii::t('app', 'Create') . ' ' . $model->label(), 'url'=>array('create')),
+		array('label'=>Yii::t('app', 'Upload') . ' ' . $model->label(), 'url'=>array('upload')),
 	);
 
 Yii::app()->clientScript->registerScript('search', "
@@ -26,12 +26,10 @@ $('.search-form form').submit(function(){
 ?>
 
 <h1><?php echo Yii::t('app', 'Manage') . ' ' . GxHtml::encode($model->label(2)); ?></h1>
+<div class="flash-notice"><?php echo yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done');?>.</div>
 
-<p>
-You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
-
-<?php echo GxHtml::link(Yii::t('app', 'Advanced Search'), '#', array('class' => 'search-button btn')); ?><div class="search-form" style="display:none">
+<?php echo GxHtml::link(Yii::t('app', 'Advanced Search'), '#', array('class' => 'search-button btn')); ?>
+<div class="search-form" style="display:none">
 <?php $this->renderPartial('_search', array(
 	'model' => $model,
 )); ?>
@@ -45,13 +43,13 @@ You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&g
             'nbr',
 		'rfc',
 		'name',
-		'serial',
+//		'serial',
 		'validFrom',
 		'validTo',
 //		'pem',
                 array(
                     'class'=>'bootstrap.widgets.BootButtonColumn',
-                    'htmlOptions'=>array('style'=>'width: 50px'),
+//                    'htmlOptions'=>array('style'=>'width: 50px'),
                 ),
 	),
 )); ?>
