@@ -16,9 +16,9 @@
  * @property string $productCode
  * @property string $description
  * @property string $unitPrice
- * @property string $amt
  *
  * @property Cfd $cfd
+ * @property CfdItemAttribute[] $cfdItemAttributes
  * @property CustomsPermit[] $customsPermits
  */
 abstract class BaseCfdItem extends GxActiveRecord {
@@ -41,18 +41,19 @@ abstract class BaseCfdItem extends GxActiveRecord {
 
 	public function rules() {
 		return array(
-			array('Cfd_id, qty, description, unitPrice, amt', 'required'),
+			array('Cfd_id, qty, description, unitPrice', 'required'),
 			array('Cfd_id', 'numerical', 'integerOnly'=>true),
-			array('qty, unitPrice, amt', 'length', 'max'=>64),
+			array('qty, unitPrice', 'length', 'max'=>64),
 			array('uom, productCode', 'safe'),
 			array('uom, productCode', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, Cfd_id, qty, uom, productCode, description, unitPrice, amt', 'safe', 'on'=>'search'),
+			array('id, Cfd_id, qty, uom, productCode, description, unitPrice', 'safe', 'on'=>'search'),
 		);
 	}
 
 	public function relations() {
 		return array(
 			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
+			'cfdItemAttributes' => array(self::HAS_MANY, 'CfdItemAttribute', 'CfdItem_id'),
 			'customsPermits' => array(self::MANY_MANY, 'CustomsPermit', 'CfdItem_has_CustomsPermit(CfdItem_id, CustomsPermit_id)'),
 		);
 	}
@@ -72,11 +73,12 @@ abstract class BaseCfdItem extends GxActiveRecord {
                 			'productCode' => yii::t('app', 'Product Code'),
                 			'description' => yii::t('app', 'Description'),
                 			'unitPrice' => yii::t('app', 'Unit Price'),
-                			'amt' => yii::t('app', 'Amt'),
                         			                        'cfd' => yii::t('app', 'Cfd'),
+                        			                        'cfdItemAttributes' => yii::t('app', 'Cfd Item Attributes'),
                         			                        'customsPermits' => yii::t('app', 'Customs Permits'),
 		);
 	}
+
 
 	public function search() {
 		$criteria = new CDbCriteria;
@@ -88,10 +90,10 @@ abstract class BaseCfdItem extends GxActiveRecord {
 		$criteria->compare('productCode', $this->productCode, true);
 		$criteria->compare('description', $this->description, true);
 		$criteria->compare('unitPrice', $this->unitPrice, true);
-		$criteria->compare('amt', $this->amt, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
 		));
 	}
 }

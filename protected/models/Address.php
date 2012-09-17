@@ -8,6 +8,25 @@ class Address extends BaseAddress {
         return parent::model($className);
     }
 
+    public function beforeSave() {
+        // Get country
+        if ($this->country) {
+            $country = Country::model()->find('code = :code', array(':code' => $this->country));
+            if ($country) {
+                $this->Country_id = $country->id;
+                // Get state
+                if ($this->state) {
+                    $state = State::model()->find('code = :code and Country_id = :country_id', array(':code' => $this->state,
+                        ':country_id' => $country->id));
+                    if ($state) {
+                        $this->State_id = $state->id;
+                    }
+                }
+            }
+        }
+        return parent::beforeSave();
+    }
+
     public function beforeValidate() {
         $this->md5 = $this->Md5;
         return parent::beforeValidate();
@@ -21,9 +40,7 @@ class Address extends BaseAddress {
         $hash .= $this->city . '|';
         $hash .= $this->municipality . '|';
         $hash .= $this->state . '|';
-        $hash .= $this->State_id . '|';
         $hash .= $this->country . '|';
-        $hash .= $this->Country_id . '|';
         $hash .= $this->zipCode . '|';
         return $hash;
     }
@@ -31,4 +48,5 @@ class Address extends BaseAddress {
     public function getMd5() {
         return md5($this->getHash());
     }
+
 }

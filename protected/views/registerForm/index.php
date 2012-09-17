@@ -13,7 +13,7 @@ $this->menu = array(
 
 <h1><?php echo GxHtml::encode(RegisterForm::label(2)); ?></h1>
 
-<?php $this->widget('zii.widgets.CListView', array(
+<?php $this->widget('BootListView', array(
 	'dataProvider'=>$dataProvider,
 	'itemView'=>'_view',
-)); 
+));

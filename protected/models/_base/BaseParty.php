@@ -10,14 +10,19 @@
  * followed by relations of table "Party" available as properties of the model.
  *
  * @property integer $id
- * @property string $name
- * @property integer $type
+ * @property integer $person
  *
  * @property Cfd[] $cfds
  * @property Cfd[] $cfds1
  * @property PartyAddress[] $partyAddresses
  * @property PartyAttribute[] $partyAttributes
+ * @property PartyHasRole[] $partyHasRoles
+ * @property PartyIdentifier[] $partyIdentifiers
  * @property PartyName[] $partyNames
+ * @property PartyPhoneLocator[] $partyPhoneLocators
+ * @property PartyRelationship[] $partyRelationships
+ * @property PartyRelationship[] $partyRelationships1
+ * @property SatCertificate[] $satCertificates
  */
 abstract class BaseParty extends GxActiveRecord {
 
@@ -34,14 +39,14 @@ abstract class BaseParty extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'name';
+		return 'id';
 	}
 
 	public function rules() {
 		return array(
-			array('name, type', 'required'),
-			array('type', 'numerical', 'integerOnly'=>true),
-			array('id, name, type', 'safe', 'on'=>'search'),
+			array('person', 'numerical', 'integerOnly'=>true),
+			array('person', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, person', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -51,37 +56,50 @@ abstract class BaseParty extends GxActiveRecord {
 			'cfds1' => array(self::HAS_MANY, 'Cfd', 'customerParty_id'),
 			'partyAddresses' => array(self::HAS_MANY, 'PartyAddress', 'Party_id'),
 			'partyAttributes' => array(self::HAS_MANY, 'PartyAttribute', 'Party_id'),
+			'partyHasRoles' => array(self::HAS_MANY, 'PartyHasRole', 'Party_id'),
+			'partyIdentifiers' => array(self::HAS_MANY, 'PartyIdentifier', 'Party_id'),
 			'partyNames' => array(self::HAS_MANY, 'PartyName', 'Party_id'),
+			'partyPhoneLocators' => array(self::HAS_MANY, 'PartyPhoneLocator', 'Party_id'),
+			'partyRelationships' => array(self::HAS_MANY, 'PartyRelationship', 'Party_id'),
+			'partyRelationships1' => array(self::HAS_MANY, 'PartyRelationship', 'RelatedParty_id'),
+			'satCertificates' => array(self::MANY_MANY, 'SatCertificate', 'Party_has_SatCertificate(Party_id, SatCertificate_id)'),
 		);
 	}
 
 	public function pivotModels() {
 		return array(
+			'satCertificates' => 'PartyHasSatCertificate',
 		);
 	}
 
 	public function attributeLabels() {
 		return array(
                 			'id' => yii::t('app', 'Id'),
-                			'name' => yii::t('app', 'Name'),
-                			'type' => yii::t('app', 'Type'),
+                			'person' => yii::t('app', 'Person'),
                         			                        'cfds' => yii::t('app', 'Cfds'),
                         			                        'cfds1' => yii::t('app', 'Cfds1'),
                         			                        'partyAddresses' => yii::t('app', 'Party Addresses'),
                         			                        'partyAttributes' => yii::t('app', 'Party Attributes'),
+                        			                        'partyHasRoles' => yii::t('app', 'Party Has Roles'),
+                        			                        'partyIdentifiers' => yii::t('app', 'Party Identifiers'),
                         			                        'partyNames' => yii::t('app', 'Party Names'),
+                        			                        'partyPhoneLocators' => yii::t('app', 'Party Phone Locators'),
+                        			                        'partyRelationships' => yii::t('app', 'Party Relationships'),
+                        			                        'partyRelationships1' => yii::t('app', 'Party Relationships1'),
+                        			                        'satCertificates' => yii::t('app', 'Sat Certificates'),
 		);
 	}
+
 
 	public function search() {
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id);
-		$criteria->compare('name', $this->name, true);
-		$criteria->compare('type', $this->type);
+		$criteria->compare('person', $this->person);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
 		));
 	}
 }

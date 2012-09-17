@@ -10,12 +10,14 @@
  * followed by relations of table "CfdAddress" available as properties of the model.
  *
  * @property integer $id
- * @property integer $type
+ * @property string $name
+ * @property string $reference
  * @property integer $Cfd_id
  * @property integer $Address_id
- * @property string $reference
+ * @property integer $AddressType_id
  *
  * @property Cfd $cfd
+ * @property AddressType $addressType
  * @property Address $address
  */
 abstract class BaseCfdAddress extends GxActiveRecord {
@@ -33,22 +35,23 @@ abstract class BaseCfdAddress extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'reference';
+		return 'name';
 	}
 
 	public function rules() {
 		return array(
-			array('type, Cfd_id, Address_id', 'required'),
-			array('type, Cfd_id, Address_id', 'numerical', 'integerOnly'=>true),
-			array('reference', 'safe'),
-			array('reference', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, type, Cfd_id, Address_id, reference', 'safe', 'on'=>'search'),
+			array('Cfd_id, Address_id, AddressType_id', 'required'),
+			array('Cfd_id, Address_id, AddressType_id', 'numerical', 'integerOnly'=>true),
+			array('name, reference', 'safe'),
+			array('name, reference', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, name, reference, Cfd_id, Address_id, AddressType_id', 'safe', 'on'=>'search'),
 		);
 	}
 
 	public function relations() {
 		return array(
 			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
+			'addressType' => array(self::BELONGS_TO, 'AddressType', 'AddressType_id'),
 			'address' => array(self::BELONGS_TO, 'Address', 'Address_id'),
 		);
 	}
@@ -61,26 +64,31 @@ abstract class BaseCfdAddress extends GxActiveRecord {
 	public function attributeLabels() {
 		return array(
                 			'id' => yii::t('app', 'Id'),
-                			'type' => yii::t('app', 'Type'),
+                			'name' => yii::t('app', 'Name'),
+                			'reference' => yii::t('app', 'Reference'),
                         			                        'Cfd_id' => yii::t('app', 'Cfd'),
                         			                        'Address_id' => yii::t('app', 'Address'),
-                			'reference' => yii::t('app', 'Reference'),
+                        			                        'AddressType_id' => yii::t('app', 'Address Type'),
                         			                        'cfd' => yii::t('app', 'Cfd'),
+                        			                        'addressType' => yii::t('app', 'Address Type'),
                         			                        'address' => yii::t('app', 'Address'),
 		);
 	}
+
 
 	public function search() {
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id);
-		$criteria->compare('type', $this->type);
+		$criteria->compare('name', $this->name, true);
+		$criteria->compare('reference', $this->reference, true);
 		$criteria->compare('Cfd_id', $this->Cfd_id);
 		$criteria->compare('Address_id', $this->Address_id);
-		$criteria->compare('reference', $this->reference, true);
+		$criteria->compare('AddressType_id', $this->AddressType_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
 		));
 	}
 }

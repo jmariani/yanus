@@ -117,7 +117,8 @@
  * @package system.web.widgets
  * @since 1.1.1
  */
-class UActiveForm extends CWidget
+//class UActiveForm extends CWidget
+class UActiveForm extends BootActiveForm
 {
 	/**
 	 * @var mixed the form action URL (see {@link normalizeUrl} for details about this parameter.)
@@ -265,7 +266,7 @@ class UActiveForm extends CWidget
 		}
 		if($this->_summary!==null)
 			$options['summaryID']=$this->_summary;
-				
+
 		$options=CJavaScript::encode($options);
 		Yii::app()->clientScript->registerCoreScript('yiiactiveform');
 		$id=$this->id;

@@ -23,4 +23,17 @@ class <?php echo $modelClass; ?> extends <?php echo $this->baseModelClass."\n"; 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
 	}
+        public function defaultScope() {
+            return array('order' => $this->getTableAlias(false, false) . '.' . <?php echo $this->baseModelClass; ?>::representingColumn() . ' ASC');
+        }
+
+	public function rules() {
+		return array(
+                <?php foreach($rules as $rule): ?>
+			<?php echo $rule.",\n"; ?>
+                <?php endforeach; ?>
+			array('<?php echo implode(', ', array_keys($columns)); ?>', 'safe', 'on'=>'search'),
+		);
+	}
+
 }

@@ -22,7 +22,6 @@ return array(
     // This is the main Web application configuration. Any writable
     // CWebApplication properties can be configured here.
     'configWeb' => array(
-        'theme' => 'yanus',
         'aliases' => array(
             //assuming you extracted the files to the extensions folder
             'xupload' => 'ext.xupload'
@@ -35,6 +34,7 @@ return array(
             'chilkat',
             'log',
             'nusoap',
+            'tcpdf',
         ),
         // application components
         'components' => array(
@@ -61,7 +61,7 @@ return array(
                 'routes' => array(
                     array(
                         'class' => 'CFileLogRoute',
-                        'levels' => 'error, warning',
+                        'levels' => 'error, warning, info',
                     ),
                     array(
                         'class' => 'CFileLogRoute',
@@ -69,14 +69,22 @@ return array(
                         'categories' => 'ext.yii-mail.YiiMail',
                         'logFile' => 'yii-mail.log'
                     ),
-                // uncomment the following to show log messages on web pages
-//                array(
-//                    'class' => 'CWebLogRoute',
-//                ),
+                    array(
+                        'class' => 'CFileLogRoute',
+                        'categories' => 'castrolprocessincominginvoicefile',
+                        'logFile' => 'castrolprocessincominginvoicefile.log'
+                    ),
+                    // uncomment the following to show log messages on web pages
+                    array(
+                        'class' => 'CWebLogRoute',
+                    ),
                 ),
             ),
             'nusoap' => array(
                 'class' => 'ext.ENuSoapLibrary'
+            ),
+            'phoneFormatter' => array(
+                'class' => 'ext.components.EPhoneFormatter', // assuming you extracted bootstrap under extensions
             ),
             'settings' => array(
                 'class' => 'CmsSettings',
@@ -91,6 +99,9 @@ return array(
             // adding the simple Workflow source component
             'swSource' => array(
                 'class' => 'application.extensions.simpleWorkflow.SWPhpWorkflowSource',
+            ),
+            'tcpdf' => array(
+                'class' => 'ext.ETcPdfLibrary'
             ),
             // uncomment the following to enable URLs in path-format
             'urlManager' => array(
@@ -112,39 +123,39 @@ return array(
                 'allowAutoLogin' => true,
                 'loginUrl' => array('/user/login'),
             ),
-            'widgetFactory' => array(
-                'widgets' => array(
-                    'CGridView' => array(
-                        'htmlOptions' => array('cellspacing' => '0', 'cellpadding' => '0'),
-                        'itemsCssClass' => 'item-class',
-                        'pagerCssClass' => 'pager-class'
-                    ),
-                    'CJuiTabs' => array(
-                        'htmlOptions' => array('class' => 'shadowtabs'),
-                    ),
-                    'CJuiAccordion' => array(
-                        'htmlOptions' => array('class' => 'shadowaccordion'),
-                    ),
-                    'CJuiProgressBar' => array(
-                        'htmlOptions' => array('class' => 'shadowprogressbar'),
-                    ),
-                    'CJuiSlider' => array(
-                        'htmlOptions' => array('class' => 'shadowslider'),
-                    ),
-                    'CJuiSliderInput' => array(
-                        'htmlOptions' => array('class' => 'shadowslider'),
-                    ),
-                    'CJuiButton' => array(
-                        'htmlOptions' => array('class' => 'shadowbutton'),
-                    ),
-                    'CJuiButton' => array(
-                        'htmlOptions' => array('class' => 'shadowbutton'),
-                    ),
-                    'CJuiButton' => array(
-                        'htmlOptions' => array('class' => 'button green'),
-                    ),
-                ),
-            ),
+//            'widgetFactory' => array(
+//                'widgets' => array(
+//                    'CGridView' => array(
+//                        'htmlOptions' => array('cellspacing' => '0', 'cellpadding' => '0'),
+//                        'itemsCssClass' => 'item-class',
+//                        'pagerCssClass' => 'pager-class'
+//                    ),
+//                    'CJuiTabs' => array(
+//                        'htmlOptions' => array('class' => 'shadowtabs'),
+//                    ),
+//                    'CJuiAccordion' => array(
+//                        'htmlOptions' => array('class' => 'shadowaccordion'),
+//                    ),
+//                    'CJuiProgressBar' => array(
+//                        'htmlOptions' => array('class' => 'shadowprogressbar'),
+//                    ),
+//                    'CJuiSlider' => array(
+//                        'htmlOptions' => array('class' => 'shadowslider'),
+//                    ),
+//                    'CJuiSliderInput' => array(
+//                        'htmlOptions' => array('class' => 'shadowslider'),
+//                    ),
+//                    'CJuiButton' => array(
+//                        'htmlOptions' => array('class' => 'shadowbutton'),
+//                    ),
+//                    'CJuiButton' => array(
+//                        'htmlOptions' => array('class' => 'shadowbutton'),
+//                    ),
+//                    'CJuiButton' => array(
+//                        'htmlOptions' => array('class' => 'button green'),
+//                    ),
+//                ),
+//            ),
         ),
         // autoloading model and component classes
         'import' => array(
@@ -160,6 +171,7 @@ return array(
             'application.modules.rights.components.*',
             'application.extensions.yii-mail.*',
             'application.extensions.simpleWorkflow.*', // Import simpleWorkflow extension
+            'application.modules.lookup.models.*',
         ),
         'modules' => array(
             'ataintegrant',
@@ -180,11 +192,24 @@ return array(
                 ),
             ),
             'institutional',
+            'lookup' => array(
+                'class' => 'application.modules.lookup.LookupModule',
+            ),
             'user' => array(
                 'tableUsers' => 'users',
                 'tableProfiles' => 'profiles',
                 'tableProfileFields' => 'profiles_fields',
-                'registrationUrl' => '/yanus/RegisterForm'
+//                'registrationUrl' => array('/user/bootRegistration'),
+//                'recoveryUrl' => array("/user/recovery/recovery"),
+//                'loginUrl' => array("/user/login"),
+//                'logoutUrl' => array("/user/logout"),
+//                'profileUrl' => array("/user/profile"),
+//                'returnUrl' => array("/site/index"),
+//                'returnLogoutUrl' => array("/user/login"),
+                'returnLogoutUrl' => array("/site/index"),
+                'loginForm' => "/user/bootLogin",
+                'recoveryForm' => "/recovery/bootRecovery",
+                'registerForm' => "/user/bootRegistration",
             ),
             'rights' => array(
 //            'install' => true,
@@ -193,10 +218,28 @@ return array(
         // application-level parameters that can be accessed
         // using Yii::app()->params['paramName']
         'params' => array(
+            '72HS_IN_SECONDS' => 259200,
+            'allowRegistration' => false,
+            'defaultPageSize' => 10,
             'demorfc' => 'AAA010101AAA',
-            'ORIGINAL_STRING_XSLT_3.0' => 'ftp://ftp2.sat.gob.mx/asistencia_servicio_ftp/publicaciones/solcedi/cadenaoriginal_3_0.xslt',
-            'ORIGINAL_STRING_XSLT_3.2' => 'http://www.sat.gob.mx/sitio_internet/cfd/3/cadenaoriginal_3_0/cadenaoriginal_3_2.xslt',
-            'ORIGINAL_STRING_TFD_XSLT_1.0' => 'ftp://ftp2.sat.gob.mx/asistencia_ftp/publicaciones/solcedi/cadenaoriginal_TFD_1_0.xslt',
+            'incomingInvoiceInterfaceFileUploadPath' => '/tmp/upload/incomingInvoiceInterfaceFiles',
+            'nativeXmlPath' => '/tmp/upload/nativeXml',
+            'pageSizeOptions' => array(10 => 10, 20 => 20, 50 => 50, 100 => 100),
+            'SAT_CER_BASE_PATH' => 'ftp://ftp2.sat.gob.mx/Certificados/FEA',
+            'URI_CFD2.0' => 'http://www.sat.gob.mx/cfd/2',
+            'URI_CFD2.2' => 'http://www.sat.gob.mx/cfd/2',
+            'URI_CFD3.0' => 'http://www.sat.gob.mx/cfd/3',
+            'URI_CFD3.2' => 'http://www.sat.gob.mx/cfd/3',
+            'XSD_CFD2.0' => 'http://www.sat.gob.mx/sitio_internet/cfd/2/cfdv2.xsd',
+            'XSD_CFD2.2' => 'http://www.sat.gob.mx/sitio_internet/cfd/2/cfdv22.xsd',
+            'XSD_CFD3.0' => 'http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv3.xsd',
+            'XSD_CFD3.2' => 'http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd',
+            'XSD_TFD1.0' => 'http://www.sat.gob.mx/TimbreFiscalDigital/TimbreFiscalDigital.xsd',
+            'XSLT_OS_CFD2.0' => 'http://www.sat.gob.mx/sitio_internet/cfd/2/cadenaoriginal_2_0/cadenaoriginal_2_0.xslt',
+            'XSLT_OS_CFD2.2' => 'http://www.sat.gob.mx/sitio_internet/cfd/2/cadenaoriginal_2_0/cadenaoriginal_2_2.xslt',
+            'XSLT_OS_CFD3.0' => 'ftp://ftp2.sat.gob.mx/asistencia_servicio_ftp/publicaciones/solcedi/cadenaoriginal_3_0.xslt',
+            'XSLT_OS_CFD3.2' => 'http://www.sat.gob.mx/sitio_internet/cfd/3/cadenaoriginal_3_0/cadenaoriginal_3_2.xslt',
+            'XSLT_OS_TFD1.0' => 'ftp://ftp2.sat.gob.mx/asistencia_ftp/publicaciones/solcedi/cadenaoriginal_TFD_1_0.xslt',
         // this is used in contact page
 //            'adminEmail' => 'webmaster@example.com',
         ),
@@ -213,7 +256,55 @@ return array(
         // Autoloading model and component classes
         'import' => 'inherit',
         // Application componentshome
-        'components' => 'inherit',
+        'components' => array(
+            'log' => array(
+                'class' => 'CLogRouter',
+                'routes' => array(
+                    array(
+                        'class' => 'CFileLogRoute',
+                        'levels' => 'error, warning, trace',
+                    ),
+                    array(
+                        'class' => 'CFileLogRoute',
+//                'levels' => 'trace, info',
+                        'categories' => 'ext.yii-mail.YiiMail',
+                        'logFile' => 'yii-mail.log'
+                    ),
+                    array(
+                        'class' => 'CFileLogRoute',
+                        'categories' => 'IncomingInvoiceInterfaceFileProcessor',
+                        'logFile' => 'processincominginvoicefile.log'
+                    ),
+                    array(
+                        'class' => 'CFileLogRoute',
+                        'categories' => 'ProcessIncomingInvoiceFile',
+                        'logFile' => 'processincominginvoicefile.log'
+                    ),
+                    array(
+                        'class' => 'CFileLogRoute',
+                        'categories' => 'ProcessIncomingInvoiceNativeXmlFile',
+                        'logFile' => 'processincominginvoicevativexmlfile.log'
+                    ),
+                // uncomment the following to show log messages on web pages
+//                    array(
+//                        'class' => 'CWebLogRoute',
+//                    ),
+                ),
+            ),
+            'nusoap' => array(
+                'class' => 'ext.ENuSoapLibrary'
+            ),
+            'phoneFormatter' => array(
+                'class' => 'EPhoneFormatter', // assuming you extracted bootstrap under extensions
+            ),
+            // adding the simple Workflow source component
+            'swSource' => array(
+                'class' => 'application.extensions.simpleWorkflow.SWPhpWorkflowSource',
+            ),
+            'tcpdf' => array(
+                'class' => 'ext.ETcPdfLibrary'
+            ),
+        ),
         'params' => 'inherit'
     ),
 );

@@ -43,17 +43,16 @@ abstract class BaseAddress extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'md5';
+		return 'street';
 	}
 
 	public function rules() {
 		return array(
-			array('md5', 'required'),
 			array('Country_id, State_id', 'numerical', 'integerOnly'=>true),
 			array('zipCode', 'length', 'max'=>45),
 			array('md5', 'length', 'max'=>32),
 			array('street, extNbr, intNbr, neighbourhood, city, municipality, state, country', 'safe'),
-			array('street, extNbr, intNbr, neighbourhood, city, municipality, state, country, zipCode, Country_id, State_id', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('street, extNbr, intNbr, neighbourhood, city, municipality, state, country, zipCode, Country_id, State_id, md5', 'default', 'setOnEmpty' => true, 'value' => null),
 			array('id, street, extNbr, intNbr, neighbourhood, city, municipality, state, country, zipCode, Country_id, State_id, md5', 'safe', 'on'=>'search'),
 		);
 	}
@@ -94,6 +93,10 @@ abstract class BaseAddress extends GxActiveRecord {
 		);
 	}
 
+    public function defaultScope() {
+        return array('order' => $this->getTableAlias(false, false) . '.' . BaseAddress::representingColumn() . ' ASC');
+    }
+
 	public function search() {
 		$criteria = new CDbCriteria;
 
@@ -113,6 +116,7 @@ abstract class BaseAddress extends GxActiveRecord {
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
 		));
 	}
 }

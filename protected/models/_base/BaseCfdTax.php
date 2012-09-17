@@ -14,6 +14,8 @@
  * @property string $name
  * @property string $rate
  * @property string $amt
+ * @property integer $local
+ * @property integer $withHolding
  *
  * @property Cfd $cfd
  */
@@ -37,10 +39,12 @@ abstract class BaseCfdTax extends GxActiveRecord {
 
 	public function rules() {
 		return array(
-			array('Cfd_id, name, rate, amt', 'required'),
-			array('Cfd_id', 'numerical', 'integerOnly'=>true),
+			array('Cfd_id', 'required'),
+			array('Cfd_id, local, withHolding', 'numerical', 'integerOnly'=>true),
 			array('rate, amt', 'length', 'max'=>64),
-			array('id, Cfd_id, name, rate, amt', 'safe', 'on'=>'search'),
+			array('name', 'safe'),
+			array('name, rate, amt, local, withHolding', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, Cfd_id, name, rate, amt, local, withHolding', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,9 +66,15 @@ abstract class BaseCfdTax extends GxActiveRecord {
                 			'name' => yii::t('app', 'Name'),
                 			'rate' => yii::t('app', 'Rate'),
                 			'amt' => yii::t('app', 'Amt'),
+                			'local' => yii::t('app', 'Local'),
+                			'withHolding' => yii::t('app', 'With Holding'),
                         			                        'cfd' => yii::t('app', 'Cfd'),
 		);
 	}
+
+    public function defaultScope() {
+        return array('order' => $this->getTableAlias(false, false) . '.' . BaseCfdTax::representingColumn() . ' ASC');
+    }
 
 	public function search() {
 		$criteria = new CDbCriteria;
@@ -74,9 +84,12 @@ abstract class BaseCfdTax extends GxActiveRecord {
 		$criteria->compare('name', $this->name, true);
 		$criteria->compare('rate', $this->rate, true);
 		$criteria->compare('amt', $this->amt, true);
+		$criteria->compare('local', $this->local);
+		$criteria->compare('withHolding', $this->withHolding);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
 		));
 	}
 }

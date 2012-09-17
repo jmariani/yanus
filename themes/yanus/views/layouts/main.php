@@ -25,14 +25,12 @@
 </head>
 
 <body>
-
-<div class="container" id="page">
         <?php $this->widget('bootstrap.widgets.BootNavbar', array(
-            'fixed'=>false,
+            'fixed'=> true,
             'brand'=>CHtml::encode(Yii::app()->name),
-            'brandUrl'=>'#',
-//            'fluid'=>true,
-            'collapse'=>true, // requires bootstrap-responsive.css
+            'brandUrl'=>yii::app()->getBaseUrl() . '/site/index',
+//            'fluid'=>false,
+            'collapse'=>false, // requires bootstrap-responsive.css
             'items'=>array(
                 array(
                     'class'=>'bootstrap.widgets.BootMenu',
@@ -73,11 +71,17 @@
                 ),
             ),
         )); ?>
+
 <!--	<div id="topnav">
             <div class="topnav_text"><a href='#'>Home</a> | <a href='#'>My Account</a> | <a href='#'>Settings</a> | <a href="<?php echo Yii::app()->baseUrl; ?>/registerForm">Register</a> |<a href='#'>Logout</a> </div>
 	</div>-->
+<div class="container" id="page">
 	<div id="header">
-		<div id="logo"><img src="<?php echo Yii::app()->theme->baseUrl; ?>/images/logo.png"></img><?php //echo CHtml::encode(Yii::app()->name); ?></div>
+            <div id="logo"><img src="<?php $logo = SystemConfig::model()->find('code = :code', array(':code' => 'THEME_LOGO'));
+            if (!$logo)
+                echo Yii::app()->theme->baseUrl . '/images/logo.png';
+            else
+                echo Yii::app()->theme->baseUrl . '/' . $logo->value;?>"></img><?php //echo CHtml::encode(Yii::app()->name); ?></div>
 	</div><!-- header -->
     <!--
 <?php /*$this->widget('application.extensions.mbmenu.MbMenu',array(

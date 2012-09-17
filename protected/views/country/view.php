@@ -22,25 +22,7 @@ $this->menu=array(
 	'attributes' => array(
 'name',
 'code',
+'active:boolean',
+'useAsAutomobileCountryOfOrigin:boolean',
 	),
 )); ?>
-
-<h2><?php echo GxHtml::encode($model->getRelationLabel('addresses')); ?></h2>
-<?php
-	echo GxHtml::openTag('ul');
-	foreach($model->addresses as $relatedModel) {
-		echo GxHtml::openTag('li');
-		echo GxHtml::link(GxHtml::encode(GxHtml::valueEx($relatedModel)), array('address/view', 'id' => GxActiveRecord::extractPkValue($relatedModel, true)));
-		echo GxHtml::closeTag('li');
-	}
-	echo GxHtml::closeTag('ul');
-?><h2><?php echo GxHtml::encode($model->getRelationLabel('states')); ?></h2>
-<?php
-	echo GxHtml::openTag('ul');
-	foreach($model->states as $relatedModel) {
-		echo GxHtml::openTag('li');
-		echo GxHtml::link(GxHtml::encode(GxHtml::valueEx($relatedModel)), array('state/view', 'id' => GxActiveRecord::extractPkValue($relatedModel, true)));
-		echo GxHtml::closeTag('li');
-	}
-	echo GxHtml::closeTag('ul');
-?>

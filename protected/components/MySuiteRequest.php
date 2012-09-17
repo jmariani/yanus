@@ -28,6 +28,9 @@ class MySuiteResponse{
 }
 
 class MySuiteRequest {
+
+    const TRANSACTION_TIMBRAR = 'TIMBRAR';
+
     public $requestor;
     public $transaction;
     public $country = 'MX';
@@ -39,14 +42,15 @@ class MySuiteRequest {
     public $data3;
     public $url;
 
-    public function requestTransaction() {
+    public function requestTransaction($transaction = self::TRANSACTION_TIMBRAR) {
         $data1 = strstr($this->data1, "<cfdi:");
-        $data1 = "<![CDATA[" . $data1 . "]]>";
+        echo $data1 . PHP_EOL;
+        $data1 = "<![CDATA[" . $this->data1 . "]]>";
 
         $param = array(
             'Requestor' => $this->requestor,
             //'Transaction' => $this->transaction,
-            'Transaction' => 'TIMBRAR',
+            'Transaction' => $transaction,
             'Country' => $this->country,
             'Entity' => $this->entity,
             'User' => $this->requestor,
@@ -56,19 +60,24 @@ class MySuiteRequest {
             'Data3' => "");
 
         $client = new nusoap_client($this->url, true);
+        $client->soap_defencoding = 'UTF-8';
+
         $requestResult = $client->call('RequestTransaction', $param);
 
+        var_dump($client->request);
+        var_dump($requestResult);
+        
         $response = new MySuiteResponse();
         $response->code = $requestResult['RequestTransactionResult']['Response']['Code'];
-        $response->data = $requestResult['RequestTransactionResult']['Response']['Data'];
+        $response->data = utf8_encode($requestResult['RequestTransactionResult']['Response']['Data']);
         $response->data1 = base64_decode($requestResult['RequestTransactionResult']['ResponseData']['ResponseData1']);
         $response->data2 = $requestResult['RequestTransactionResult']['ResponseData']['ResponseData2'];
         $response->data3 = $requestResult['RequestTransactionResult']['ResponseData']['ResponseData3'];
-        $response->description = $requestResult['RequestTransactionResult']['Response']['Description'];
-        $response->hint = $requestResult['RequestTransactionResult']['Response']['Hint'];
+        $response->description = utf8_encode($requestResult['RequestTransactionResult']['Response']['Description']);
+        $response->hint = utf8_encode($requestResult['RequestTransactionResult']['Response']['Hint']);
         $response->lastResult = $requestResult['RequestTransactionResult']['Response']['LastResult'];
         $response->processor = $requestResult['RequestTransactionResult']['Response']['Processor'];
-        $response->result = $requestResult['RequestTransactionResult']['Response']['Result'];
+        $response->result = ($requestResult['RequestTransactionResult']['Response']['Result'] == 'true');
         $response->timeStamp = $requestResult['RequestTransactionResult']['Response']['TimeStamp'];
         return $response;
     }

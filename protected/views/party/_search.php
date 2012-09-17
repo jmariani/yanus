@@ -1,23 +1,25 @@
 <div class="wide form">
-
 <?php $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
 	'action' => Yii::app()->createUrl($this->route),
 	'method' => 'get',
+        'htmlOptions'=>array('class'=>'well'),
+        'type' => 'horizontal',
 )); ?>
 
 	<div class="row">
 <!--
 		<?php echo $form->label($model, 'name'); ?>
             -->
-                <?php echo $form->textAreaRow($model,'name',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
-<!--
-		<?php echo $form->textArea($model, 'name'); ?>
-            -->
-	</div>
+<!--                \n"; ?>-->
 
+		<?php echo $form->textAreaRow($model, 'name'); ?>
+
+	</div>
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.BootButton', array(
 			'type'=>'primary',
+                        'buttonType'=>'submit',
+                        'icon' => 'search',
 			'label'=>yii::t('app', 'Search'),
 		)); ?>
 	</div>

@@ -158,3 +158,28 @@ div.wide.form .buttons, div.wide.form .hint, div.wide.form .errorMessage
 	clear: left;
 	padding-left: 110px;
 }
+
+div.add
+{
+	cursor: pointer;
+	width: 60px;
+	padding: 2px;
+	border: 1px solid #a6c9e2;
+	color: #0066a7;
+	text-align: center;
+}
+
+div.remove
+{
+	cursor: pointer;
+	width: 60px;
+	padding: 2px;
+	border: 1px solid #a6c9e2;
+	color: #0066a7;
+	text-align: center;
+}
+
+textarea.template
+{
+	display: none;
+}

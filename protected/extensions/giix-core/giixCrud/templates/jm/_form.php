@@ -9,37 +9,29 @@
 <?php $ajax = ($this->enable_ajax_validation) ? 'true' : 'false'; ?>
 
 <?php echo '<?php '; ?>
-$form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
+    /** @var BootActiveForm $form */
+    $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
 	'id' => '<?php echo $this->class2id($this->modelClass); ?>-form',
 	'enableAjaxValidation' => <?php echo $ajax; ?>,
-));
+        'htmlOptions'=>array('class'=>'well'),
+        'type' => 'horizontal',
+    ));
 <?php echo '?>'; ?>
 
 
-	<p class="note">
-		<?php echo "<?php echo Yii::t('app', 'Fields with'); ?> <span class=\"required\">*</span> <?php echo Yii::t('app', 'are required'); ?>"; ?>.
-	</p>
-
-	<?php echo "<?php echo \$form->errorSummary(\$model); ?>\n"; ?>
+<div class="flash-notice"><?php echo "<?php echo Yii::t('app', 'Fields with'); ?> <span class=\"required\">*</span> <?php echo Yii::t('app', 'are required'); ?>"; ?>.</div>
+<?php echo "<?php echo \$form->errorSummary(\$model); ?>\n"; ?>
 
 <?php foreach ($this->tableSchema->columns as $column): ?>
 <?php if (!$column->autoIncrement): ?>
-		<div class="row">
-		<?php echo "<?php echo " . $this->generateActiveLabel($this->modelClass, $column) . "; ?>\n"; ?>
-		<?php echo "<?php " . $this->generateActiveField($this->modelClass, $column) . "; ?>\n"; ?>
-		<?php echo "<?php echo \$form->error(\$model,'{$column->name}'); ?>\n"; ?>
-		</div><!-- row -->
+<!--		<div class="row">-->
+<!--		<?php // echo "<?php echo " . $this->generateActiveLabel($this->modelClass, $column) . "; ?>\n"; ?>-->
+		<?php echo "<?php " . $this->generateActiveBootField($this->modelClass, $column) . "; ?>\n"; ?>
+<!--		<?php // echo "<?php echo \$form->error(\$model,'{$column->name}'); ?>\n"; ?>-->
+<!--		</div> row -->
 <?php endif; ?>
 <?php endforeach; ?>
 
-<!--
-<?php foreach ($this->getRelations($this->modelClass) as $relation): ?>
-<?php if ($relation[1] == GxActiveRecord::HAS_MANY || $relation[1] == GxActiveRecord::MANY_MANY): ?>
-		<label><?php echo '<?php'; ?> echo GxHtml::encode($model->getRelationLabel('<?php echo $relation[0]; ?>')); ?></label>
-		<?php echo '<?php ' . $this->generateActiveRelationField($this->modelClass, $relation) . "; ?>\n"; ?>
-<?php endif; ?>
-<?php endforeach; ?>
--->
 	<div class="form-actions">
 		<?php echo "<?php \$this->widget('bootstrap.widgets.BootButton', array(
 			'buttonType'=>'submit',

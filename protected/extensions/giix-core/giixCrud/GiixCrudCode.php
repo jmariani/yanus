@@ -113,7 +113,61 @@ class GiixCrudCode extends CrudCode {
 				return "echo \$form->{$inputField}(\$model, '{$column->name}', array('maxlength' => {$column->size}))";
 		} // End of CrudCode::generateActiveField code.
 	}
+	/**
+	 * Generates and returns the view source code line
+	 * to create the appropriate active input field based on
+	 * the model attribute field type on the database.
+	 * #MethodTracker
+	 * This method is based on {@link CrudCode::generateActiveField}, from version 1.1.7 (r3135). Changes:
+	 * <ul>
+	 * <li>All styling is removed.</li>
+	 * </ul>
+	 * @param string $modelClass The model class name.
+	 * @param CDbColumnSchema $column The column.
+	 * @return string The source code line for the active field.
+	 */
+	public function generateActiveBootField($modelClass, $column) {
+		if ($column->isForeignKey) {
+			$relation = $this->findRelation($modelClass, $column);
+			$relatedModelClass = $relation[3];
+//			return "echo \$form->dropDownList(\$model, '{$column->name}', GxHtml::listDataEx({$relatedModelClass}::model()->findAllAttributes(null, true)))";
+                        return "echo \$form->dropDownListRow(\$model, '{$column->name}', GxHtml::listDataEx({$relatedModelClass}::model()->findAllAttributes(null, true)))";
+		}
 
+		if (strtoupper($column->dbType) == 'TINYINT(1)'
+				|| strtoupper($column->dbType) == 'BIT'
+				|| strtoupper($column->dbType) == 'BOOL'
+				|| strtoupper($column->dbType) == 'BOOLEAN') {
+//			return "echo \$form->checkBox(\$model, '{$column->name}')";
+                        return "echo \$form->checkBoxRow(\$model, '{$column->name}')";
+		} else if (strtoupper($column->dbType) == 'DATE') {
+			return "\$form->widget('zii.widgets.jui.CJuiDatePicker', array(
+			'model' => \$model,
+			'attribute' => '{$column->name}',
+			'value' => \$model->{$column->name},
+			'options' => array(
+				'showButtonPanel' => true,
+				'changeYear' => true,
+				'dateFormat' => 'yy-mm-dd',
+				),
+			));\n";
+		} else if (stripos($column->dbType, 'text') !== false) { // Start of CrudCode::generateActiveField code.
+			return "echo \$form->textAreaRow(\$model, '{$column->name}')";
+		} else {
+			$passwordI18n = Yii::t('app', 'password');
+			$passwordI18n = (isset($passwordI18n) && $passwordI18n !== '') ? '|' . $passwordI18n : '';
+			$pattern = '/^(password|pass|passwd|passcode' . $passwordI18n . ')$/i';
+			if (preg_match($pattern, $column->name))
+				$inputField = 'passwordFieldRow';
+			else
+				$inputField='textFieldRow';
+
+			if ($column->type !== 'string' || $column->size === null)
+				return "echo \$form->{$inputField}(\$model, '{$column->name}')";
+			else
+				return "echo \$form->{$inputField}(\$model, '{$column->name}', array('maxlength' => {$column->size}))";
+		} // End of CrudCode::generateActiveField code.
+	}
 	/**
 	 * Generates and returns the view source code line
 	 * to create the appropriate active input field based on
@@ -197,7 +251,7 @@ class GiixCrudCode extends CrudCode {
 					|| strtoupper($column->dbType) == 'BOOLEAN') {
 				return "array(
 					'name' => '{$column->name}',
-					'value' => '(\$data->{$column->name} === 0) ? Yii::t(\\'app\\', \\'No\\') : Yii::t(\\'app\\', \\'Yes\\')',
+					'value' => '(\$data->{$column->name} == 0) ? Yii::t(\\'app\\', \\'No\\') : Yii::t(\\'app\\', \\'Yes\\')',
 					'filter' => array('0' => Yii::t('app', 'No'), '1' => Yii::t('app', 'Yes')),
 					)";
 			} else // Common column.
@@ -237,6 +291,23 @@ class GiixCrudCode extends CrudCode {
 			$relation = $this->findRelation($modelClass, $column);
 			$relatedModelClass = $relation[3];
 			return "echo \$form->dropDownList(\$model, '{$column->name}', GxHtml::listDataEx({$relatedModelClass}::model()->findAllAttributes(null, true)), array('prompt' => Yii::t('app', 'All')))";
+		}
+	}
+	public function generateSearchBootField($modelClass, $column) {
+		if (!$column->isForeignKey) {
+			// Boolean or bit.
+			if (strtoupper($column->dbType) == 'TINYINT(1)'
+					|| strtoupper($column->dbType) == 'BIT'
+					|| strtoupper($column->dbType) == 'BOOL'
+					|| strtoupper($column->dbType) == 'BOOLEAN')
+				return "echo \$form->dropDownListRow(\$model, '{$column->name}', array('0' => Yii::t('app', 'No'), '1' => Yii::t('app', 'Yes')), array('prompt' => Yii::t('app', 'All')))";
+			else // Common column. generateActiveField method will add 'echo' when necessary.
+				return $this->generateActiveBootField($this->modelClass, $column);
+		} else { // FK.
+			// Find the related model for this column.
+			$relation = $this->findRelation($modelClass, $column);
+			$relatedModelClass = $relation[3];
+			return "echo \$form->dropDownListRow(\$model, '{$column->name}', GxHtml::listDataEx({$relatedModelClass}::model()->findAllAttributes(null, true)), array('prompt' => Yii::t('app', 'All')))";
 		}
 	}
 

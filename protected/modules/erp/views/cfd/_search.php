@@ -3,6 +3,7 @@
 <?php $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
 	'action' => Yii::app()->createUrl($this->route),
 	'method' => 'get',
+        'htmlOptions'=>array('class'=>'well'),
 )); ?>
 
 	<div class="row">

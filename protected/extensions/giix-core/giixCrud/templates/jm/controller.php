@@ -9,11 +9,11 @@
 
 class <?php echo $this->controllerClass; ?> extends <?php echo $this->baseControllerClass; ?> {
 
-<?php 
+<?php
 	$authpath = 'ext.giix-core.giixCrud.templates.default.auth.';
 	Yii::app()->controller->renderPartial($authpath . $this->authtype);
 ?>
-
+        public $defaultAction = 'admin';
 	public function actionView($id) {
 		$this->render('view', array(
 			'model' => $this->loadModel($id, '<?php echo $this->modelClass; ?>'),
@@ -41,7 +41,7 @@ class <?php echo $this->controllerClass; ?> extends <?php echo $this->baseContro
 				if (Yii::app()->getRequest()->getIsAjaxRequest())
 					Yii::app()->end();
 				else
-					$this->redirect(array('view', 'id' => $model-><?php echo $this->tableSchema->primaryKey; ?>));
+					$this->redirect(array('admin', 'id' => $model-><?php echo $this->tableSchema->primaryKey; ?>));
 			}
 		}
 
@@ -66,7 +66,8 @@ class <?php echo $this->controllerClass; ?> extends <?php echo $this->baseContro
 <?php else: ?>
 			if ($model->save()) {
 <?php endif; ?>
-				$this->redirect(array('view', 'id' => $model-><?php echo $this->tableSchema->primaryKey; ?>));
+				// $this->redirect(array('admin', 'id' => $model-><?php // echo $this->tableSchema->primaryKey; ?>));
+                                $this->redirect(array('admin'));
 			}
 		}
 
@@ -87,6 +88,7 @@ class <?php echo $this->controllerClass; ?> extends <?php echo $this->baseContro
 
 	public function actionIndex() {
 		$dataProvider = new CActiveDataProvider('<?php echo $this->modelClass; ?>');
+                $dataProvider->sort->defaultOrder = <?php echo $this->modelClass; ?>::representingColumn() . ' ASC';
 		$this->render('index', array(
 			'dataProvider' => $dataProvider,
 		));

@@ -120,6 +120,7 @@ abstract class <?php echo $this->baseModelClass; ?> extends <?php echo $this->ba
 		);
 	}
 
+
 	public function search() {
 		$criteria = new CDbCriteria;
 
@@ -130,6 +131,7 @@ abstract class <?php echo $this->baseModelClass; ?> extends <?php echo $this->ba
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
 		));
 	}
 }

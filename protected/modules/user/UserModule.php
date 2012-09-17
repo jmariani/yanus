@@ -60,6 +60,10 @@ class UserModule extends CWebModule {
     public $returnLogoutUrl = array("/user/login");
     public $fieldsMessage = '';
 
+    public $loginForm = "/user/login";
+    public $recoveryForm = "/user/recovery";
+    public $registerForm = '/user/registration';
+
     /**
      * @var array
      * @desc User model relation from other models
@@ -197,10 +201,19 @@ class UserModule extends CWebModule {
      */
     public static function sendMail($email, $subject, $message) {
         $adminEmail = Yii::app()->params['adminEmail'];
-        $headers = "MIME-Version: 1.0\r\nFrom: $adminEmail\r\nReply-To: $adminEmail\r\nContent-Type: text/html; charset=utf-8";
+//        $headers = "MIME-Version: 1.0\r\nFrom: $adminEmail\r\nReply-To: $adminEmail\r\nContent-Type: text/html; charset=utf-8";
         $message = wordwrap($message, 70);
         $message = str_replace("\n.", "\n..", $message);
-        return mail($email, '=?UTF-8?B?' . base64_encode($subject) . '?=', $message, $headers);
+//        return mail($email, '=?UTF-8?B?' . base64_encode($subject) . '?=', $message, $headers);
+
+        $mail = new YiiMailMessage();
+        $mail->setTo($email);
+//        $mail->setBcc(array(Yii::app()->params['adminEmail'] => CHtml::encode(Yii::app()->name) . ' ' . yii::t('app', 'administration')));
+        $mail->setFrom($adminEmail);
+        $mail->setSubject($subject);
+//        $mail->view = 'activateRegisterForm';
+        $mail->setBody($message, 'text/html');
+        yii::app()->mail->send($mail);
     }
 
     /**

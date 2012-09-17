@@ -6,5 +6,11 @@
 	<?php echo GxHtml::encode($data->getAttributeLabel('code')); ?>:
 	<?php echo GxHtml::encode($data->code); ?>
 	<br />
+	<?php echo GxHtml::encode($data->getAttributeLabel('active')); ?>:
+	<?php echo GxHtml::encode($data->active); ?>
+	<br />
+	<?php echo GxHtml::encode($data->getAttributeLabel('useAsAutomobileCountryOfOrigin')); ?>:
+	<?php echo GxHtml::encode($data->useAsAutomobileCountryOfOrigin); ?>
+	<br />
 
 </div>

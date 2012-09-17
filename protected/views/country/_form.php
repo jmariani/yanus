@@ -1,35 +1,39 @@
 <div class="form">
 
 
-<?php $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
+<?php     /** @var BootActiveForm $form */
+    $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
 	'id' => 'country-form',
 	'enableAjaxValidation' => false,
-));
+        'htmlOptions'=>array('class'=>'well'),
+        'type' => 'horizontal',
+    ));
 ?>
 
-	<p class="note">
-		<?php echo Yii::t('app', 'Fields with'); ?> <span class="required">*</span> <?php echo Yii::t('app', 'are required'); ?>.
-	</p>
+<div class="flash-notice"><?php echo Yii::t('app', 'Fields with'); ?> <span class="required">*</span> <?php echo Yii::t('app', 'are required'); ?>.</div>
+<?php echo $form->errorSummary($model); ?>
 
-	<?php echo $form->errorSummary($model); ?>
+<!--		<div class="row">-->
+<!--		\n"; ?>-->
+		<?php echo $form->textAreaRow($model, 'name'); ?>
+<!--		\n"; ?>-->
+<!--		</div> row -->
+<!--		<div class="row">-->
+<!--		\n"; ?>-->
+		<?php echo $form->textFieldRow($model, 'code', array('maxlength' => 45)); ?>
+<!--		\n"; ?>-->
+<!--		</div> row -->
+<!--		<div class="row">-->
+<!--		\n"; ?>-->
+		<?php echo $form->checkBoxRow($model, 'active'); ?>
+<!--		\n"; ?>-->
+<!--		</div> row -->
+<!--		<div class="row">-->
+<!--		\n"; ?>-->
+		<?php echo $form->checkBoxRow($model, 'useAsAutomobileCountryOfOrigin'); ?>
+<!--		\n"; ?>-->
+<!--		</div> row -->
 
-		<div class="row">
-		<?php echo $form->labelEx($model,'name'); ?>
-		<?php echo $form->textArea($model, 'name'); ?>
-		<?php echo $form->error($model,'name'); ?>
-		</div><!-- row -->
-		<div class="row">
-		<?php echo $form->labelEx($model,'code'); ?>
-		<?php echo $form->textField($model, 'code', array('maxlength' => 45)); ?>
-		<?php echo $form->error($model,'code'); ?>
-		</div><!-- row -->
-
-<!--
-		<label><?php echo GxHtml::encode($model->getRelationLabel('addresses')); ?></label>
-		<?php echo $form->checkBoxList($model, 'addresses', GxHtml::encodeEx(GxHtml::listDataEx(Address::model()->findAllAttributes(null, true)), false, true)); ?>
-		<label><?php echo GxHtml::encode($model->getRelationLabel('states')); ?></label>
-		<?php echo $form->checkBoxList($model, 'states', GxHtml::encodeEx(GxHtml::listDataEx(State::model()->findAllAttributes(null, true)), false, true)); ?>
--->
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.BootButton', array(
 			'buttonType'=>'submit',

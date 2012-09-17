@@ -26,7 +26,9 @@ $('.search-form form').submit(function(){
 ?>
 
 <h1><?php echo Yii::t('app', 'Manage') . ' ' . GxHtml::encode($model->label(2)); ?></h1>
-<div class="flash-notice"><?php echo yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done.');?>.</div>
+<div class="flash-notice">
+    <?php echo yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done.');?>.
+</div>
 
 <?php echo GxHtml::link(Yii::t('app', 'Advanced Search'), '#', array('class' => 'search-button btn')); ?>
 <div class="search-form" style="display:none">

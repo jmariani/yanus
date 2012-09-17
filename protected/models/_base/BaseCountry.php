@@ -12,8 +12,11 @@
  * @property integer $id
  * @property string $name
  * @property string $code
+ * @property integer $active
+ * @property integer $useAsAutomobileCountryOfOrigin
  *
  * @property Address[] $addresses
+ * @property Automobile[] $automobiles
  * @property State[] $states
  */
 abstract class BaseCountry extends GxActiveRecord {
@@ -37,14 +40,17 @@ abstract class BaseCountry extends GxActiveRecord {
 	public function rules() {
 		return array(
 			array('name, code', 'required'),
+			array('active, useAsAutomobileCountryOfOrigin', 'numerical', 'integerOnly'=>true),
 			array('code', 'length', 'max'=>45),
-			array('id, name, code', 'safe', 'on'=>'search'),
+			array('active, useAsAutomobileCountryOfOrigin', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, name, code, active, useAsAutomobileCountryOfOrigin', 'safe', 'on'=>'search'),
 		);
 	}
 
 	public function relations() {
 		return array(
 			'addresses' => array(self::HAS_MANY, 'Address', 'Country_id'),
+			'automobiles' => array(self::HAS_MANY, 'Automobile', 'Country_id'),
 			'states' => array(self::HAS_MANY, 'State', 'Country_id'),
 		);
 	}
@@ -59,10 +65,17 @@ abstract class BaseCountry extends GxActiveRecord {
                 			'id' => yii::t('app', 'Id'),
                 			'name' => yii::t('app', 'Name'),
                 			'code' => yii::t('app', 'Code'),
+                			'active' => yii::t('app', 'Active'),
+                			'useAsAutomobileCountryOfOrigin' => yii::t('app', 'Use As Automobile Country Of Origin'),
                         			                        'addresses' => yii::t('app', 'Addresses'),
+                        			                        'automobiles' => yii::t('app', 'Automobiles'),
                         			                        'states' => yii::t('app', 'States'),
 		);
 	}
+
+    public function defaultScope() {
+        return array('order' => $this->getTableAlias(false, false) . '.' . BaseCountry::representingColumn() . ' ASC');
+    }
 
 	public function search() {
 		$criteria = new CDbCriteria;
@@ -70,13 +83,12 @@ abstract class BaseCountry extends GxActiveRecord {
 		$criteria->compare('id', $this->id);
 		$criteria->compare('name', $this->name, true);
 		$criteria->compare('code', $this->code, true);
+		$criteria->compare('active', $this->active);
+		$criteria->compare('useAsAutomobileCountryOfOrigin', $this->useAsAutomobileCountryOfOrigin);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
-                        'sort'=>array(
-                            'defaultOrder'=> array(self::representingColumn() => CSort::SORT_ASC),
-                            'attributes' => array('code' => 'Code', 'name' => 'Name')
-                        ),
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
 		));
 	}
 }

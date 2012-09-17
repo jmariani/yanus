@@ -21,6 +21,8 @@
  * @property string $keyPassword
  * @property string $issuerName
  *
+ * @property Cfd[] $cfds
+ * @property Cfd[] $cfds1
  * @property Party[] $parties
  */
 abstract class BaseSatCertificate extends GxActiveRecord {
@@ -54,6 +56,8 @@ abstract class BaseSatCertificate extends GxActiveRecord {
 
 	public function relations() {
 		return array(
+			'cfds' => array(self::HAS_MANY, 'Cfd', 'dtsSatCertificate_id'),
+			'cfds1' => array(self::HAS_MANY, 'Cfd', 'SatCertificate_id'),
 			'parties' => array(self::MANY_MANY, 'Party', 'Party_has_SatCertificate(SatCertificate_id, Party_id)'),
 		);
 	}
@@ -77,9 +81,15 @@ abstract class BaseSatCertificate extends GxActiveRecord {
                 			'keyPem' => yii::t('app', 'Key Pem'),
                 			'keyPassword' => yii::t('app', 'Key Password'),
                 			'issuerName' => yii::t('app', 'Issuer Name'),
+                        			                        'cfds' => yii::t('app', 'Cfds'),
+                        			                        'cfds1' => yii::t('app', 'Cfds1'),
                         			                        'parties' => yii::t('app', 'Parties'),
 		);
 	}
+
+    public function defaultScope() {
+        return array('order' => $this->getTableAlias(false, false) . '.' . BaseSatCertificate::representingColumn() . ' ASC');
+    }
 
 	public function search() {
 		$criteria = new CDbCriteria;
@@ -98,6 +108,7 @@ abstract class BaseSatCertificate extends GxActiveRecord {
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
 		));
 	}
 }

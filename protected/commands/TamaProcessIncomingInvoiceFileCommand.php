@@ -11,6 +11,8 @@
  * @author jmariani
  */
 class TamaProcessIncomingInvoiceFileCommand extends CConsoleCommand {
+    const PARTY_RFC = 'TME1109123E9';
+
     const MASTER_ACCOUNT_ALIAS = 'TAMA';
     const DEFAULT_PAYMENT_TYPE_VALUE = 'PAGO EN UNA SOLA EXHIBICION';
     const DEFAULT_PAYMENT_METHOD = 'NO DEFINIDO';
@@ -56,6 +58,12 @@ class TamaProcessIncomingInvoiceFileCommand extends CConsoleCommand {
         yii::log(yii::t('app', 'Processing file {file}', array('{file}' => $args[0])), CLogger::LEVEL_INFO, $this->name);
 
         try {
+            // Load party information
+            $pa = PartyAttribute::find('code = :code and value = :value', array(':code' => 'RFC', ':value' => self::PARTY_RFC));
+            if (!$pa)
+                die('Party with RFC ' . self::PARTY_RFC . ' not found');
+            $party = $pa->party;
+            
             // Load master account information.
 //            $masterAccount = MasterAccount::model()->with('masterAccountAttributes')->find('alias = :alias', array(':alias' => self::MASTER_ACCOUNT_ALIAS));
             $masterAccount = MasterAccount::model()->find('alias = :alias', array(':alias' => self::MASTER_ACCOUNT_ALIAS));

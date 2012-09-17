@@ -2,6 +2,8 @@
 
 class CfdController extends GxController {
 
+    public $defaultAction = 'admin';
+
     public function filters() {
         return array('rights',
         );
@@ -74,7 +76,8 @@ class CfdController extends GxController {
     public function actionAdmin() {
         $model = new Cfd('search');
         $model->unsetAttributes();
-        $this->layout = 'column1';
+        $this->layout = '//layouts/column1';
+
         if (isset($_GET['Cfd']))
             $model->setAttributes($_GET['Cfd']);
 

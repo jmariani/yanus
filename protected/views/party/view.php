@@ -16,21 +16,88 @@ $this->menu=array(
 
 <h1><?php echo Yii::t('app', 'View') . ' ' . GxHtml::encode($model->label()) . ' ' . GxHtml::encode(GxHtml::valueEx($model)); ?></h1>
 
+
 <?php $this->widget('bootstrap.widgets.BootDetailView', array(
 	'data' => $model,
         'type' => array('striped','bordered'),
 	'attributes' => array(
-'name', 'Rfc'
+        'name',
 	),
 )); ?>
-
-<h2><?php echo GxHtml::encode($model->getRelationLabel('partyAttributes')); ?></h2>
 <?php
-	echo GxHtml::openTag('ul');
-	foreach($model->partyAttributes as $relatedModel) {
-		echo GxHtml::openTag('li');
-		echo GxHtml::link(GxHtml::encode(GxHtml::valueEx($relatedModel)), array('partyAttribute/view', 'id' => GxActiveRecord::extractPkValue($relatedModel, true)));
-		echo GxHtml::closeTag('li');
-	}
-	echo GxHtml::closeTag('ul');
-?>
+$partyName = new PartyName();
+$partyName->Party_id = $model->id;
+$this->widget('bootstrap.widgets.BootGridView',array(
+	'id'=>'party-name-grid',
+	'dataProvider'=>  $partyName->search(),
+        'type'=>'striped bordered condensed',
+//	'filter'=>$model,
+	'columns'=>array(
+		'fullName',
+		'effDt',
+                array(
+                    'class'=>'bootstrap.widgets.BootButtonColumn',
+                    'htmlOptions'=>array('style'=>'width: 50px'),
+                ),
+	),
+)); ?>
+<?php
+$partyIdentifier = new PartyIdentifier();
+$partyIdentifier->Party_id = $model->id;
+$this->widget('bootstrap.widgets.BootGridView',array(
+	'id'=>'party-identifier-grid',
+	'dataProvider'=>  $partyIdentifier->search(),
+        'type'=>'striped bordered condensed',
+//	'filter'=>$model,
+	'columns'=>array(
+		'name',
+		'value',
+		'effDt',
+                array(
+                    'class'=>'bootstrap.widgets.BootButtonColumn',
+                    'htmlOptions'=>array('style'=>'width: 50px'),
+                ),
+	),
+)); ?>
+<?php
+$partyPhoneLocator = new PartyPhoneLocator();
+$partyPhoneLocator->Party_id = $model->id;
+$this->widget('bootstrap.widgets.BootGridView',array(
+	'id'=>'party-phone-grid',
+	'dataProvider'=>  $partyPhoneLocator->search(),
+        'type'=>'striped bordered condensed',
+//	'filter'=>$model,
+	'columns'=>array(
+		'value',
+		'effDt',
+		array(
+				'name'=>'Party_id',
+				'value'=>'GxHtml::valueEx($data->party)',
+				'filter'=>GxHtml::listDataEx(Party::model()->findAllAttributes(null, true)),
+				),
+                array(
+                    'class'=>'bootstrap.widgets.BootButtonColumn',
+                    'htmlOptions'=>array('style'=>'width: 50px'),
+                ),
+	),
+)); ?>
+<?php $this->widget('bootstrap.widgets.BootMenu', array(
+    'type'=>'pills', // '', 'tabs', 'pills' (or 'list')
+    'stacked'=>false, // whether this is a stacked menu
+    'items'=>array(
+        array('label'=>yii::t('app', 'Identifiers'), 'url'=>'#',
+//            'active'=>true
+            ),
+        array('label'=>yii::t('app', 'Names'), 'url'=>'#'),
+        array('label'=>yii::t('app', 'Addresses'), 'url'=>'#'),
+        array('label'=>yii::t('app', 'Phone'), 'url'=>'#'),
+        array('label'=>yii::t('app', 'Payment options'), 'url'=>'#'),
+        array('label'=>yii::t('app', 'Required addendas'), 'url'=>'#'),
+        array('label'=>yii::t('app', 'Issued Cfds'), 'url'=>'#'),
+        array('label'=>yii::t('app', 'SAT Certificates'), 'url'=>'#'),
+    ),
+)); ?>
+<fieldset>
+    <legend><?php echo yii::t('app', 'Identifiers'); ?></legend>
+</fieldset>
+

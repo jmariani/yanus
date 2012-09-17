@@ -1,8 +1,8 @@
 <?php
 
 $this->breadcrumbs = array(
-	$model->label(2) => array('index'),
-	GxHtml::valueEx($model) => array('view', 'id' => GxActiveRecord::extractPkValue($model, true)),
+	yii::t('app', ($model->person ? 'Persons' : 'Companies')) => array(($model->person ? 'adminPerson' : 'adminCompany')),
+	GxHtml::valueEx($model) => array(),// => array('view', 'id' => GxActiveRecord::extractPkValue($model, true)),
 	Yii::t('app', 'Update'),
 );
 
@@ -14,9 +14,9 @@ $this->menu = array(
 );
 ?>
 
-<h1><?php echo Yii::t('app', 'Update') . ' ' . GxHtml::encode($model->label()) . ' ' . GxHtml::encode(GxHtml::valueEx($model)); ?></h1>
+<h1><?php echo Yii::t('app', 'Update') . ' ' . GxHtml::encode(yii::t('app', ($model->person ? 'Person' : 'Company'))) . ' ' . GxHtml::encode(GxHtml::valueEx($model)); ?></h1>
 
 <?php
-$this->renderPartial('_form', array(
+$this->renderPartial(($model->person ? '_formPerson' : '_formUpdateCompany'), array(
 		'model' => $model));
 ?>

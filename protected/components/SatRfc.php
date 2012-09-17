@@ -13,9 +13,15 @@
 class SatRfc {
     const rfc_regex = '/^[A-Z,Ñ,&]{3,4}[0-9]{2}[0-1][0-9][0-3][0-9][A-Z,0-9]?[A-Z,0-9]?[0-9,A]+$/u';
 
+    public static function normalize($rfc) {
+        $rfc = trim($rfc);
+        $rfc = str_replace(' ', '', $rfc);
+        $rfc = str_replace('-', '', $rfc);
+        return $rfc;
+    }
     public static function validate($rfc) {
         if (!preg_match(self::rfc_regex, $rfc))
-            throw new Exception(yii::t('app', 'RFC "{rfc}" is invalid.', array('{rfc}' => $rfc,)));
+            throw new CException(yii::t('app', 'RFC "{rfc}" is invalid.', array('{rfc}' => $rfc,)));
         // Validate RFC length
         switch (strlen($rfc)) {
             case 12:

@@ -14,4 +14,10 @@ class Country extends BaseCountry
         return parent::beforeSave();
     }
 
+    public function scopes() {
+        $scopes = parent::scopes();
+        $scopes['active'] = array('condition' => 'active = 1');
+        $scopes['automobileCountryOfOrigin'] = array('condition' => 'useAsAutomobileCountryOfOrigin = 1');
+        return $scopes;
+    }
 }

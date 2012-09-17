@@ -59,6 +59,10 @@ abstract class BasePartyHasSatCertificate extends GxActiveRecord {
 		);
 	}
 
+    public function defaultScope() {
+        return array('order' => $this->getTableAlias(false, false) . '.' . BasePartyHasSatCertificate::representingColumn() . ' ASC');
+    }
+
 	public function search() {
 		$criteria = new CDbCriteria;
 
@@ -67,6 +71,7 @@ abstract class BasePartyHasSatCertificate extends GxActiveRecord {
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
 		));
 	}
 }

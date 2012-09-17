@@ -11,8 +11,9 @@
  *
  * @property integer $id
  * @property integer $Party_id
+ * @property string $fullName
  * @property string $surName
- * @property string $motherName
+ * @property string $motherFamilyName
  * @property string $firstName
  * @property string $secondName
  * @property string $effDt
@@ -34,16 +35,16 @@ abstract class BasePartyName extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'effDt';
+		return 'fullName';
 	}
 
 	public function rules() {
 		return array(
-			array('Party_id, effDt', 'required'),
+			array('Party_id', 'required'),
 			array('Party_id', 'numerical', 'integerOnly'=>true),
-			array('surName, motherName, firstName, secondName', 'safe'),
-			array('surName, motherName, firstName, secondName', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, Party_id, surName, motherName, firstName, secondName, effDt', 'safe', 'on'=>'search'),
+			array('fullName, surName, motherFamilyName, firstName, secondName, effDt', 'safe'),
+			array('fullName, surName, motherFamilyName, firstName, secondName, effDt', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, Party_id, fullName, surName, motherFamilyName, firstName, secondName, effDt', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,8 +63,9 @@ abstract class BasePartyName extends GxActiveRecord {
 		return array(
                 			'id' => yii::t('app', 'Id'),
                         			                        'Party_id' => yii::t('app', 'Party'),
+                			'fullName' => yii::t('app', 'Full Name'),
                 			'surName' => yii::t('app', 'Sur Name'),
-                			'motherName' => yii::t('app', 'Mother Name'),
+                			'motherFamilyName' => yii::t('app', 'Mother Family Name'),
                 			'firstName' => yii::t('app', 'First Name'),
                 			'secondName' => yii::t('app', 'Second Name'),
                 			'effDt' => yii::t('app', 'Eff Dt'),
@@ -71,19 +73,22 @@ abstract class BasePartyName extends GxActiveRecord {
 		);
 	}
 
+
 	public function search() {
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id);
 		$criteria->compare('Party_id', $this->Party_id);
+		$criteria->compare('fullName', $this->fullName, true);
 		$criteria->compare('surName', $this->surName, true);
-		$criteria->compare('motherName', $this->motherName, true);
+		$criteria->compare('motherFamilyName', $this->motherFamilyName, true);
 		$criteria->compare('firstName', $this->firstName, true);
 		$criteria->compare('secondName', $this->secondName, true);
 		$criteria->compare('effDt', $this->effDt, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
 		));
 	}
 }

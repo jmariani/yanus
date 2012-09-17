@@ -25,4 +25,16 @@ defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', $env->yiiTraceLevel);
 //$env->showDebug(); // show produced environment configuration
 require_once($env->yiiPath);
 $env->runYiiStatics(); // like Yii::setPathOfAlias()
-Yii::createWebApplication($env->configWeb)->run();
+$app = Yii::createWebApplication($env->configWeb);
+Yii::setPathOfAlias('incomingInvoiceInterfaceFilesPath',
+    dirname($_SERVER['SCRIPT_FILENAME']) . DIRECTORY_SEPARATOR .
+        'files' . DIRECTORY_SEPARATOR .
+        'incomingInvoiceInterfaceFiles');
+Yii::setPathOfAlias('bin',
+    dirname($_SERVER['SCRIPT_FILENAME']) . DIRECTORY_SEPARATOR .
+        'bin');
+Yii::setPathOfAlias('nativeXmlPath',
+    dirname($_SERVER['SCRIPT_FILENAME']) . DIRECTORY_SEPARATOR .
+        'files' . DIRECTORY_SEPARATOR .
+        'nativeXml');
+$app->run();

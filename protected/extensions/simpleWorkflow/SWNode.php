@@ -1,8 +1,8 @@
 <?php
 /**
  * This class represent a graph node
- */			
-class SWNode {
+ */
+class SWNode extends CComponent {
 	/**
 	 * @var string workflow identifier
 	 */
@@ -22,6 +22,10 @@ class SWNode {
 	 */
 	private $_constraint;
 	/**
+	 * @var array
+	 */
+	private $_metadata;
+	/**
 	 * @var array array of transitions that exist between this node and other nodes
 	 */
 	private $_tr=array();
@@ -35,29 +39,32 @@ class SWNode {
 	 * ignored. The $node argument may also be an associative array, with the following structure :<br/>
 	 * <pre>
 	 * 	{
-	 * 		'id' => string,			// mandatory, may include the workflowId
-	 * 		'label' => string ,		// optional
-	 * 		'constraint' => string,	// optional
-	 * 		'transition' => array,	// optional
+	 * 		'id'         => string,			// mandatory, may include the workflowId
+	 * 		'label'      => string ,		// optional
+	 * 		'constraint' => string,			// optional
+	 * 		'transition' => array,			// optional
+	 * 		'metadata'   => array,			// optional
 	 * 	}
 	 * </pre>
-	 * At last, $node may also be an array with key $key contains a string. 
+	 * At last, $node may also be an array with key $key contains a string.
 	 * @param string defaultWorkflowId workflow Id that is used each time a workflow is needed to complete
 	 * a status name.
 	 */
 	public function __construct($node, $defaultWorkflowId=null, $key=null){
 		$st=array();
-		if(is_a($node,'SWNode')){
-			// copy constructor
-			$st['workflow']=$node->getWorkflowId();
-			$st['node']=$node->getId();
-			$this->_label = $node->getLabel();
-			
+		
+		if( $node instanceof SWNode )
+		{
+			// copy constructor : does not copy transitions, constraints and metadata
+			$st['workflow'] = $node->getWorkflowId();
+			$st['node'] 	= $node->getId();
+			$this->_label   = $node->getLabel();
 		}
-		elseif( is_array($node) and $key == null){
+		elseif( is_array($node) and $key == null)
+		{
 			if(array_key_exists('id',$node)==false)
 				throw new SWException(Yii::t('simpleWorkflow','missing node id'));
-			// set node id -----------------------	
+			// set node id -----------------------
 			$nodeId=$node['id'];
 			if(strstr($nodeId,'/') != false){
 				$st=SWNode::parseNodeId($nodeId);
@@ -71,45 +78,73 @@ class SWNode {
 			// set node constraint --------------
 			if(isset($node['constraint'])){
 				$this->_constraint=$node['constraint'];
-			}	
+			}
 			// load node transitions --------------
 			if( isset($node['transition'])){
-				$this->_loadTransition($node['transition'],$st['workflow']);				
-			}	
+				$this->_loadTransition($node['transition'],$st['workflow']);
+			}
+			// load node transitions -------------- (to test)
+			if(isset($node['metadata'])){
+				$this->_metadata = $node['metadata'];
+			}
 		}
-		else{
+		else
+		{
 			$str=null;
 			if(is_array($node) and isset($node[$key]) ){
 				$str=$node[$key];
 			}elseif(is_string($node)){
 				$str=$node;
 			}
-			if( $str==null){
-				//Yii::trace('$node='.CVarDumper::dumpAsString($node),'simpleWorkflow');
+			if( $str==null ){
 				throw new SWException(Yii::t('simpleWorkflow','failed to create node'));
 			}
-				
 				
 			if(strstr($str,'/') == true){
 				$st=SWNode::parseNodeId($str);
 			}else {
 				$st=SWNode::parseNodeId($defaultWorkflowId.'/'.$str);
-			}				
+			}
 		}
 		if( array_key_exists('workflow',$st)==false or array_key_exists('node',$st)==false)
 			throw new SWException(Yii::t('simpleWorkflow','failed to create node'));
 			
-		$this->_ownerWf=$st['workflow'];
-		$this->_id=$st['node'];	
-		if(!isset($this->_label)){
+		$this->_ownerWf = $st['workflow'];
+		$this->_id 	    = $st['node'];
+		
+		if(!isset($this->_label))
 			$this->_label=$this->_id;
-		}	
 	}
 	/**
-	 * 
+	 * Overrides the default magic method defined at the CComponent level in order to
+	 * return a metadata value if parent method fails.
+	 *
+	 * @see CComponent::__get()
 	 */
-	private function _loadTransition($tr, $defWfId){
-		
+	public function __get($name)
+	{
+		try{
+			return parent::__get($name);
+		}catch(CException $e){
+			
+			if(isset($this->_metadata[$name])){
+				return $this->_metadata[$name];
+			}else{
+				throw new CException(Yii::t('yii','second chance exception : Property "{class}.{property}" is not defined.',
+					array('{class}'=>get_class($this), '{property}'=>$name)));
+			}
+		}
+	}
+	/**
+	 * Loads the set of transitions passed as argument.
+	 *
+	 * @param mixed $tr if provided as a string, it is a comma separated list of SWNodes id,
+	 * This list can also be provided as an array
+	 * @param string $defWfId Default workflow Id if nodes have no workflow id, this value is used
+	 * as their workflow id.
+	 */
+	private function _loadTransition($tr, $defWfId)
+	{
 		if( is_string($tr))
 		{
 			$trAr=explode(',',$tr);
@@ -133,24 +168,26 @@ class SWNode {
 					$this->_tr[$objNode->toString()]=null;
 				}
 			}
+		}else {
+			throw new SWException(__FUNCTION__. 'incorrect arg type : string or array expected');
 		}
-	}	
+	}
 	/**
 	 * Parse a status name and return it as an array. The string passed as argument
 	 * may be a complete status name (e.g workflowId/nodeId) and if no workflowId is
 	 * specified, then null is returned as workflowId.
-	 * 
+	 *
 	 * @param string status status name (wfId/nodeId or nodeId)
 	 * @return array the complete status (e.g array ( [workflow] => 'a' [node] => 'b' ))
 	 */
 	public static function parseNodeId($status,$defaultWorkflow=null){
 		$nodeId=$wfId=null;
-		if( preg_match('/^[a-zA-Z0-9_-]+$/',$status)==1 and 
+		if( preg_match('/^[a-zA-Z0-9_-]+$/',$status)==1 and
 			preg_match('/^[a-zA-Z0-9_-]+$/',$defaultWorkflow)==1)
 		{
 			$nodeId=$status;
 			$wfId=$defaultWorkflow;
-		} 
+		}
 		elseif(preg_match('/^([a-zA-Z0-9_-]+)\/([a-zA-Z0-9_-]+)$/',$status,$matches) )
 		{
 			$wfId=$matches[1];
@@ -159,58 +196,65 @@ class SWNode {
 		else {
 			throw new SWException('invalid status name : '.$status);
 		}
-		return array('workflow'=>$wfId,'node'=>$nodeId);		
+		return array('workflow'=>$wfId,'node'=>$nodeId);
 	}
-	public static function parseNodeId_orig($status,$defaultWorkflow=null){
-		$nodeId=$wfId=null;
-		if( preg_match('/^[[:alpha:]][a-zA-Z0-9_-]*$/',$status)==1 and 
-			preg_match('/^[[:alpha:]][a-zA-Z0-9_-]*$/',$defaultWorkflow)==1)
-		{
-			$nodeId=$status;
-			$wfId=$defaultWorkflow;
-		} 
-		elseif(preg_match('/^([[:alpha:]][a-zA-Z0-9_-]*)\/([[:alpha:]][a-zA-Z0-9_-]*)$/',$status,$matches) )
-		{
-			$wfId=$matches[1];
-			$nodeId=$matches[2];
-		}
-		else {
-			throw new SWException('invalid status name : '.$status);
-		}
-		return array('workflow'=>$wfId,'node'=>$nodeId);		
+	// accessors
+	public function __toString(){
+		return $this->getWorkflowId().'/'.$this->getId();
 	}
-	public function __toString(){return $this->getWorkflowId().'/'.$this->getId();}
-	public function toString(){return $this->__toString();}
-	public function getWorkflowId(){return $this->_ownerWf;}
-	public function getId(){return $this->_id;}
-	public function getLabel(){return $this->_label;}
-	public function getNext(){return $this->_tr;}
-	public function getConstraint(){return $this->_constraint;}
+	public function toString(){
+		return $this->__toString();
+	}
+	public function getWorkflowId(){
+		return $this->_ownerWf;
+	}
+	public function getId(){
+		return $this->_id;
+	}
+	public function getLabel(){
+		return $this->_label;
+	}
+	public function getNext(){
+		return $this->_tr;
+	}
+	public function getConstraint(){
+		return $this->_constraint;
+	}
 	public function getTransition($swNodeEnd){
-		if( !is_a($swNodeEnd,'SWnode'))
+		
+		if( ! $swNodeEnd instanceof SWNode )
 			throw new SWException(Yii::t('simpleWorkflow','SWNode object expected'));
-		if( $this->_tr == null or 
+		
+		if( $this->_tr == null or
 			count($this->_tr)==0 or
 			!isset($this->_tr[$swNodeEnd->toString()]))
 		{
 			return null;
 		}else {
+			
 			return $this->_tr[$swNodeEnd->toString()];
 		}
 	}
 	/**
-	 * 
+	 * SWnode comparator method. Note that only the node and the workflow id
+	 * members are compared.
+	 *
+	 * @param mixed SWNode object or string. If a string is provided it is used to create
+	 * a new SWNode object.
 	 */
 	public function equals($status){
-		if( is_a($status,'SWnode') and 
-			$status->getWorkflowId() == $this->getWorkflowId() and
+		if( $status instanceof SWNode  &&
+			$status->getWorkflowId() == $this->getWorkflowId() &&
 			$status->getId() == $this->getId())
 		{
-			return true;	
-		} elseif( is_string($status) and !empty($status)){
+			return true;
+		}
+		elseif( is_string($status) and !empty($status))
+		{
 			$other=new SWNode($status,$this->getWorkflowId());
 			return $other->equals($this);
-		}else
+		}
+		else
 			return false;
 	}
 }

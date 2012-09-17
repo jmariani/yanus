@@ -3,7 +3,6 @@
 class RegisterFormController extends GxController {
 
     public $defaultAction = 'create';
-
     public function actionActivate() {
         try {
             if (!isset($_GET['activateKey'])) throw new Exception(yii::t('app', 'Invalid activation key'));

@@ -24,6 +24,7 @@ return array(
     // This is the specific Web application configuration for this mode.
     // Supplied config elements will be merged into the main config array.
     'configWeb' => array(
+        'theme' => 'yanus',
         // Application components
         'components' => array(
             // Database
@@ -100,5 +101,36 @@ return array(
     // Use value 'inherit' to copy from generated configWeb.
     'configConsole' => array(
         'params' => 'inherit',
+        'components' => array(
+            // Database
+            // uncomment the following to use a MySQL database
+            'db' => array(
+                'connectionString' => 'mysql:host=localhost;dbname=yanus;port=3306',
+                'emulatePrepare' => true,
+                'username' => 'bdmexdem_root',
+                'password' => 'toor',
+                'charset' => 'utf8',
+                'tablePrefix' => '',
+            ),
+            // Mail
+            'mail' => array(
+                'class' => 'application.extensions.yii-mail.YiiMail',
+                'transportType' => 'smtp',
+                'transportOptions' => array(
+                    'host' => 'smtp.gmail.com',
+                    'username' => 'jorgemariani@gmail.com',
+                    // or email@googleappsdomain.com
+                    'password' => 'pipe1967',
+                    'port' => '465',
+                    'encryption' => 'ssl',
+//                'host' => 'localhost',
+//                'username' => 'username',
+//                'password' => 'password',
+                ),
+                'viewPath' => 'application.views.mail',
+                'logging' => true,
+                'dryRun' => false
+            ),
+        ),
     ),
 );

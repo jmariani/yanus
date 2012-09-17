@@ -1,7 +1,12 @@
 <?php $this->pageTitle=Yii::app()->name; ?>
 
-<h1>Welcome to <i><?php echo CHtml::encode(Yii::app()->name); ?></i></h1>
-
-<p><?php echo CHtml::encode(Yii::app()->name); ?> is a Total Administration Online Application aimed to solve the everyday issues that come with business admnistration.</p>
-
-<p>For more details on how we can help you, please feel free to contact us.</p>
+<?php $this->beginWidget('bootstrap.widgets.BootHero', array('heading'=>yii::t('app', 'Welcome'),)); ?>
+<p><?php echo yii::t('app', 'Access to this application is allowed to authorized users only.'); ?></p>
+<p><?php echo yii::t('app', 'Please log-in or register.'); ?></p>
+<?php $this->widget('bootstrap.widgets.BootButtonGroup', array(
+    'buttons'=>array(
+        array('label'=>yii::t('app', 'Log in'), 'url'=>Yii::app()->getModule('user')->loginUrl),
+        array('label'=>yii::t('app', 'Register'), 'url'=>Yii::app()->getModule('user')->registrationUrl),
+    ),
+)); ?>
+<?php $this->endWidget(); ?>

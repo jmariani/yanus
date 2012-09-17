@@ -13,6 +13,7 @@
  * @property integer $Cfd_id
  * @property string $taxName
  * @property string $amt
+ * @property integer $local
  *
  * @property Cfd $cfd
  */
@@ -36,10 +37,12 @@ abstract class BaseCfdWithholding extends GxActiveRecord {
 
 	public function rules() {
 		return array(
-			array('Cfd_id, taxName, amt', 'required'),
-			array('Cfd_id', 'numerical', 'integerOnly'=>true),
+			array('Cfd_id', 'required'),
+			array('Cfd_id, local', 'numerical', 'integerOnly'=>true),
 			array('amt', 'length', 'max'=>64),
-			array('id, Cfd_id, taxName, amt', 'safe', 'on'=>'search'),
+			array('taxName', 'safe'),
+			array('taxName, amt, local', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, Cfd_id, taxName, amt, local', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,9 +63,14 @@ abstract class BaseCfdWithholding extends GxActiveRecord {
                         			                        'Cfd_id' => yii::t('app', 'Cfd'),
                 			'taxName' => yii::t('app', 'Tax Name'),
                 			'amt' => yii::t('app', 'Amt'),
+                			'local' => yii::t('app', 'Local'),
                         			                        'cfd' => yii::t('app', 'Cfd'),
 		);
 	}
+
+    public function defaultScope() {
+        return array('order' => $this->getTableAlias(false, false) . '.' . BaseCfdWithholding::representingColumn() . ' ASC');
+    }
 
 	public function search() {
 		$criteria = new CDbCriteria;
@@ -71,9 +79,11 @@ abstract class BaseCfdWithholding extends GxActiveRecord {
 		$criteria->compare('Cfd_id', $this->Cfd_id);
 		$criteria->compare('taxName', $this->taxName, true);
 		$criteria->compare('amt', $this->amt, true);
+		$criteria->compare('local', $this->local);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
 		));
 	}
 }

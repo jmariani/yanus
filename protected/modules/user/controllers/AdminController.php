@@ -3,7 +3,7 @@
 class AdminController extends Controller
 {
 	public $defaultAction = 'admin';
-	
+
 	private $_model;
 
 	/**
@@ -104,7 +104,7 @@ class AdminController extends Controller
 		{
 			$model->attributes=$_POST['User'];
 			$profile->attributes=$_POST['Profile'];
-			
+
 			if($model->validate()&&$profile->validate()) {
 				$old_password = User::model()->notsafe()->findByPk($model->id);
 				if ($old_password->password!=$model->password) {
@@ -135,7 +135,7 @@ class AdminController extends Controller
 			// we only allow deletion via POST request
 			$model = $this->loadModel();
 			$profile = Profile::model()->findByPk($model->id);
-			$profile->delete();
+                        if ($profile) $profile->delete();
 			$model->delete();
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_POST['ajax']))
@@ -144,8 +144,8 @@ class AdminController extends Controller
 		else
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
-	
-	
+
+
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
@@ -161,5 +161,5 @@ class AdminController extends Controller
 		}
 		return $this->_model;
 	}
-	
+
 }
