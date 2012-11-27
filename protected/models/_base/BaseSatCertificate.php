@@ -36,7 +36,7 @@ abstract class BaseSatCertificate extends GxActiveRecord {
 	}
 
 	public static function label($n = 1) {
-        return Yii::t('app', 'Sat Certificate|Sat Certificates', $n);
+        return Yii::t('app', 'SAT Certificate|SAT Certificates', $n);
 	}
 
 	public static function representingColumn() {

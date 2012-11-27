@@ -61,7 +61,7 @@ body
 
 #logo
 {
-	padding: 10px 20px;
+	/*padding: 10px 20px;*/
 }
 
 #mainmenu
@@ -69,8 +69,8 @@ body
 	/*background:white url(bg.gif) repeat-x left top;background-image:url(http://inventory.simpson.com/dashboard-download/images/el_bg.png);*/
 	background-color:#333333;
 	height: 42px;
-	
-  
+
+
 
 }
 
@@ -78,7 +78,7 @@ body
 {
 	padding:6px 20px 5px 20px;
 	margin:0px;
-	
+
 }
 
 #mainmenu ul li
@@ -162,18 +162,18 @@ body
 .dashIcon {
   float:left;
   /*padding-left:4px;width:123px;*/
-  border: solid 1px #CCCCCC;	
+  border: solid 1px #CCCCCC;
   background-color:#F9F9F9;
   padding-top:8px;
   margin-bottom:10px;
   text-align:center;
-  
+
 }
 
 .dashIconText{
 	padding-top:5px;
 	padding-bottom:10px;
-	
+
 }
 div.flash-error, div.flash-notice, div.flash-success
 {
@@ -181,7 +181,7 @@ div.flash-error, div.flash-notice, div.flash-success
 	margin-bottom:1em;
 	border:1px solid #ddd;
     padding-left:2.5em;
-    
+
 }
 
 div.flash-error
@@ -190,7 +190,7 @@ div.flash-error
 	border-color:#FBC2C4;
     background: url(../images/exclamation.png) left center no-repeat #FBE3E4;
     background-position: 10px 10px;
-    
+
 }
 
 div.flash-notice
@@ -245,7 +245,7 @@ div.breadcrumbs
 
 .breadcrumbs
 {
-	
+
   background-color:#F1F1F1;
 
 }
@@ -280,14 +280,14 @@ div.search-form
 {
 
 	padding: 0;
-	margin: 0;	
+	margin: 0;
 	font-size: 13px;
 	font-weight: bold;
 	text-align: left;
 	padding: 10px;
 
 	color: #FFF;
-	
+
 }
 
 .portlet-content
@@ -361,7 +361,7 @@ div.search-form
 .operations li a:hover
 {
 	background: #EFEFEF;
-	
+
 }
 
 .dashbox{
@@ -369,8 +369,8 @@ div.search-form
 	border: solid 1px #d5dae0;
   	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
-	border-radius: 10px;	
-	
+	border-radius: 10px;
+
   background-color:#FFFF;
   background-position:50% 0;
   background-repeat:no-repeat no-repeat;
@@ -516,7 +516,7 @@ div.search-form
 	color: #FFFFFF!important;
 	height:35px;
 	vertical-align:middle;
-	
+
 }
 .fc-event, .fc-agenda .fc-event-time, .fc-event a , .fc-event a span{
   background-color:#3333!important;
@@ -525,7 +525,7 @@ div.search-form
 }
 .pager-class{
 	text-align:center;
-	
+
 }
 
 .pager-class ul.yiiPager
@@ -594,13 +594,13 @@ ul.yiiPager a:visited
 }
 
 .button {
-    
+
     padding: 5px 10px 5px 10px;
 	min-width: 100px;
 	min-height:40px;
     -moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
-	border-radius: 3px;	
+	border-radius: 3px;
     cursor: pointer;
 	color:#FFF!important;
 	text-shadow:black 0.1em 0.1em 0.2em;
@@ -610,18 +610,18 @@ ul.yiiPager a:visited
   background-position:0 -14px;
   padding-left:24px;
 }
-	
+
 .button_list{
     width: 100%;}
-	
+
 .button_list ul{
     margin-bottom: 10px; padding: 0;
     float: left;}
- 
+
 .button_list ul li{
     display: inline;
 	}
- 
+
 .button_list ul li a{
     float: left; text-decoration: none;
     color: white!important;
@@ -632,13 +632,13 @@ ul.yiiPager a:visited
 	border:solid 1px #CCC;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
-	border-radius: 3px;	
+	border-radius: 3px;
 	text-shadow:black 0.1em 0.1em 0.2em;
 	}
- 
+
 .button_list ul li a:visited{
     color: white;}
- 
+
 .button_list ul li a:hover, .button_list ul li .current{
     color: #fff;
     background-color:#0b75b2;}
@@ -690,6 +690,6 @@ ul.yiiPager a:visited
 	color:#F00;
 	text-shadow:#CCC 0.1em 0.1em 0.1em;
 }
-	
+
 
 

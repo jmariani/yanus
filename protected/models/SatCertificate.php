@@ -160,6 +160,13 @@ class SatCertificate extends BaseSatCertificate {
         return $rules;
     }
 
+    public function scopes() {
+//        $x = CfdHasFileAsset::model()->find($condition, $params)
+        $scopes = parent::scopes();
+        $scopes['valid'] = array('condition' => $this->getTableAlias(false, false) . '.validFrom <= now() and ' . $this->getTableAlias(false, false) . '.validTo >= now()');
+        return $scopes;
+    }
+
     public function current($date = null) {
         $criteria = new CDbCriteria();
         if (is_null($date))

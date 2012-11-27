@@ -14,7 +14,6 @@
  * @property string $version
  * @property string $serial
  * @property integer $folio
- * @property string $uuid
  * @property string $dttm
  * @property string $seal
  * @property string $paymentType
@@ -30,34 +29,26 @@
  * @property string $sourceSerial
  * @property string $sourceDttm
  * @property string $sourceAmt
- * @property string $dtsVersion
- * @property string $dtsDttm
- * @property string $dtsSatCertNbr
- * @property string $dtsSatSeal
- * @property string $dtsOriginalString
  * @property integer $approvalNbr
  * @property integer $approvalYear
  * @property string $md5
  * @property string $creationDt
  * @property string $updateDt
- * @property integer $vendorParty_id
- * @property integer $customerParty_id
  * @property string $originalString
  * @property string $cbb
  * @property integer $SatCertificate_id
- * @property integer $dtsSatCertificate_id
- * @property integer $CfdStatus_id
  * @property string $errorMsg
  * @property integer $PaymentTerm_id
  * @property string $addenda
+ * @property string $status
+ * @property string $subTotal
+ * @property string $total
+ * @property string $tax
+ * @property string $withHolding
  *
- * @property CfdStatus $cfdStatus
  * @property Currency $currency0
- * @property Party $vendorParty
- * @property Party $customerParty
  * @property PaymentTerm $paymentTerm0
  * @property SatCertificate $satCertificate
- * @property SatCertificate $dtsSatCertificate
  * @property CfdAddress[] $cfdAddresses
  * @property CfdAttribute[] $cfdAttributes
  * @property CfdDiscount[] $cfdDiscounts
@@ -66,8 +57,10 @@
  * @property CfdTax[] $cfdTaxes
  * @property CfdTaxRegime[] $cfdTaxRegimes
  * @property CustomsPermit[] $customsPermits
+ * @property CfdHasParty[] $cfdHasParties
+ * @property SatStamp[] $satStamps
  */
-abstract class BaseCfd extends GxActiveRecord {
+abstract class BaseCfd extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -87,28 +80,24 @@ abstract class BaseCfd extends GxActiveRecord {
 
 	public function rules() {
 		return array(
-			array('version, CfdStatus_id', 'required'),
-			array('folio, Currency_id, sourceFolio, approvalNbr, approvalYear, vendorParty_id, customerParty_id, SatCertificate_id, dtsSatCertificate_id, CfdStatus_id, PaymentTerm_id', 'numerical', 'integerOnly'=>true),
-			array('version, voucherType, dtsVersion, dtsSatCertNbr', 'length', 'max'=>45),
+			array('version', 'required'),
+			array('folio, Currency_id, sourceFolio, approvalNbr, approvalYear, SatCertificate_id, PaymentTerm_id', 'numerical', 'integerOnly'=>true),
+			array('version, voucherType', 'length', 'max'=>45),
 			array('serial, sourceSerial', 'length', 'max'=>25),
-			array('uuid', 'length', 'max'=>36),
-			array('exchangeRate, sourceAmt', 'length', 'max'=>64),
+			array('exchangeRate, sourceAmt, subTotal, total, tax, withHolding', 'length', 'max'=>64),
 			array('md5', 'length', 'max'=>32),
-			array('invoice, dttm, seal, paymentType, paymentTerm, currency, paymentMethod, expeditionPlace, paymentAcctNbr, sourceDttm, dtsDttm, dtsSatSeal, dtsOriginalString, creationDt, updateDt, originalString, cbb, errorMsg, addenda', 'safe'),
-			array('invoice, serial, folio, uuid, dttm, seal, paymentType, paymentTerm, exchangeRate, currency, Currency_id, voucherType, paymentMethod, expeditionPlace, paymentAcctNbr, sourceFolio, sourceSerial, sourceDttm, sourceAmt, dtsVersion, dtsDttm, dtsSatCertNbr, dtsSatSeal, dtsOriginalString, approvalNbr, approvalYear, md5, creationDt, updateDt, vendorParty_id, customerParty_id, originalString, cbb, SatCertificate_id, dtsSatCertificate_id, errorMsg, PaymentTerm_id, addenda', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, invoice, version, serial, folio, uuid, dttm, seal, paymentType, paymentTerm, exchangeRate, currency, Currency_id, voucherType, paymentMethod, expeditionPlace, paymentAcctNbr, sourceFolio, sourceSerial, sourceDttm, sourceAmt, dtsVersion, dtsDttm, dtsSatCertNbr, dtsSatSeal, dtsOriginalString, approvalNbr, approvalYear, md5, creationDt, updateDt, vendorParty_id, customerParty_id, originalString, cbb, SatCertificate_id, dtsSatCertificate_id, CfdStatus_id, errorMsg, PaymentTerm_id, addenda', 'safe', 'on'=>'search'),
+			array('status', 'length', 'max'=>255),
+			array('invoice, dttm, seal, paymentType, paymentTerm, currency, paymentMethod, expeditionPlace, paymentAcctNbr, sourceDttm, creationDt, updateDt, originalString, cbb, errorMsg, addenda', 'safe'),
+			array('invoice, serial, folio, dttm, seal, paymentType, paymentTerm, exchangeRate, currency, Currency_id, voucherType, paymentMethod, expeditionPlace, paymentAcctNbr, sourceFolio, sourceSerial, sourceDttm, sourceAmt, approvalNbr, approvalYear, md5, creationDt, updateDt, originalString, cbb, SatCertificate_id, errorMsg, PaymentTerm_id, addenda, status, subTotal, total, tax, withHolding', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, invoice, version, serial, folio, dttm, seal, paymentType, paymentTerm, exchangeRate, currency, Currency_id, voucherType, paymentMethod, expeditionPlace, paymentAcctNbr, sourceFolio, sourceSerial, sourceDttm, sourceAmt, approvalNbr, approvalYear, md5, creationDt, updateDt, originalString, cbb, SatCertificate_id, errorMsg, PaymentTerm_id, addenda, status, subTotal, total, tax, withHolding', 'safe', 'on'=>'search'),
 		);
 	}
 
 	public function relations() {
-		return array(
-			'cfdStatus' => array(self::BELONGS_TO, 'CfdStatus', 'CfdStatus_id'),
+		$relations = array(
 			'currency0' => array(self::BELONGS_TO, 'Currency', 'Currency_id'),
-			'vendorParty' => array(self::BELONGS_TO, 'Party', 'vendorParty_id'),
-			'customerParty' => array(self::BELONGS_TO, 'Party', 'customerParty_id'),
 			'paymentTerm0' => array(self::BELONGS_TO, 'PaymentTerm', 'PaymentTerm_id'),
 			'satCertificate' => array(self::BELONGS_TO, 'SatCertificate', 'SatCertificate_id'),
-			'dtsSatCertificate' => array(self::BELONGS_TO, 'SatCertificate', 'dtsSatCertificate_id'),
 			'cfdAddresses' => array(self::HAS_MANY, 'CfdAddress', 'Cfd_id'),
 			'cfdAttributes' => array(self::HAS_MANY, 'CfdAttribute', 'Cfd_id'),
 			'cfdDiscounts' => array(self::HAS_MANY, 'CfdDiscount', 'Cfd_id'),
@@ -117,7 +106,10 @@ abstract class BaseCfd extends GxActiveRecord {
 			'cfdTaxes' => array(self::HAS_MANY, 'CfdTax', 'Cfd_id'),
 			'cfdTaxRegimes' => array(self::HAS_MANY, 'CfdTaxRegime', 'Cfd_id'),
 			'customsPermits' => array(self::MANY_MANY, 'CustomsPermit', 'Cfd_has_CustomsPermit(Cfd_id, CustomsPermit_id)'),
+			'cfdHasParties' => array(self::HAS_MANY, 'CfdHasParty', 'Cfd_id'),
+			'satStamps' => array(self::HAS_MANY, 'SatStamp', 'Cfd_id'),
 		);
+                return array_merge($relations, parent::relations());
 	}
 
 	public function pivotModels() {
@@ -133,7 +125,6 @@ abstract class BaseCfd extends GxActiveRecord {
                 			'version' => yii::t('app', 'Version'),
                 			'serial' => yii::t('app', 'Serial'),
                 			'folio' => yii::t('app', 'Folio'),
-                			'uuid' => yii::t('app', 'Uuid'),
                 			'dttm' => yii::t('app', 'Dttm'),
                 			'seal' => yii::t('app', 'Seal'),
                 			'paymentType' => yii::t('app', 'Payment Type'),
@@ -149,33 +140,25 @@ abstract class BaseCfd extends GxActiveRecord {
                 			'sourceSerial' => yii::t('app', 'Source Serial'),
                 			'sourceDttm' => yii::t('app', 'Source Dttm'),
                 			'sourceAmt' => yii::t('app', 'Source Amt'),
-                			'dtsVersion' => yii::t('app', 'Dts Version'),
-                			'dtsDttm' => yii::t('app', 'Dts Dttm'),
-                			'dtsSatCertNbr' => yii::t('app', 'Dts Sat Cert Nbr'),
-                			'dtsSatSeal' => yii::t('app', 'Dts Sat Seal'),
-                			'dtsOriginalString' => yii::t('app', 'Dts Original String'),
                 			'approvalNbr' => yii::t('app', 'Approval Nbr'),
                 			'approvalYear' => yii::t('app', 'Approval Year'),
                 			'md5' => yii::t('app', 'Md5'),
                 			'creationDt' => yii::t('app', 'Creation Dt'),
                 			'updateDt' => yii::t('app', 'Update Dt'),
-                        			                        'vendorParty_id' => yii::t('app', 'Vendor Party'),
-                        			                        'customerParty_id' => yii::t('app', 'Customer Party'),
                 			'originalString' => yii::t('app', 'Original String'),
                 			'cbb' => yii::t('app', 'Cbb'),
                         			                        'SatCertificate_id' => yii::t('app', 'Sat Certificate'),
-                        			                        'dtsSatCertificate_id' => yii::t('app', 'Dts Sat Certificate'),
-                        			                        'CfdStatus_id' => yii::t('app', 'Cfd Status'),
                 			'errorMsg' => yii::t('app', 'Error Msg'),
                         			                        'PaymentTerm_id' => yii::t('app', 'Payment Term'),
                 			'addenda' => yii::t('app', 'Addenda'),
-                        			                        'cfdStatus' => yii::t('app', 'Cfd Status'),
+                			'status' => yii::t('app', 'Status'),
+                			'subTotal' => yii::t('app', 'Sub Total'),
+                			'total' => yii::t('app', 'Total'),
+                			'tax' => yii::t('app', 'Tax'),
+                			'withHolding' => yii::t('app', 'With Holding'),
                         			                        'currency0' => yii::t('app', 'Currency0'),
-                        			                        'vendorParty' => yii::t('app', 'Vendor Party'),
-                        			                        'customerParty' => yii::t('app', 'Customer Party'),
                         			                        'paymentTerm0' => yii::t('app', 'Payment Term0'),
                         			                        'satCertificate' => yii::t('app', 'Sat Certificate'),
-                        			                        'dtsSatCertificate' => yii::t('app', 'Dts Sat Certificate'),
                         			                        'cfdAddresses' => yii::t('app', 'Cfd Addresses'),
                         			                        'cfdAttributes' => yii::t('app', 'Cfd Attributes'),
                         			                        'cfdDiscounts' => yii::t('app', 'Cfd Discounts'),
@@ -184,6 +167,8 @@ abstract class BaseCfd extends GxActiveRecord {
                         			                        'cfdTaxes' => yii::t('app', 'Cfd Taxes'),
                         			                        'cfdTaxRegimes' => yii::t('app', 'Cfd Tax Regimes'),
                         			                        'customsPermits' => yii::t('app', 'Customs Permits'),
+                        			                        'cfdHasParties' => yii::t('app', 'Cfd Has Parties'),
+                        			                        'satStamps' => yii::t('app', 'Sat Stamps'),
 		);
 	}
 
@@ -196,7 +181,6 @@ abstract class BaseCfd extends GxActiveRecord {
 		$criteria->compare('version', $this->version, true);
 		$criteria->compare('serial', $this->serial, true);
 		$criteria->compare('folio', $this->folio);
-		$criteria->compare('uuid', $this->uuid, true);
 		$criteria->compare('dttm', $this->dttm, true);
 		$criteria->compare('seal', $this->seal, true);
 		$criteria->compare('paymentType', $this->paymentType, true);
@@ -212,26 +196,22 @@ abstract class BaseCfd extends GxActiveRecord {
 		$criteria->compare('sourceSerial', $this->sourceSerial, true);
 		$criteria->compare('sourceDttm', $this->sourceDttm, true);
 		$criteria->compare('sourceAmt', $this->sourceAmt, true);
-		$criteria->compare('dtsVersion', $this->dtsVersion, true);
-		$criteria->compare('dtsDttm', $this->dtsDttm, true);
-		$criteria->compare('dtsSatCertNbr', $this->dtsSatCertNbr, true);
-		$criteria->compare('dtsSatSeal', $this->dtsSatSeal, true);
-		$criteria->compare('dtsOriginalString', $this->dtsOriginalString, true);
 		$criteria->compare('approvalNbr', $this->approvalNbr);
 		$criteria->compare('approvalYear', $this->approvalYear);
 		$criteria->compare('md5', $this->md5, true);
 		$criteria->compare('creationDt', $this->creationDt, true);
 		$criteria->compare('updateDt', $this->updateDt, true);
-		$criteria->compare('vendorParty_id', $this->vendorParty_id);
-		$criteria->compare('customerParty_id', $this->customerParty_id);
 		$criteria->compare('originalString', $this->originalString, true);
 		$criteria->compare('cbb', $this->cbb, true);
 		$criteria->compare('SatCertificate_id', $this->SatCertificate_id);
-		$criteria->compare('dtsSatCertificate_id', $this->dtsSatCertificate_id);
-		$criteria->compare('CfdStatus_id', $this->CfdStatus_id);
 		$criteria->compare('errorMsg', $this->errorMsg, true);
 		$criteria->compare('PaymentTerm_id', $this->PaymentTerm_id);
 		$criteria->compare('addenda', $this->addenda, true);
+		$criteria->compare('status', $this->status, true);
+		$criteria->compare('subTotal', $this->subTotal, true);
+		$criteria->compare('total', $this->total, true);
+		$criteria->compare('tax', $this->tax, true);
+		$criteria->compare('withHolding', $this->withHolding, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,

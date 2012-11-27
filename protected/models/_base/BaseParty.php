@@ -12,19 +12,17 @@
  * @property integer $id
  * @property integer $person
  *
- * @property Cfd[] $cfds
- * @property Cfd[] $cfds1
- * @property PartyAddress[] $partyAddresses
+ * @property CfdHasParty[] $cfdHasParties
  * @property PartyAttribute[] $partyAttributes
- * @property PartyHasRole[] $partyHasRoles
+ * @property PartyHasIdentifiers[] $partyHasIdentifiers
+ * @property PartyHasRelationship[] $partyHasRelationships
+ * @property PartyHasRelationship[] $partyHasRelationships1
  * @property PartyIdentifier[] $partyIdentifiers
+ * @property PartyLocator[] $partyLocators
  * @property PartyName[] $partyNames
- * @property PartyPhoneLocator[] $partyPhoneLocators
- * @property PartyRelationship[] $partyRelationships
- * @property PartyRelationship[] $partyRelationships1
  * @property SatCertificate[] $satCertificates
  */
-abstract class BaseParty extends GxActiveRecord {
+abstract class BaseParty extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -52,16 +50,14 @@ abstract class BaseParty extends GxActiveRecord {
 
 	public function relations() {
 		return array(
-			'cfds' => array(self::HAS_MANY, 'Cfd', 'vendorParty_id'),
-			'cfds1' => array(self::HAS_MANY, 'Cfd', 'customerParty_id'),
-			'partyAddresses' => array(self::HAS_MANY, 'PartyAddress', 'Party_id'),
+			'cfdHasParties' => array(self::HAS_MANY, 'CfdHasParty', 'Party_id'),
 			'partyAttributes' => array(self::HAS_MANY, 'PartyAttribute', 'Party_id'),
-			'partyHasRoles' => array(self::HAS_MANY, 'PartyHasRole', 'Party_id'),
+			'partyHasIdentifiers' => array(self::HAS_MANY, 'PartyHasIdentifiers', 'Party_id'),
+			'partyHasRelationships' => array(self::HAS_MANY, 'PartyHasRelationship', 'Party_id'),
+			'partyHasRelationships1' => array(self::HAS_MANY, 'PartyHasRelationship', 'RelatedParty_id'),
 			'partyIdentifiers' => array(self::HAS_MANY, 'PartyIdentifier', 'Party_id'),
+			'partyLocators' => array(self::HAS_MANY, 'PartyLocator', 'Party_id'),
 			'partyNames' => array(self::HAS_MANY, 'PartyName', 'Party_id'),
-			'partyPhoneLocators' => array(self::HAS_MANY, 'PartyPhoneLocator', 'Party_id'),
-			'partyRelationships' => array(self::HAS_MANY, 'PartyRelationship', 'Party_id'),
-			'partyRelationships1' => array(self::HAS_MANY, 'PartyRelationship', 'RelatedParty_id'),
 			'satCertificates' => array(self::MANY_MANY, 'SatCertificate', 'Party_has_SatCertificate(Party_id, SatCertificate_id)'),
 		);
 	}
@@ -76,16 +72,14 @@ abstract class BaseParty extends GxActiveRecord {
 		return array(
                 			'id' => yii::t('app', 'Id'),
                 			'person' => yii::t('app', 'Person'),
-                        			                        'cfds' => yii::t('app', 'Cfds'),
-                        			                        'cfds1' => yii::t('app', 'Cfds1'),
-                        			                        'partyAddresses' => yii::t('app', 'Party Addresses'),
+                        			                        'cfdHasParties' => yii::t('app', 'Cfd Has Parties'),
                         			                        'partyAttributes' => yii::t('app', 'Party Attributes'),
-                        			                        'partyHasRoles' => yii::t('app', 'Party Has Roles'),
+                        			                        'partyHasIdentifiers' => yii::t('app', 'Party Has Identifiers'),
+                        			                        'partyHasRelationships' => yii::t('app', 'Party Has Relationships'),
+                        			                        'partyHasRelationships1' => yii::t('app', 'Party Has Relationships1'),
                         			                        'partyIdentifiers' => yii::t('app', 'Party Identifiers'),
+                        			                        'partyLocators' => yii::t('app', 'Party Locators'),
                         			                        'partyNames' => yii::t('app', 'Party Names'),
-                        			                        'partyPhoneLocators' => yii::t('app', 'Party Phone Locators'),
-                        			                        'partyRelationships' => yii::t('app', 'Party Relationships'),
-                        			                        'partyRelationships1' => yii::t('app', 'Party Relationships1'),
                         			                        'satCertificates' => yii::t('app', 'Sat Certificates'),
 		);
 	}

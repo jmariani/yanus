@@ -1,5 +1,5 @@
 <div class="wide form">
-<?php $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
+<?php $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	'action' => Yii::app()->createUrl($this->route),
 	'method' => 'get',
         'htmlOptions'=>array('class'=>'well'),
@@ -38,26 +38,26 @@
 
 	<div class="row">
 <!--
-		<?php echo $form->label($model, 'nativeXmlFile'); ?>
+		<?php // echo $form->label($model, 'nativeXmlFile'); ?>
             -->
 <!--                \n"; ?>-->
 
-		<?php echo $form->textAreaRow($model, 'nativeXmlFile'); ?>
+		<?php // echo $form->textAreaRow($model, 'nativeXmlFile'); ?>
 
 	</div>
 
 	<div class="row">
 <!--
-		<?php echo $form->label($model, 'IncomingInvoiceInterfaceFileStatus_id'); ?>
+		<?php // echo $form->label($model, 'IncomingInvoiceInterfaceFileStatus_id'); ?>
             -->
 <!--                \n"; ?>-->
 
-		<?php echo $form->dropDownListRow($model, 'IncomingInvoiceInterfaceFileStatus_id', GxHtml::listDataEx(IncomingInvoiceInterfaceFileStatus::model()->findAllAttributes(null, true)), array('prompt' => Yii::t('app', 'All'))); ?>
+		<?php // echo $form->dropDownListRow($model, 'IncomingInvoiceInterfaceFileStatus_id', GxHtml::listDataEx(IncomingInvoiceInterfaceFileStatus::model()->findAllAttributes(null, true)), array('prompt' => Yii::t('app', 'All'))); ?>
 
 	</div>
 
 	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.BootButton', array(
+		<?php $this->widget('bootstrap.widgets.TbButton', array(
 			'type'=>'primary',
                         'buttonType'=>'submit',
                         'icon' => 'search',

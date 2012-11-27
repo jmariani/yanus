@@ -15,9 +15,10 @@ return array(
     'yiiTraceLevel' => 0,
     // Static function Yii::setPathOfAlias()
     'yiiSetPathOfAlias' => array(
-    // uncomment the following to define a path alias
-    //'local' => 'path/to/local-folder'
+        // uncomment the following to define a path alias
+        //'local' => 'path/to/local-folder'
 //        'cfd' => dirname(__FILE__) . '/files/cfd'
+        'log' => dirname(__FILE__) . DIRECTORY_SEPARATOR . 'protected' . DIRECTORY_SEPARATOR . 'runtime' . DIRECTORY_SEPARATOR . 'log'
     ),
     // This is the main Web application configuration. Any writable
     // CWebApplication properties can be configured here.
@@ -55,6 +56,9 @@ return array(
             'errorHandler' => array(
                 // use 'site/error' action to display errors
                 'errorAction' => 'site/error',
+            ),
+            'file' => array(
+                'class' => 'application.extensions.file.CFile',
             ),
             'log' => array(
                 'class' => 'CLogRouter',
@@ -159,6 +163,7 @@ return array(
         ),
         // autoloading model and component classes
         'import' => array(
+            'application.actions.*',
             'application.models.*',
             'ext.bootstrap.widgets.*',
             'application.components.*',
@@ -172,6 +177,7 @@ return array(
             'application.extensions.yii-mail.*',
             'application.extensions.simpleWorkflow.*', // Import simpleWorkflow extension
             'application.modules.lookup.models.*',
+//            'ext.bootstraplinkpager.*',
         ),
         'modules' => array(
             'ataintegrant',
@@ -257,6 +263,9 @@ return array(
         'import' => 'inherit',
         // Application componentshome
         'components' => array(
+            'file' => array(
+                'class' => 'application.extensions.file.CFile',
+            ),
             'log' => array(
                 'class' => 'CLogRouter',
                 'routes' => array(

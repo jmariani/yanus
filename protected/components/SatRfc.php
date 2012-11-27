@@ -10,8 +10,34 @@
  *
  * @author jmariani
  */
-class SatRfc {
+class SatRfc extends CComponent {
+
+    private $_value;
+    private $_error = '';
+
     const rfc_regex = '/^[A-Z,Ñ,&]{3,4}[0-9]{2}[0-1][0-9][0-3][0-9][A-Z,0-9]?[A-Z,0-9]?[0-9,A]+$/u';
+
+    public function __construct($value) {
+        $this->_value = $value;
+        if ($this->_value) $this->validate($this->_value);
+    }
+
+    /**
+     * Returns an error code describing the status of this file uploading.
+     * @return integer the error code
+     * @see http://www.php.net/manual/en/features.file-upload.errors.php
+     */
+    public function getError() {
+        return $this->_error;
+    }
+
+    /**
+     * @return boolean whether there is an error with the uploaded file.
+     * Check {@link error} for detailed error code information.
+     */
+    public function getHasError() {
+        return (strlen($this->_error) != 0);
+    }
 
     public static function normalize($rfc) {
         $rfc = trim($rfc);
@@ -19,9 +45,11 @@ class SatRfc {
         $rfc = str_replace('-', '', $rfc);
         return $rfc;
     }
-    public static function validate($rfc) {
+
+    public function validate($rfc) {
         if (!preg_match(self::rfc_regex, $rfc))
-            throw new CException(yii::t('app', 'RFC "{rfc}" is invalid.', array('{rfc}' => $rfc,)));
+            $this->_error = yii::t('app', 'RFC "{rfc}" is invalid.', array('{rfc}' => $rfc,));
+
         // Validate RFC length
         switch (strlen($rfc)) {
             case 12:
@@ -31,8 +59,7 @@ class SatRfc {
                 $innerPos = 4;
                 break;
             default:
-                throw new Exception(yii::t('app', 'RFC "{rfc}" is invalid. Length is {length} and it must be 12 or 13 characters long.',
-                        array('{rfc}' => $rfc, '{length}' => strlen($rfc))));
+                $this->_error = yii::t('app', 'RFC "{rfc}" is invalid. Length is {length} and it must be 12 or 13 characters long.', array('{rfc}' => $rfc, '{length}' => strlen($rfc)));
         }
         // Validate inner section.
         $rfcYear = substr($rfc, $innerPos, 2);
@@ -41,10 +68,8 @@ class SatRfc {
         if (!checkdate($rfcMonth, $rfcDay, $rfcYear)) {
             // Try adding '20' to the year.
             $rfcYear = '20' . $rfcYear;
-            if (!checkdate($rfcMonth, $rfcDay, $rfcYear)) {
-                throw new Exception(yii::t('app', 'RFC "{rfc}" is invalid. Inner segment of RFC must be a valid date (YYMMDD). Value reported: {inner}',
-                        array('{rfc}' => $rfc, '{inner}' => substr($rfc, $innerPos, 6))));
-            }
+            if (!checkdate($rfcMonth, $rfcDay, $rfcYear))
+                $this->_error = yii::t('app', 'RFC "{rfc}" is invalid. Inner segment of RFC must be a valid date (YYMMDD). Value reported: {inner}', array('{rfc}' => $rfc, '{inner}' => substr($rfc, $innerPos, 6)));
         }
         // Validate checksum.
         $checkSum = substr($rfc, -1);
@@ -62,11 +87,11 @@ class SatRfc {
             case 'A':
                 break;
             default:
-            throw new Exception(yii::t('app', 'RFC "{rfc}" is invalid. Invalid checksum. Checksum must be a number (0-9) or the letter "A". Value reported: {chksum}',
-                    array('{rfc}' => $rfc, '{chksum}' => $checkSum)));
+                $this->_error = yii::t('app', 'RFC "{rfc}" is invalid. Invalid checksum. Checksum must be a number (0-9) or the letter "A". Value reported: {chksum}', array('{rfc}' => $rfc, '{chksum}' => $checkSum));
         }
         return true;
     }
+
 }
 
 ?>

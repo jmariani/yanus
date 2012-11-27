@@ -2,85 +2,73 @@
 
 class CustomsPermitController extends GxController {
 
-        public $defaultAction = 'admin';
-	public function actionView($id) {
-		$this->render('view', array(
-			'model' => $this->loadModel($id, 'CustomsPermit'),
-		));
-	}
+    public $defaultAction = 'admin';
 
-	public function actionCreate() {
-		$model = new CustomsPermit;
+    public function actionView($id) {
+        $this->render('view', array(
+            'model' => $this->loadModel($id, 'CustomsPermit'),
+        ));
+    }
 
+    public function actionCreate() {
+        $model = new CustomsPermit;
 
-		if (isset($_POST['CustomsPermit'])) {
-			$model->setAttributes($_POST['CustomsPermit']);
-			$relatedData = array(
-				'cfdItems' => $_POST['CustomsPermit']['cfdItems'] === '' ? null : $_POST['CustomsPermit']['cfdItems'],
-				'cfds' => $_POST['CustomsPermit']['cfds'] === '' ? null : $_POST['CustomsPermit']['cfds'],
-				);
+        if (isset($_POST['CustomsPermit'])) {
+            $model->setAttributes($_POST['CustomsPermit']);
+            if ($model->save()) {
+                if (Yii::app()->getRequest()->getIsAjaxRequest())
+                    Yii::app()->end();
+                else
+                    $this->redirect(array('admin'));
+            }
+        }
 
-			if ($model->saveWithRelated($relatedData)) {
-				if (Yii::app()->getRequest()->getIsAjaxRequest())
-					Yii::app()->end();
-				else
-					$this->redirect(array('admin', 'id' => $model->id));
-			}
-		}
+        $this->render('create', array('model' => $model));
+    }
 
-		$this->render('create', array( 'model' => $model));
-	}
-
-	public function actionUpdate($id) {
-		$model = $this->loadModel($id, 'CustomsPermit');
+    public function actionUpdate($id) {
+        $model = $this->loadModel($id, 'CustomsPermit');
 
 
-		if (isset($_POST['CustomsPermit'])) {
-			$model->setAttributes($_POST['CustomsPermit']);
-			$relatedData = array(
-				'cfdItems' => $_POST['CustomsPermit']['cfdItems'] === '' ? null : $_POST['CustomsPermit']['cfdItems'],
-				'cfds' => $_POST['CustomsPermit']['cfds'] === '' ? null : $_POST['CustomsPermit']['cfds'],
-				);
+        if (isset($_POST['CustomsPermit'])) {
+            $model->setAttributes($_POST['CustomsPermit']);
+            if ($model->save()) {
+                // $this->redirect(array('admin', 'id' => $model->));
+                $this->redirect(array('admin'));
+            }
+        }
 
-			if ($model->saveWithRelated($relatedData)) {
-				// $this->redirect(array('admin', 'id' => $model->));
-                                $this->redirect(array('admin'));
-			}
-		}
+        $this->render('update', array('model' => $model,));
+    }
 
-		$this->render('update', array(
-				'model' => $model,
-				));
-	}
+    public function actionDelete($id) {
+        if (Yii::app()->getRequest()->getIsPostRequest()) {
+            $this->loadModel($id, 'CustomsPermit')->delete();
 
-	public function actionDelete($id) {
-		if (Yii::app()->getRequest()->getIsPostRequest()) {
-			$this->loadModel($id, 'CustomsPermit')->delete();
+            if (!Yii::app()->getRequest()->getIsAjaxRequest())
+                $this->redirect(array('admin'));
+        } else
+            throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
+    }
 
-			if (!Yii::app()->getRequest()->getIsAjaxRequest())
-				$this->redirect(array('admin'));
-		} else
-			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
-	}
+    public function actionIndex() {
+        $dataProvider = new CActiveDataProvider('CustomsPermit');
+        $dataProvider->sort->defaultOrder = CustomsPermit::representingColumn() . ' ASC';
+        $this->render('index', array(
+            'dataProvider' => $dataProvider,
+        ));
+    }
 
-	public function actionIndex() {
-		$dataProvider = new CActiveDataProvider('CustomsPermit');
-                $dataProvider->sort->defaultOrder = CustomsPermit::representingColumn() . ' ASC';
-		$this->render('index', array(
-			'dataProvider' => $dataProvider,
-		));
-	}
+    public function actionAdmin() {
+        $model = new CustomsPermit('search');
+        $model->unsetAttributes();
 
-	public function actionAdmin() {
-		$model = new CustomsPermit('search');
-		$model->unsetAttributes();
+        if (isset($_GET['CustomsPermit']))
+            $model->setAttributes($_GET['CustomsPermit']);
 
-		if (isset($_GET['CustomsPermit']))
-			$model->setAttributes($_GET['CustomsPermit']);
-
-		$this->render('admin', array(
-			'model' => $model,
-		));
-	}
+        $this->render('admin', array(
+            'model' => $model,
+        ));
+    }
 
 }

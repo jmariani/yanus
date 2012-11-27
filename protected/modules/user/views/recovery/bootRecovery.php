@@ -15,7 +15,7 @@ $this->breadcrumbs=array(
 
 <div class="form">
 <?php     /** @var BootActiveForm $form */
-    $rform = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
+    $rform = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	'id' => 'login-form',
 	'enableAjaxValidation' => false,
         'htmlOptions'=>array('class'=>'well'),
@@ -26,7 +26,7 @@ $this->breadcrumbs=array(
 <?php echo $rform->errorSummary($form); ?>
 <?php echo $rform->textFieldRow($form, 'login_or_email'); ?>
 <div class="form-actions">
-<?php $this->widget('bootstrap.widgets.BootButton', array(
+<?php $this->widget('bootstrap.widgets.TbButton', array(
         'buttonType'=>'submit',
         'type'=>'primary',
         'label'=>Yii::t('app', 'Restore'),

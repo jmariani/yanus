@@ -4,6 +4,12 @@ Yii::import('application.models._base.BaseAddress');
 
 class Address extends BaseAddress {
 
+    const CFD_VENDOR_PRIMARY_ADDRESS_SCENARIO = 'CfdVendorPrimaryAddressScenario';
+
+    public function __construct($scenario = 'insert', $values = null) {
+        parent::__construct($scenario);
+        $this->setAttributes($values);
+    }
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
@@ -47,6 +53,12 @@ class Address extends BaseAddress {
 
     public function getMd5() {
         return md5($this->getHash());
+    }
+
+    public function rules() {
+        $rules = array();
+        $rules[] = array('md5', 'unique');
+        return array_merge($rules, parent::rules());
     }
 
 }

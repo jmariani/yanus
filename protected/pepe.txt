@@ -1,0 +1,186 @@
+Array
+(
+    [Taxes] => Array
+        (
+            [0] => CHasManyRelation
+            [1] => CfdTax
+            [2] => Cfd_id
+            [on] => Taxes.local = 0 and Taxes.withHolding = 0
+        )
+
+    [WithHoldings] => Array
+        (
+            [0] => CHasManyRelation
+            [1] => CfdTax
+            [2] => Cfd_id
+            [on] => WithHoldings.local = 0 and WithHoldings.withHolding = 1
+        )
+
+    [CfdHasVendorParty] => Array
+        (
+            [0] => CHasOneRelation
+            [1] => CfdHasParty
+            [2] => Cfd_id
+            [scopes] => vendor
+        )
+
+    [VendorParty] => Array
+        (
+            [0] => CHasOneRelation
+            [1] => Party
+            [2] => Array
+                (
+                    [Party_id] => id
+                )
+
+            [through] => CfdHasVendorParty
+        )
+
+    [CfdHasCustomerParty] => Array
+        (
+            [0] => CHasOneRelation
+            [1] => CfdHasParty
+            [2] => Cfd_id
+            [scopes] => customer
+        )
+
+    [CustomerParty] => Array
+        (
+            [0] => CHasOneRelation
+            [1] => Party
+            [2] => Array
+                (
+                    [Party_id] => id
+                )
+
+            [through] => CfdHasCustomerParty
+        )
+
+    [cfdCfdFileAsset] => Array
+        (
+            [0] => CHasOneRelation
+            [1] => CfdHasFileAsset
+            [2] => Cfd_id
+            [scopes] => cfd
+        )
+
+    [cfdFileAsset] => Array
+        (
+            [0] => CHasOneRelation
+            [1] => FileAsset
+            [2] => Array
+                (
+                    [FileAsset_id] => id
+                )
+
+            [through] => cfdCfdFileAsset
+        )
+
+    [satCertificate] => Array
+        (
+            [0] => CBelongsToRelation
+            [1] => SatCertificate
+            [2] => SatCertificate_id
+        )
+
+    [currency0] => Array
+        (
+            [0] => CBelongsToRelation
+            [1] => Currency
+            [2] => Currency_id
+        )
+
+    [paymentTerm0] => Array
+        (
+            [0] => CBelongsToRelation
+            [1] => PaymentTerm
+            [2] => PaymentTerm_id
+        )
+
+    [cfdAddresses] => Array
+        (
+            [0] => CHasManyRelation
+            [1] => CfdAddress
+            [2] => Cfd_id
+        )
+
+    [cfdAttributes] => Array
+        (
+            [0] => CHasManyRelation
+            [1] => CfdAttribute
+            [2] => Cfd_id
+        )
+
+    [cfdDiscounts] => Array
+        (
+            [0] => CHasManyRelation
+            [1] => CfdDiscount
+            [2] => Cfd_id
+        )
+
+    [cfdItems] => Array
+        (
+            [0] => CHasManyRelation
+            [1] => CfdItem
+            [2] => Cfd_id
+        )
+
+    [cfdNotes] => Array
+        (
+            [0] => CHasManyRelation
+            [1] => CfdNote
+            [2] => Cfd_id
+        )
+
+    [cfdTaxes] => Array
+        (
+            [0] => CHasManyRelation
+            [1] => CfdTax
+            [2] => Cfd_id
+        )
+
+    [cfdTaxRegimes] => Array
+        (
+            [0] => CHasManyRelation
+            [1] => CfdTaxRegime
+            [2] => Cfd_id
+        )
+
+    [customsPermits] => Array
+        (
+            [0] => CManyManyRelation
+            [1] => CustomsPermit
+            [2] => Cfd_has_CustomsPermit(Cfd_id, CustomsPermit_id)
+        )
+
+    [cfdHasFileAssets] => Array
+        (
+            [0] => CHasManyRelation
+            [1] => CfdHasFileAsset
+            [2] => Cfd_id
+        )
+
+    [cfdHasParties] => Array
+        (
+            [0] => CHasManyRelation
+            [1] => CfdHasParty
+            [2] => Cfd_id
+        )
+
+    [satStamps] => Array
+        (
+            [0] => CHasManyRelation
+            [1] => SatStamp
+            [2] => Cfd_id
+        )
+
+)
+||3.2|2012-10-26T21:20:39|ingreso|PAGO EN UNA SOLA EXHIBICION|21 DIAS|13982.000000|MXP|16219.120000|NO IDENTIFICADO|Calle Bretaña 134, Zacahuizco, Iztapalapa, México, Distrito Federal, 09440, México|GGA090129153|GAMA GESTION ADMINISTRATIVA EN MANTENIMIENTO AUTOMOTRIZ, S.A.|Calle Bretaña 134|Zacahuizco|México|Entre calle Palmarola y calle Torento|Iztapalapa|Distrito Federal|México|09440|Régimen General de Ley Personas Morales|UNA2907227Y5|UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO|AVE. UNIVERSIDAD # 3000|UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO C.U.|MEXICO|COYOACAN|DISTRITO FEDERAL|MEXICO|04510|1.000000|EA|BOMBA DE FRENOS|10922.000000|10922.000000|1.000000|EA|REPARACION DE BOOSTER|2975.000000|2975.000000|1.000000|EA|LIQUIDO DE FRENOS|85.000000|85.000000|IVA|16.000000|2237.120000|2237.120000||PHP Error[8]: Undefined variable: certificate
+    in file /Applications/MAMP/public_html/yanus/protected/models/Cfd.php at line 1214
+#0 /Applications/MAMP/public_html/yanus/protected/commands/SignCfdCommand.php(21): Cfd->signXml()
+#1 /Applications/MAMP/framework/console/CConsoleCommandRunner.php(68): SignCfdCommand->run()
+#2 /Applications/MAMP/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#3 /Applications/MAMP/framework/base/CApplication.php(162): CConsoleApplication->processRequest()
+#4 /Applications/MAMP/framework/yiic.php(34): CConsoleApplication->run()
+#5 /Applications/MAMP/public_html/yanus/protected/yiic.php(19): require_once()
+#6 /Applications/MAMP/public_html/yanus/protected/yiic(4): require_once()

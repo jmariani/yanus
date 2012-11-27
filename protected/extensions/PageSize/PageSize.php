@@ -13,17 +13,32 @@ class PageSize extends CWidget {
     public $mGridId = '';
     public $mDefPageSize = 10;
     public $label = 'Items per page';
+    public $htmlOptions;
 
     public function run() {
         Yii::app()->user->setState('pageSize', $this->mPageSize);
 
         $this->mPageSize = null == $this->mPageSize ? $this->mDefPageSize : $this->mPageSize;
 
-        echo $this->label . ': ';
-        echo GxHtml::dropDownList('pageSize', $this->mPageSize, $this->mPageSizeOptions, array(
+//        echo $this->label . ': ';
+        $htmlOptions = array(
             'onchange' => "$.fn.yiiGridView.update('$this->mGridId',{ data:{pageSize: $(this).val() }})",
-            'style'=>'width: 60px',
-        ));
+            'style' => 'width: 60px',
+        );
+        echo $this->label . ': ';
+//        $this->widget('bootstrap.widgets.TbButtonGroup', array(
+//            'buttons' => array(
+//                array('label' => '10', 'url' => '#'),
+//                array('label' => '25', 'url' => '#'),
+//                array('label' => '50', 'url' => '#'),
+//                array('label' => '75', 'url' => '#'),
+//                array('label' => '100', 'url' => '#')
+//            ),
+//        ));
+//        echo GxHtml::label($this->label . ': ', 'pageSize', array('display' => 'inline'));
+        if ($this->htmlOptions)
+            $htmlOptions = array_merge($htmlOptions, $this->htmlOptions);
+        echo GxHtml::dropDownList('pageSize', $this->mPageSize, $this->mPageSizeOptions, $htmlOptions);
     }
 
 }

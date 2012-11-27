@@ -53,7 +53,7 @@
 	?>
 <?php endforeach; ?>
  */
-abstract class <?php echo $this->baseModelClass; ?> extends <?php echo $this->baseClass; ?> {
+abstract class <?php echo $this->baseModelClass; ?> extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -89,11 +89,12 @@ abstract class <?php echo $this->baseModelClass; ?> extends <?php echo $this->ba
 	}
 
 	public function relations() {
-		return array(
+		$relations = array(
 <?php foreach($relations as $name=>$relation): ?>
 			<?php echo "'{$name}' => {$relation},\n"; ?>
 <?php endforeach; ?>
 		);
+                return array_merge($relations, parent::relations());
 	}
 
 	public function pivotModels() {

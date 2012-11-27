@@ -14,14 +14,13 @@
  * @property string $reference
  * @property integer $Cfd_id
  * @property integer $Address_id
- * @property integer $AddressType_id
+ * @property string $type
  *
  * @property Cfd $cfd
- * @property AddressType $addressType
  * @property Address $address
  */
-abstract class BaseCfdAddress extends GxActiveRecord {
-
+//abstract class BaseCfdAddress extends GxActiveRecord {
+abstract class BaseCfdAddress extends EAVActiveRecord {
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
 	}
@@ -40,18 +39,18 @@ abstract class BaseCfdAddress extends GxActiveRecord {
 
 	public function rules() {
 		return array(
-			array('Cfd_id, Address_id, AddressType_id', 'required'),
-			array('Cfd_id, Address_id, AddressType_id', 'numerical', 'integerOnly'=>true),
+			array('Cfd_id, Address_id', 'required'),
+			array('Cfd_id, Address_id', 'numerical', 'integerOnly'=>true),
+			array('type', 'length', 'max'=>255),
 			array('name, reference', 'safe'),
-			array('name, reference', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, name, reference, Cfd_id, Address_id, AddressType_id', 'safe', 'on'=>'search'),
+			array('name, reference, type', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, name, reference, Cfd_id, Address_id, type', 'safe', 'on'=>'search'),
 		);
 	}
 
 	public function relations() {
 		return array(
 			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
-			'addressType' => array(self::BELONGS_TO, 'AddressType', 'AddressType_id'),
 			'address' => array(self::BELONGS_TO, 'Address', 'Address_id'),
 		);
 	}
@@ -68,9 +67,8 @@ abstract class BaseCfdAddress extends GxActiveRecord {
                 			'reference' => yii::t('app', 'Reference'),
                         			                        'Cfd_id' => yii::t('app', 'Cfd'),
                         			                        'Address_id' => yii::t('app', 'Address'),
-                        			                        'AddressType_id' => yii::t('app', 'Address Type'),
+                			'type' => yii::t('app', 'Type'),
                         			                        'cfd' => yii::t('app', 'Cfd'),
-                        			                        'addressType' => yii::t('app', 'Address Type'),
                         			                        'address' => yii::t('app', 'Address'),
 		);
 	}
@@ -84,7 +82,7 @@ abstract class BaseCfdAddress extends GxActiveRecord {
 		$criteria->compare('reference', $this->reference, true);
 		$criteria->compare('Cfd_id', $this->Cfd_id);
 		$criteria->compare('Address_id', $this->Address_id);
-		$criteria->compare('AddressType_id', $this->AddressType_id);
+		$criteria->compare('type', $this->type, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,

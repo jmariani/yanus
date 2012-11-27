@@ -21,7 +21,8 @@ class GiixModelCode extends ModelCode {
 	/**
 	 * @var string The (base) model base class name.
 	 */
-	public $baseClass = 'GxActiveRecord';
+//	public $baseClass = 'GxActiveRecord';
+	public $baseClass = 'EAVActiveRecord';
 	/**
 	 * @var string The path of the base model.
 	 */

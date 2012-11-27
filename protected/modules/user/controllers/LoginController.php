@@ -8,6 +8,7 @@ class LoginController extends Controller {
      * Displays the login page
      */
     public function actionLogin() {
+        yii::trace('Hello', get_class($this));
         if (Yii::app()->user->isGuest) {
             $model = new UserLogin;
             // collect user input data

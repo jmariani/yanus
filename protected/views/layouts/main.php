@@ -25,7 +25,7 @@
 		<div id="logo"><?php echo CHtml::encode(Yii::app()->name); ?></div>
 	</div> header
         -->
-        <?php $this->widget('bootstrap.widgets.BootNavbar', array(
+        <?php $this->widget('bootstrap.widgets.TbNavbar', array(
             'fixed'=>false,
             'brand'=>CHtml::encode(Yii::app()->name),
             'brandUrl'=>'#',
@@ -33,7 +33,7 @@
             'collapse'=>true, // requires bootstrap-responsive.css
             'items'=>array(
                 array(
-                    'class'=>'bootstrap.widgets.BootMenu',
+                    'class'=>'bootstrap.widgets.TbMenu',
 			'items'=>array(
 				array('label'=>'Home', 'url'=>array('/site/index')),
 				array('label'=>'About', 'url'=>array('/site/page', 'view'=>'about')),
@@ -49,7 +49,7 @@
                 ),
 //                '<form class="navbar-search pull-left" action=""><input type="text" class="search-query span2" placeholder="Search"></form>',
                 array(
-                    'class'=>'bootstrap.widgets.BootMenu',
+                    'class'=>'bootstrap.widgets.TbMenu',
                     'htmlOptions'=>array('class'=>'pull-right'),
                     'items'=>array(
                                 array('label'=>'Rights', 'url'=>array('/rights'), 'visible'=>!Yii::app()->user->isGuest),
@@ -73,7 +73,7 @@
         )); ?>
 <!--
 	<div id="mainmenu">
-                <?php $this->widget('bootstrap.widgets.BootMenu', array(
+                <?php $this->widget('bootstrap.widgets.TbMenu', array(
                     'type'=>'pills', // '', 'tabs', 'pills' (or 'list')
                     'stacked'=>false, // whether this is a stacked menu
 			'items'=>array(
@@ -93,7 +93,7 @@
         -->
         <div class="container" id="page">
             <?php if(isset($this->breadcrumbs)):?>
-                <?php $this->widget('bootstrap.widgets.BootBreadcrumbs', array(
+                <?php $this->widget('bootstrap.widgets.TbBreadcrumbs', array(
                     'links'=>$this->breadcrumbs,
                 )); ?>
 	<?php endif?>

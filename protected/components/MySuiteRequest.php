@@ -31,6 +31,8 @@ class MySuiteRequest {
 
     const TRANSACTION_TIMBRAR = 'TIMBRAR';
 
+    const TIMBRE_OUT_OF_TIME_LIMIT = 'TIMBRE_OUT_OF_TIME_LIMIT';
+    
     public $requestor;
     public $transaction;
     public $country = 'MX';
@@ -60,13 +62,14 @@ class MySuiteRequest {
             'Data3' => "");
 
         $client = new nusoap_client($this->url, true);
+        $client->debugLevel = 1;
         $client->soap_defencoding = 'UTF-8';
 
         $requestResult = $client->call('RequestTransaction', $param);
 
         var_dump($client->request);
         var_dump($requestResult);
-        
+
         $response = new MySuiteResponse();
         $response->code = $requestResult['RequestTransactionResult']['Response']['Code'];
         $response->data = utf8_encode($requestResult['RequestTransactionResult']['Response']['Data']);

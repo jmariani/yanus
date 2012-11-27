@@ -27,11 +27,27 @@ $('.search-form form').submit(function(){
 ?>
 <h1><?php echo Yii::t('app', 'Manage') . ' ' . GxHtml::encode($model->label(2)); ?></h1>
 
-<div class="flash-notice"><?php echo Yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done'); ?>.</div>
-<?php $this->widget('bootstrap.widgets.BootButtonGroup', array(
+<?php
+Yii::app()->user->setFlash('info', '<strong>Note: </strong> ' . Yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done'));
+$this->widget('bootstrap.widgets.TbAlert', array(
+    'block'=>true, // display a larger alert block?
+    'fade'=>true, // use transitions?
+    'closeText'=>false, // close link text - if set to false, no close link is displayed
+//    'alerts'=>array( // configurations per alert type
+//        'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'), // success, info, warning, error or danger
+//        'info'=>array('block'=>true, 'fade'=>true, ), // success, info, warning, error or danger
+//    ),
+));
+?>
+
+<?php $this->widget('bootstrap.widgets.TbButtonGroup', array(
     'buttons'=>array(
-        array('buttonType'=>'link', 'icon'=>'search', 'label'=>Yii::t('app', 'Advanced Search'), 'url' => '#', 'htmlOptions' => array('class' => 'search-button')),
-        array('buttonType'=>'link', 'icon'=>'upload', 'label'=>Yii::t('app', 'Upload new' . ' ' . $model->label()), 'url' => array('upload')),
+//        array('buttonType'=>'link', 'icon'=>'search', 'label'=>Yii::t('app', 'Advanced Search'), 'url' => '#', 'htmlOptions' => array('class' => 'search-button')),
+        array(
+            'buttonType'=>'link',
+            'icon'=>'upload',
+            'url' => array('upload'),
+            'htmlOptions' => array('rel' => 'tooltip', 'title' => Yii::t('app', 'Upload new') . ' ' . $model->label(), )),
         ),
 )); ?>
 <!--
@@ -54,19 +70,19 @@ $('.search-form form').submit(function(){
 ));
 ?>
 </div>
-<?php $this->widget('bootstrap.widgets.BootGridView',array(
+<?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'pemex-pre-invoice-grid',
 	'dataProvider'=>$model->search(),
         'type'=>'striped bordered condensed',
 	'filter'=>$model,
 	'columns'=>array(
-		'fileName',
 		'poNbr',
 		'copade',
 		'addenda',
-                array(
-                    'class'=>'bootstrap.widgets.BootButtonColumn',
-                    'htmlOptions'=>array('style'=>'width: 50px'),
-                ),
+		'fileName',
+//                array(
+//                    'class'=>'bootstrap.widgets.TbButtonColumn',
+//                    'htmlOptions'=>array('style'=>'width: 50px'),
+//                ),
 	),
 )); ?>

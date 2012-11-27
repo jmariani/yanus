@@ -7,19 +7,20 @@
  * property or method in class "IncomingInvoiceInterfaceFile".
  *
  * Columns in table "IncomingInvoiceInterfaceFile" available as properties of the model,
- * followed by relations of table "IncomingInvoiceInterfaceFile" available as properties of the model.
+ * and there are no model relations.
  *
  * @property integer $id
  * @property string $fileName
+ * @property string $status
  * @property string $receptionDttm
+ * @property string $validationDttm
  * @property string $processDttm
  * @property string $note
- * @property string $nativeXmlFile
- * @property integer $IncomingInvoiceInterfaceFileStatus_id
+ * @property string $fileLocation
+ * @property string $logFileLocation
  *
- * @property IncomingInvoiceInterfaceFileStatus $incomingInvoiceInterfaceFileStatus
  */
-abstract class BaseIncomingInvoiceInterfaceFile extends GxActiveRecord {
+abstract class BaseIncomingInvoiceInterfaceFile extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -39,18 +40,15 @@ abstract class BaseIncomingInvoiceInterfaceFile extends GxActiveRecord {
 
 	public function rules() {
 		return array(
-			array('IncomingInvoiceInterfaceFileStatus_id', 'required'),
-			array('IncomingInvoiceInterfaceFileStatus_id', 'numerical', 'integerOnly'=>true),
-			array('fileName', 'length', 'max'=>255),
-			array('receptionDttm, processDttm, note, nativeXmlFile', 'safe'),
-			array('fileName, receptionDttm, processDttm, note, nativeXmlFile', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, fileName, receptionDttm, processDttm, note, nativeXmlFile, IncomingInvoiceInterfaceFileStatus_id', 'safe', 'on'=>'search'),
+			array('status', 'length', 'max'=>255),
+			array('fileName, receptionDttm, validationDttm, processDttm, note, fileLocation, logFileLocation', 'safe'),
+			array('fileName, status, receptionDttm, validationDttm, processDttm, note, fileLocation, logFileLocation', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, fileName, status, receptionDttm, validationDttm, processDttm, note, fileLocation, logFileLocation', 'safe', 'on'=>'search'),
 		);
 	}
 
 	public function relations() {
 		return array(
-			'incomingInvoiceInterfaceFileStatus' => array(self::BELONGS_TO, 'IncomingInvoiceInterfaceFileStatus', 'IncomingInvoiceInterfaceFileStatus_id'),
 		);
 	}
 
@@ -63,29 +61,29 @@ abstract class BaseIncomingInvoiceInterfaceFile extends GxActiveRecord {
 		return array(
                 			'id' => yii::t('app', 'Id'),
                 			'fileName' => yii::t('app', 'File Name'),
+                			'status' => yii::t('app', 'Status'),
                 			'receptionDttm' => yii::t('app', 'Reception Dttm'),
+                			'validationDttm' => yii::t('app', 'Validation Dttm'),
                 			'processDttm' => yii::t('app', 'Process Dttm'),
                 			'note' => yii::t('app', 'Note'),
-                			'nativeXmlFile' => yii::t('app', 'Native Xml File'),
-                        			                        'IncomingInvoiceInterfaceFileStatus_id' => yii::t('app', 'Incoming Invoice Interface File Status'),
-                        			                        'incomingInvoiceInterfaceFileStatus' => yii::t('app', 'Incoming Invoice Interface File Status'),
+                			'fileLocation' => yii::t('app', 'File Location'),
+                			'logFileLocation' => yii::t('app', 'Log File Location'),
 		);
 	}
 
-    public function defaultScope() {
-        return array('order' => $this->getTableAlias(false, false) . '.' . BaseIncomingInvoiceInterfaceFile::representingColumn() . ' ASC');
-    }
 
 	public function search() {
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id);
 		$criteria->compare('fileName', $this->fileName, true);
+		$criteria->compare('status', $this->status, true);
 		$criteria->compare('receptionDttm', $this->receptionDttm, true);
+		$criteria->compare('validationDttm', $this->validationDttm, true);
 		$criteria->compare('processDttm', $this->processDttm, true);
 		$criteria->compare('note', $this->note, true);
-		$criteria->compare('nativeXmlFile', $this->nativeXmlFile, true);
-		$criteria->compare('IncomingInvoiceInterfaceFileStatus_id', $this->IncomingInvoiceInterfaceFileStatus_id);
+		$criteria->compare('fileLocation', $this->fileLocation, true);
+		$criteria->compare('logFileLocation', $this->logFileLocation, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,

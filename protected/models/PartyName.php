@@ -4,6 +4,9 @@ Yii::import('application.models._base.BasePartyName');
 
 class PartyName extends BasePartyName {
 
+    public function __toString() {
+        return $this->fullName;
+    }
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }

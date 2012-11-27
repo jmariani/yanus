@@ -19,67 +19,68 @@
  */
 abstract class BaseCustomsPermit extends GxActiveRecord {
 
-	public static function model($className=__CLASS__) {
-		return parent::model($className);
-	}
+    public static function model($className = __CLASS__) {
+        return parent::model($className);
+    }
 
-	public function tableName() {
-		return 'CustomsPermit';
-	}
+    public function tableName() {
+        return 'CustomsPermit';
+    }
 
-	public static function label($n = 1) {
+    public static function label($n = 1) {
         return Yii::t('app', 'Customs Permit|Customs Permits', $n);
-	}
+    }
 
-	public static function representingColumn() {
-		return 'nbr';
-	}
+    public static function representingColumn() {
+        return 'nbr';
+    }
 
-	public function rules() {
-		return array(
-			array('nbr, dt', 'required'),
-			array('nbr', 'length', 'max'=>45),
-			array('office', 'safe'),
-			array('office', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, nbr, dt, office', 'safe', 'on'=>'search'),
-		);
-	}
+    public function rules() {
+        return array(
+            array('nbr, dt', 'required'),
+            array('nbr', 'length', 'max' => 45),
+            array('office', 'safe'),
+            array('office', 'default', 'setOnEmpty' => true, 'value' => null),
+            array('id, nbr, dt, office', 'safe', 'on' => 'search'),
+        );
+    }
 
-	public function relations() {
-		return array(
-			'cfdItems' => array(self::MANY_MANY, 'CfdItem', 'CfdItem_has_CustomsPermit(CustomsPermit_id, CfdItem_id)'),
-			'cfds' => array(self::MANY_MANY, 'Cfd', 'Cfd_has_CustomsPermit(CustomsPermit_id, Cfd_id)'),
-		);
-	}
+    public function relations() {
+        return array(
+            'cfdItems' => array(self::MANY_MANY, 'CfdItem', 'CfdItem_has_CustomsPermit(CustomsPermit_id, CfdItem_id)'),
+            'cfds' => array(self::MANY_MANY, 'Cfd', 'Cfd_has_CustomsPermit(CustomsPermit_id, Cfd_id)'),
+        );
+    }
 
-	public function pivotModels() {
-		return array(
-			'cfdItems' => 'CfdItemHasCustomsPermit',
-			'cfds' => 'CfdHasCustomsPermit',
-		);
-	}
+    public function pivotModels() {
+        return array(
+            'cfdItems' => 'CfdItemHasCustomsPermit',
+            'cfds' => 'CfdHasCustomsPermit',
+        );
+    }
 
-	public function attributeLabels() {
-		return array(
-                			'id' => yii::t('app', 'Id'),
-                			'nbr' => yii::t('app', 'Nbr'),
-                			'dt' => yii::t('app', 'Dt'),
-                			'office' => yii::t('app', 'Office'),
-                        			                        'cfdItems' => yii::t('app', 'Cfd Items'),
-                        			                        'cfds' => yii::t('app', 'Cfds'),
-		);
-	}
+    public function attributeLabels() {
+        return array(
+            'id' => yii::t('app', 'Id'),
+            'nbr' => yii::t('app', 'Nbr'),
+            'dt' => yii::t('app', 'Dt'),
+            'office' => yii::t('app', 'Office'),
+            'cfdItems' => yii::t('app', 'Cfd Items'),
+            'cfds' => yii::t('app', 'Cfds'),
+        );
+    }
 
-	public function search() {
-		$criteria = new CDbCriteria;
+    public function search() {
+        $criteria = new CDbCriteria;
 
-		$criteria->compare('id', $this->id);
-		$criteria->compare('nbr', $this->nbr, true);
-		$criteria->compare('dt', $this->dt, true);
-		$criteria->compare('office', $this->office, true);
+        $criteria->compare('id', $this->id);
+        $criteria->compare('nbr', $this->nbr, true);
+        $criteria->compare('dt', $this->dt, true);
+        $criteria->compare('office', $this->office, true);
 
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-		));
-	}
+        return new CActiveDataProvider($this, array(
+                    'criteria' => $criteria,
+                ));
+    }
+
 }

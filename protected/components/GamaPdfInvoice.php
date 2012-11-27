@@ -48,29 +48,29 @@ class GamaPdfInvoice extends TCPDF {
     private $cbb;
 
     public function Header() {
-        $primaryAddress = false;
-        $invoicedFrom = false;
-        $soldTo = false;
-        $shipTo = false;
-
-        // Get vendor attributes
-        $vendorAttr = $this->invoice->vendorParty->getAttributesAssocArray();
-        // Get customer attributes
-        $customerAttr = $this->invoice->customerParty->getAttributesAssocArray();
-
-        // Get addresses.
-        foreach ($this->invoice->cfdAddresses as $invoiceAddress) {
-            switch ($invoiceAddress->type) {
-                case AddressTypeBehavior::FISCAL:
-                    $primaryAddress = $invoiceAddress;
-                    break;
-                case AddressTypeBehavior::BILL_TO:
-                    $soldTo = $invoiceAddress;
-                    break;
-                default:
-                    break;
-            }
-        }
+//        $primaryAddress = false;
+//        $invoicedFrom = false;
+//        $soldTo = false;
+//        $shipTo = false;
+//
+//        // Get vendor attributes
+//        $vendorAttr = $this->invoice->vendorParty->getAttributesAssocArray();
+//        // Get customer attributes
+//        $customerAttr = $this->invoice->customerParty->getAttributesAssocArray();
+//
+//        // Get addresses.
+//        foreach ($this->invoice->cfdAddresses as $invoiceAddress) {
+//            switch ($invoiceAddress->type) {
+//                case AddressTypeBehavior::FISCAL:
+//                    $primaryAddress = $invoiceAddress;
+//                    break;
+//                case AddressTypeBehavior::BILL_TO:
+//                    $soldTo = $invoiceAddress;
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
 
         // get RFC
 
@@ -86,12 +86,12 @@ class GamaPdfInvoice extends TCPDF {
 
         // GAMA Information
         $this->SetFont("helvetica", "BI", 7);
-        $this->Cell(0, 0, $this->invoice->vendorName,
+        $this->Cell(0, 0, $this->invoice->vendorParty->name,
                 '',  // NO border
                 1,    // Put cursor in next line
                 "R"   // Align right
                 );
-        $this->Cell(0, 0, 'R.F.C: ' . $this->invoice->vendorRfc,
+        $this->Cell(0, 0, 'R.F.C: ' . $this->invoice->vendorParty->rfc,
                 'B',  // No bottom border
                 1,    // Put cursor in next line
                 "R"   // Align right
@@ -100,33 +100,32 @@ class GamaPdfInvoice extends TCPDF {
         // GAMA address
         $this->SetFont("helvetica", 'I', 5);
         $this->Cell(0, 0,
-                $primaryAddress->address->street . ' ' .
-                'Colonia ' . $primaryAddress->address->neighbourhood . ' ' .
-                'Delegación ' . $primaryAddress->address->municipality,
+                $this->invoice->primaryAddress->street . ' ' .
+                    'Colonia ' . $this->invoice->primaryAddress->neighbourhood . ' ' .
+                    'Delegación ' . $this->invoice->primaryAddress->municipality,
                 '',  // No bottom border
                 1,    // Put cursor in next line
                 "R"   // Align right
                 );
         $this->Cell(0, 0,
-                'C.P. ' . $primaryAddress->address->zipCode . ', ' .
-                $primaryAddress->address->city . ', ' .
-                $primaryAddress->address->state . ', ' .
-                $primaryAddress->address->country,
+                'C.P. ' . $this->invoice->primaryAddress->zipCode . ', ' .
+                $this->invoice->primaryAddress->city . ', ' .
+                $this->invoice->primaryAddress->state . ', ' .
+                $this->invoice->primaryAddress->country,
                 '',  // No bottom border
                 1,    // Put cursor in next line
                 "R"   // Align right
                 );
-        $phone = PartyPhoneLocator::model()->current()->find('Party_id = :id', array(':id' => $this->invoice->vendorParty->id));
+        $phone = $this->invoice->vendorParty->primaryPhone;
         $this->Cell(0, 0,
-                'TEL. ' . ($phone ? yii::app()->phoneFormatter->format($phone->value) : ''),
+                'TEL. ' . ($phone ? yii::app()->phoneFormatter->format($phone) : ''),
                 '',  // No bottom border
                 1,    // Put cursor in next line
                 "R"   // Align right
                 );
-
         $fiscalRegime = '';
         foreach ($this->invoice->cfdTaxRegimes as $taxRegime) {
-            $fiscalRegime .= $taxRegime->name;
+            $fiscalRegime .= $taxRegime->name . ', ';
         }
         $this->Cell(0, 0,
                 'Régimen fiscal: ' . $fiscalRegime,
@@ -142,7 +141,7 @@ class GamaPdfInvoice extends TCPDF {
 
         // CUSTOMER NAME
         $this->SetFont("helvetica", '', 7);
-        $this->Cell(self::WIDTH_CUSTOMER_BOX, 0, $this->invoice->customerName, 'LTR', 0, 'L', false, '', 1);
+        $this->Cell(self::WIDTH_CUSTOMER_BOX, 0, $this->invoice->customerParty->name, 'LTR', 0, 'L', false, '', 1);
 
         // INVOICE TYPE
         $this->SetFont("helvetica", 'BI', 7);
@@ -156,11 +155,11 @@ class GamaPdfInvoice extends TCPDF {
         // CUSTOMER STREET
         $this->SetFont("helvetica", '', 7);
         $this->Cell(self::WIDTH_CUSTOMER_BOX, 0,
-                $soldTo->address->street,
-                'LR',  // Left right border
-                0,    // Put cursor to the right
-                "L"   // Align left
-                , false, '', 1);
+            $this->invoice->billToAddress->street,
+            'LR',  // Left right border
+            0,    // Put cursor to the right
+            "L"   // Align left
+            , false, '', 1);
 
         // INVOICE NUMBER
         $this->SetFont("helvetica", '', 7);
@@ -174,7 +173,7 @@ class GamaPdfInvoice extends TCPDF {
         // CUSTOMER COLONY
         $this->SetFont("helvetica", '', 7);
         $this->Cell(self::WIDTH_CUSTOMER_BOX, 0,
-                'COLONIA: ' . $soldTo->address->neighbourhood,
+                'COLONIA: ' . $this->invoice->billToAddress->neighbourhood,
                 'LR',  // Left right border
                 0,    // Put cursor to the right
                 "L"   // Align left
@@ -192,11 +191,11 @@ class GamaPdfInvoice extends TCPDF {
         // CUSTOMER MUNICIPALITY and ZIPCODE
         $this->SetFont("helvetica", '', 7);
         $this->Cell(self::WIDTH_CUSTOMER_BOX, 0,
-                (trim($soldTo->address->municipality) ? 'DELEGACION: ' . $soldTo->address->municipality . ', ' : '') .
-                'C.P. ' . $soldTo->address->zipCode . ', ' .
-                (trim($soldTo->address->city) ? 'CIUDAD: ' . $soldTo->address->city . ', ' : '') .
-                (trim($soldTo->address->state) ? $soldTo->address->state  . ', ': '') .
-                $soldTo->address->country
+                (trim($this->invoice->billToAddress->municipality) ? 'DELEGACION: ' . $this->invoice->billToAddress->municipality . ', ' : '') .
+                'C.P. ' . $this->invoice->billToAddress->zipCode . ', ' .
+                (trim($this->invoice->billToAddress->city) ? 'CIUDAD: ' . $this->invoice->billToAddress->city . ', ' : '') .
+                (trim($this->invoice->billToAddress->state) ? $this->invoice->billToAddress->state  . ', ': '') .
+                $this->invoice->billToAddress->country
                 ,
                 'LR',  // Left right border
                 0,    // Put cursor to the right
@@ -215,16 +214,19 @@ class GamaPdfInvoice extends TCPDF {
         // CUSTOMER RFC
         $this->SetFont("helvetica", '', 7);
         $this->Cell(self::WIDTH_CUSTOMER_BOX, 0,
-                'CLAVE DEL R.F.C. ' . $this->invoice->customerRfc,
+                'CLAVE DEL R.F.C. ' . $this->invoice->customerParty->rfc,
                 'LR',  // Left bottomright border
                 0,    // Put cursor next line
                 "L"   // Align left
                 );
         // SUPPLIER NUMBER
+        // find supplier number
+        $phr = PartyHasRelationship::model()->find('party_id = :id and relatedParty_id = :rpid and type = :type',
+                array(':id' => $this->invoice->customerParty->id, ':rpid' => $this->invoice->vendorParty->id, ':type' => PartyRelationshipTypeBehavior::SUPPLIER));
         $this->SetFont("helvetica", '', 7);
         $this->Cell(self::WIDTH_INVOICE_BOX, 0,
-                (isset($customerAttr['nbr']) && $customerAttr['nbr'] ?
-                    'Nº de proveedor GAMA para el cliente: ' . $customerAttr['nbr'] : ''),
+                ($phr && isset($phr->suppliercode) ?
+                    'Nº de proveedor GAMA para el cliente: ' . $phr->supplierCode : ''),
                 1,  // Frame
                 1,    // Put cursor next line
                 "C"   // Align left
@@ -298,7 +300,7 @@ class GamaPdfInvoice extends TCPDF {
 //        $this->Image($this->invoice->MasterRecord->invoicelogofile, 10, 16, 60);
 //        $this->Image($this->master->getAttr(MasterRecordAttribute::INVOICE_LOGO_FILE)->value, 10, 16, 60);
         $this->Image(yii::getPathOfAlias('application') . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'invoiceLogo' .
-                DIRECTORY_SEPARATOR . $this->invoice->vendorRfc . '.png', 10, 16, 60);
+                DIRECTORY_SEPARATOR . $this->invoice->vendorParty->rfc . '.png', 10, 16, 60);
     }
 
     public function Footer(){
@@ -354,7 +356,7 @@ class GamaPdfInvoice extends TCPDF {
         $this->Cell(self::WIDTH_UNP, 0, 'I.V.A. (16%)', 'LR', 0, 'R');
 
         $this->SetFont("helvetica", '', 7);
-        $this->Cell(self::WIDTH_AMT, 0, number_format($this->invoice->taxAmt, 2), 'LR', 1, 'R');
+        $this->Cell(self::WIDTH_AMT, 0, number_format($this->invoice->tax, 2), 'LR', 1, 'R');
 
 
         $this->SetFont("helvetica", "B", 7);
@@ -367,7 +369,7 @@ class GamaPdfInvoice extends TCPDF {
         $this->Cell(self::WIDTH_AMT, 0, number_format($this->invoice->total, 2), 'LR', 1, 'R');
 
 
-        $pagare = 'DEBO (EMOS) Y PAGARE (MOS) INCONDICIONALMENTE A LA ORDEN DE ' . $this->invoice->vendorName.
+        $pagare = 'DEBO (EMOS) Y PAGARE (MOS) INCONDICIONALMENTE A LA ORDEN DE ' . $this->invoice->vendorParty->name .
                 ' EN SUS OFICINAS EN MEXICO DF EL DIA ___ POR LA CANTIDAD DE $ ' . number_format($this->invoice->total, 2) . ' MN '.
                 'VALOR DE LA MERCANCIA QUE HE (MOS) RECIBIDO A ENTERA SATISFACCION. ' .
                 'ESTE PAGARE ES MERCANTIL Y ESTA REGIDO POR LA LEY GENERAL DE TITULOS DE CREDITO EN SU ART. 73 PARTE FINAL ' .
@@ -378,7 +380,7 @@ class GamaPdfInvoice extends TCPDF {
 
         $this->Ln(6);
 
-        $this->Cell(0, 0, $this->invoice->vendorName, "T", 1, "R");
+        $this->Cell(0, 0, $this->invoice->vendorParty->name, "T", 1, "R");
 
         // Sello
         $this->ln(2);
@@ -388,35 +390,35 @@ class GamaPdfInvoice extends TCPDF {
         $this->SetFont("courier", "B", 6);
         $this->Cell(self::WIDTH_SAT_LABELS, 0, 'FOLIO FISCAL', 0, 0, 'R');
         $this->SetFont("courier", '', 6);
-        $this->Cell(0, 0, $this->invoice->uuid, 0, 1);
+        $this->Cell(0, 0, $this->invoice->SatStamp->uuid, 0, 1);
 
         $this->SetFont("courier", "", 6);
         $this->Cell(self::WIDTH_CBB, 0, '', 0, 0);
         $this->SetFont("courier", "B", 6);
         $this->Cell(self::WIDTH_SAT_LABELS, 0, 'FECHA TIMBRADO', 0, 0, 'R');
         $this->SetFont("courier", '', 6);
-        $this->Cell(0, 0, $this->invoice->dtsDttm, 0, 1);
+        $this->Cell(0, 0, $this->invoice->SatStamp->dttm, 0, 1);
 
         $this->SetFont("courier", "", 6);
         $this->Cell(self::WIDTH_CBB, 0, '', 0, 0);
         $this->SetFont("courier", "B", 6);
         $this->Cell(self::WIDTH_SAT_LABELS, 0, 'Nº DE SERIE DEL CERTIFICADO DEL SAT', 0, 0, 'R');
         $this->SetFont("courier", '', 6);
-        $this->Cell(0, 0, $this->invoice->dtsSatCertNbr, 0, 1);
+        $this->Cell(0, 0, $this->invoice->SatStamp->certificate, 0, 1);
 
         $this->SetFont("courier", "", 6);
         $this->Cell(self::WIDTH_CBB, 0, '', 0, 0);
         $this->SetFont("courier", "B", 6);
         $this->Cell(self::WIDTH_SAT_LABELS, 0, 'Nº DE SERIE DEL CERTIFICADO DEL EMISOR', 0, 0, 'R');
         $this->SetFont("courier", '', 6);
-        $this->Cell(0, 0, $this->invoice->certNbr, 0, 1);
+        $this->Cell(0, 0, $this->invoice->satCertificate->nbr, 0, 1);
 
         $this->SetFont("courier", "", 6);
         $this->Cell(self::WIDTH_CBB, 0, '', 0, 0);
         $this->SetFont("courier", "B", 6);
         $this->Cell(self::WIDTH_SAT_LABELS, 0, 'SELLO DIGITAL DEL SAT', 0, 0, 'R');
         $this->SetFont("courier", '', 6);
-        $this->MultiCell(0, 0, $this->invoice->dtsSatSeal, 0, 'L', false, 1);
+        $this->MultiCell(0, 0, $this->invoice->SatStamp->stamp, 0, 'L', false, 1);
 
         $this->SetFont("courier", "", 6);
         $this->Cell(self::WIDTH_CBB, 0, '', 0, 0);
@@ -430,7 +432,7 @@ class GamaPdfInvoice extends TCPDF {
         $this->SetFont("courier", "B", 6);
         $this->MultiCell(self::WIDTH_SAT_LABELS, 0, 'CADENA ORIGINAL DEL COMPLEMENTO DE CERTIFICACION DIGITAL DEL SAT', 0, 'R', false, 0);
         $this->SetFont("courier", '', 6);
-        $this->MultiCell(0, 0, $this->invoice->dtsOriginalString, 0, 'L', false, 1);
+        $this->MultiCell(0, 0, $this->invoice->SatStamp->originalString, 0, 'L', false, 1);
 
         // CBB
         $style = array(
@@ -446,16 +448,11 @@ class GamaPdfInvoice extends TCPDF {
         $this->write2DBarcode($this->invoice->cbb, "QRCODE,H", 10, 215, 55, 55, $style);
 
     }
-//    public function create($invoice, $fname, $target){
+
     public function create($invoice, $fname, $target = 'F'){
-
-        // get master
-//        $this->master = Doctrine::getTable('MasterRecord')->find($invoice->masterrecord_id);
-
         $this->invoice = $invoice;
         $this->cbb = $invoice->cbb;
 
-        $pedimentos = array();
         $items = array();
 
         $row = 0;
@@ -478,92 +475,142 @@ class GamaPdfInvoice extends TCPDF {
         $this->issuePageBreak(true);
 
         $group = '';
+
         // Get cfd items
         $cfdItemCriteria = new CDbCriteria();
         $cfdItemCriteria->condition = 'Cfd_id = :id';
         $cfdItemCriteria->params = array(':id' => $this->invoice->id);
-        $cfdItemCriteria->order = 't.group ASC';
         $cfdItems = CfdItem::model()->findAll($cfdItemCriteria);
 
+        $grouping = array();
         foreach ($cfdItems as $item) {
-            // Get item attributes
-            $itemAttr = CfdItemAttribute::model()->findAll('CfdItem_id = :itemId', array(':itemId' => $item->id));
-            $cfdItemAttributes = $item->getAttributesAssocArray();
-
-//            $carModel = ($item->getAttr('carModel') ? $item->getAttr('carModel')->value : '');
-//            $licensePlate = ($item->getAttr('licensePlate') ? $item->getAttr('licensePlate')->value : '');
-//            $km = ($item->getAttr('km') ? $item->getAttr('km')->value : '');
-//            $engineNbr = ($item->getAttr('engineNbr') ? $item->getAttr('engineNbr')->value : '');
-//            $carSerialNbr = ($item->getAttr('carSerialNbr') ? $item->getAttr('carSerialNbr')->value : '');
-//            $carInventoryNbr = ($item->getAttr('carInventoryNbr') ? $item->getAttr('carInventoryNbr')->value : '');
-//            $userName = ($item->getAttr('userName') ? $item->getAttr('userName')->value : '');
-
-            if ($group != $item->group) {
-                $group = $item->group;
-                $this->row += 3;
-                $this->issuePageBreak();
-//                $this->SetFont("helvetica", "", 5);
-                $this->SetFont("helvetica", "B", 7);
-                if ((isset($cfdItemAttributes['vehicle']) && $cfdItemAttributes['vehicle'])
-                        || (isset($cfdItemAttributes['licensePlate']) && $cfdItemAttributes['licensePlate'])
-                        || (isset($cfdItemAttributes['km']) && $cfdItemAttributes['km'])) {
-                    $this->cell(0, 0, (isset($cfdItemAttributes['vehicle']) && $cfdItemAttributes['vehicle'] ? 'Vehículo: ' . $cfdItemAttributes['vehicle'] . ' ' : '') .
-                        (isset($cfdItemAttributes['licensePlate']) && $cfdItemAttributes['licensePlate'] ? 'Placas: ' . $cfdItemAttributes['licensePlate'] . ' ' : '') .
-                        (isset($cfdItemAttributes['km']) && $cfdItemAttributes['km'] ? 'KM: ' . number_format($cfdItemAttributes['km'], 0) : ''),
-                        'LR', 1, 'L', false, '', 1, false, '', 'C');
-                }
-                if ((isset($cfdItemAttributes['engineNbr']) && $cfdItemAttributes['engineNbr'])
-                        || (isset($cfdItemAttributes['serialNbr']) && $cfdItemAttributes['serialNbr'])
-                        || (isset($cfdItemAttributes['inventoryNbr']) && $cfdItemAttributes['inventoryNbr'])) {
-                    $this->issuePageBreak();
-                    $this->cell(0, 0,
-                            (isset($cfdItemAttributes['engineNbr']) && $cfdItemAttributes['engineNbr'] ? 'Nº de motor: ' . $cfdItemAttributes['engineNbr'] . ' ' : '') .
-                            (isset($cfdItemAttributes['serialNbr']) && $cfdItemAttributes['serialNbr'] ? 'Nº de serie: ' . $cfdItemAttributes['serialNbr'] . ' ' : '') .
-                            (isset($cfdItemAttributes['inventoryNbr']) && $cfdItemAttributes['inventoryNbr'] ? 'Nº de inventario: ' . number_format($cfdItemAttributes['inventoryNbr'], 0) : ''),
-                        'LR', 1, 'L', false, '', 1, false, '', 'C');
-                }
-                if (isset($cfdItemAttributes['user']) && $cfdItemAttributes['user']) {
-                    $this->issuePageBreak();
-                    $this->cell(0, 0, (isset($cfdItemAttributes['user']) && $cfdItemAttributes['user'] ? 'Usuario: ' . $cfdItemAttributes['user'] : ''),
-                        'LR', 1, 'L', false, '', 1, false, '', 'C');
-                }
+            if (!isset($grouping[$item->group])) $grouping[$item->group] = array();
+            $grouping[$item->group][] = $item;
+        }
+//        print_r($grouping);
+        foreach ($grouping as $groupItem) {
+            $this->row += 3;
+            $this->issuePageBreak();
+    ////                $this->SetFont("helvetica", "", 5);
+            $this->SetFont("helvetica", "B", 7);
+            if (isset($groupItem[0]->vehicle) || isset($groupItem[0]->licenseplate) || isset($groupItem[0]->km)) {
+                $this->cell(0, 0, (isset($groupItem[0]->vehicle) ? 'Vehículo: ' . $groupItem[0]->vehicle . ' ' : '') .
+                    (isset($groupItem[0]->licenseplate) ? 'Placas: ' . $groupItem[0]->licenseplate . ' ' : '') .
+                    (isset($groupItem[0]->km) ? 'KM: ' . number_format($groupItem[0]->km, 0) : ''),
+                    'LR', 1, 'L', false, '', 1, false, '', 'C');
             }
+            if (isset($groupItem[0]->enginenbr) || isset($groupItem[0]->serialnbr) || isset($groupItem[0]->inventorynbr)) {
+                $this->issuePageBreak();
+                $this->cell(0, 0,
+                        (isset($groupItem[0]->enginenbr) ? 'Nº de motor: ' . $groupItem[0]->enginenbr . ' ' : '') .
+                        (isset($groupItem[0]->serialnbr) ? 'Nº de serie: ' . $groupItem[0]->serialnbr . ' ' : '') .
+                        (isset($groupItem[0]->inventorynbr) ? 'Nº de inventario: ' . number_format($groupItem[0]->inventorynbr, 0) : ''),
+                    'LR', 1, 'L', false, '', 1, false, '', 'C');
+            }
+            if (isset($groupItem[0]->username)) {
+                $this->issuePageBreak();
+                $this->cell(0, 0, (isset($groupItem[0]->username) ? 'Usuario: ' . $groupItem[0]->username : ''),
+                    'LR', 1, 'L', false, '', 1, false, '', 'C');
+            }
+            foreach ($groupItem as $item) {
+                switch ($item->description) {
+                    case 'REFACCIONES':
+                    case 'MANO DE OBRA':
+                        $this->issuePageBreak();
+                        $this->ln();
+                        $this->row++;
 
-//            switch ($item->Product->name) {
-            switch ($item->description) {
-                case 'REFACCIONES':
-                case 'MANO DE OBRA':
-                    $this->issuePageBreak();
-                    $this->ln();
-                    $this->row++;
+                        $this->SetFont("helvetica", "B", 7);
+                        $this->issuePageBreak();
+                        $this->cell(0, 0, $item->description,
+                                1, 1, 'L', false, '', 1, false, '', 'C');
 
-                    $this->SetFont("helvetica", "B", 7);
-                    $this->issuePageBreak();
-                    $this->cell(0, 0, $item->description,
-                            1, 1, 'L', false, '', 1, false, '', 'C');
-
-                    $this->issuePageBreak();
-                    $this->ln();
-                    $this->row++;
-                    break;
-                default:
-                    $this->issuePageBreak();
-                    $this->SetFont("helvetica", "", 7);
-                    $this->cell(self::WIDTH_AUTH, 0, $cfdItemAttributes['authNbr'],
-                            1, 0, 'R', false, '', 1, false, '', 'C');
-                    $this->cell(self::WIDTH_QTY, 0, number_format($item->qty, 0),
-                            1, 0, 'R', false, '', 1, false, '', 'C');
-                    $this->cell(self::WIDTH_UOM, 0, $item->uom,
-                            1, 0, 'C', false, '', 1, false, '', 'C');
-                    $this->cell(self::WIDTH_DESC, 0, $item->description,
-                            1, 0, 'L', false, '', 1, false, '', 'C');
-                    $this->cell(self::WIDTH_UNP, 0, number_format($item->unitPrice, 2),
-                            1, 0, 'R', false, '', 1, false, '', 'C');
-                    $this->cell(self::WIDTH_AMT, 0, number_format($item->amt, 2),
-                            1, 1, 'R', false, '', 1, false, '', 'C');
-                    $this->row++;
+                        $this->issuePageBreak();
+                        $this->ln();
+                        $this->row++;
+                        break;
+                    default:
+                        $this->issuePageBreak();
+                        $this->SetFont("helvetica", "", 7);
+                        $this->cell(self::WIDTH_AUTH, 0, $item->authNbr,
+                                1, 0, 'R', false, '', 1, false, '', 'C');
+                        $this->cell(self::WIDTH_QTY, 0, number_format($item->qty, 0),
+                                1, 0, 'R', false, '', 1, false, '', 'C');
+                        $this->cell(self::WIDTH_UOM, 0, $item->uom,
+                                1, 0, 'C', false, '', 1, false, '', 'C');
+                        $this->cell(self::WIDTH_DESC, 0, $item->description,
+                                1, 0, 'L', false, '', 1, false, '', 'C');
+                        $this->cell(self::WIDTH_UNP, 0, number_format($item->unitPrice, 2),
+                                1, 0, 'R', false, '', 1, false, '', 'C');
+                        $this->cell(self::WIDTH_AMT, 0, number_format($item->amt, 2),
+                                1, 1, 'R', false, '', 1, false, '', 'C');
+                        $this->row++;
+                }
             }
         }
+//        foreach ($cfdItems as $item) {
+//            if ($group != $item->group) {
+//                $group = $item->group;
+//                $this->row += 3;
+//                $this->issuePageBreak();
+//////                $this->SetFont("helvetica", "", 5);
+//                $this->SetFont("helvetica", "B", 7);
+//                if (isset($item->vehicle) || isset($item->licenseplate) || isset($item->km)) {
+//                    $this->cell(0, 0, (isset($item->vehicle) ? 'Vehículo: ' . $item->vehicle . ' ' : '') .
+//                        (isset($item->licenseplate) ? 'Placas: ' . $item->licenseplate . ' ' : '') .
+//                        (isset($item->km) ? 'KM: ' . number_format($item->km, 0) : ''),
+//                        'LR', 1, 'L', false, '', 1, false, '', 'C');
+//                }
+//                if (isset($item->enginenbr) || isset($item->serialnbr) || isset($item->inventorynbr)) {
+//                    $this->issuePageBreak();
+//                    $this->cell(0, 0,
+//                            (isset($item->enginenbr) ? 'Nº de motor: ' . $item->enginenbr . ' ' : '') .
+//                            (isset($item->serialnbr) ? 'Nº de serie: ' . $item->serialnbr . ' ' : '') .
+//                            (isset($item->inventorynbr) ? 'Nº de inventario: ' . number_format($item->inventorynbr, 0) : ''),
+//                        'LR', 1, 'L', false, '', 1, false, '', 'C');
+//                }
+//                if (isset($item->username)) {
+//                    $this->issuePageBreak();
+//                    $this->cell(0, 0, (isset($item->username) ? 'Usuario: ' . $item->username : ''),
+//                        'LR', 1, 'L', false, '', 1, false, '', 'C');
+//                }
+//            }
+////
+//////            switch ($item->Product->name) {
+//            switch ($item->description) {
+//                case 'REFACCIONES':
+//                case 'MANO DE OBRA':
+//                    $this->issuePageBreak();
+//                    $this->ln();
+//                    $this->row++;
+//
+//                    $this->SetFont("helvetica", "B", 7);
+//                    $this->issuePageBreak();
+//                    $this->cell(0, 0, $item->description,
+//                            1, 1, 'L', false, '', 1, false, '', 'C');
+//
+//                    $this->issuePageBreak();
+//                    $this->ln();
+//                    $this->row++;
+//                    break;
+//                default:
+//                    $this->issuePageBreak();
+//                    $this->SetFont("helvetica", "", 7);
+//                    $this->cell(self::WIDTH_AUTH, 0, $item->authNbr,
+//                            1, 0, 'R', false, '', 1, false, '', 'C');
+//                    $this->cell(self::WIDTH_QTY, 0, number_format($item->qty, 0),
+//                            1, 0, 'R', false, '', 1, false, '', 'C');
+//                    $this->cell(self::WIDTH_UOM, 0, $item->uom,
+//                            1, 0, 'C', false, '', 1, false, '', 'C');
+//                    $this->cell(self::WIDTH_DESC, 0, $item->description,
+//                            1, 0, 'L', false, '', 1, false, '', 'C');
+//                    $this->cell(self::WIDTH_UNP, 0, number_format($item->unitPrice, 2),
+//                            1, 0, 'R', false, '', 1, false, '', 'C');
+//                    $this->cell(self::WIDTH_AMT, 0, number_format($item->amt, 2),
+//                            1, 1, 'R', false, '', 1, false, '', 'C');
+//                    $this->row++;
+//            }
+//        }
         $this->issuePageBreak();
         $this->ln();
         $this->row++;
@@ -591,7 +638,6 @@ class GamaPdfInvoice extends TCPDF {
             $this->issuePageBreak();
             $this->row++;
             $this->Cell(0, 0, $osChunk, '', 1, 'L');
-//            $originalString = substr($originalString, self::WIDTH_ORIGINAL_STRING);
         }
         $this->grandTotal();
         return $this->Output($fname, $target);

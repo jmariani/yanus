@@ -7,13 +7,21 @@ class PartyIdentifier extends BasePartyIdentifier {
     const CUSTOMER_CODE = 'CUSTOMER_CODE';
     const RFC = 'RFC';
 
+    public function __toString() {
+        return $this->value;
+    }
+
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
 
     public function behaviors() {
         return array(
-            'CurrentBehavior' => array('class' => 'ext.CurrentBehavior')
+            'name' => array(
+                'class' => 'PartyIdentifierNameBehavior',
+                'attribute' => 'name',
+            ),
+            'CurrentBehavior' => array('class' => 'ext.CurrentBehavior'),
         );
     }
 
@@ -23,7 +31,7 @@ class PartyIdentifier extends BasePartyIdentifier {
             array('Party_id', 'numerical', 'integerOnly' => true),
             array('name, value', 'length', 'max' => 45),
             array('effDt', 'safe'),
-            array('name, value, effDt', 'default', 'setOnEmpty' => true, 'value' => null),
+            array('name, value', 'default', 'setOnEmpty' => true, 'value' => null),
             array('id, name, value, effDt, Party_id', 'safe', 'on' => 'search'),
             array('effDt', 'default', 'setOnEmpty' => true, 'value' => new CDbExpression('NOW()')),
         );
@@ -31,7 +39,12 @@ class PartyIdentifier extends BasePartyIdentifier {
 
     public function scopes() {
         $scopes = parent::scopes();
-        $scopes['rfc'] = array('condition' => $this->getTableAlias(false, false) . '.name = "RFC"');
+        $names = new PartyIdentifierNameBehavior();
+        foreach ($names->getList() as $name => $value) {
+            $scopes[$name] = array('condition' => $this->getTableAlias(false, false) . '.name = "' . $name . '"');
+
+        }
         return $scopes;
     }
+
 }

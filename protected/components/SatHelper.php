@@ -37,6 +37,7 @@ class SatHelper {
         return $rfc;
     }
     public static function validateRfc($rfc) {
+        $rfc = trim($rfc);
         if (!preg_match(self::rfc_regex, $rfc))
             throw new CException(yii::t('app', 'RFC "{rfc}" is invalid.', array('{rfc}' => $rfc,)));
         // Validate RFC length
@@ -48,7 +49,7 @@ class SatHelper {
                 $innerPos = 4;
                 break;
             default:
-                throw new Exception(yii::t('app', 'RFC "{rfc}" is invalid. Length is {length} and it must be 12 or 13 characters long.',
+                throw new CException(yii::t('app', 'RFC "{rfc}" is invalid. RFC length must be 12 or 13 characters long and is {length}.',
                         array('{rfc}' => $rfc, '{length}' => strlen($rfc))));
         }
         // Validate inner section.
@@ -59,7 +60,7 @@ class SatHelper {
             // Try adding '20' to the year.
             $rfcYear = '20' . $rfcYear;
             if (!checkdate($rfcMonth, $rfcDay, $rfcYear)) {
-                throw new Exception(yii::t('app', 'RFC "{rfc}" is invalid. Inner segment of RFC must be a valid date (YYMMDD). Value reported: {inner}',
+                throw new CException(yii::t('app', 'RFC "{rfc}" is invalid. Inner segment of RFC must be a valid date (YYMMDD). Value reported: {inner}',
                         array('{rfc}' => $rfc, '{inner}' => substr($rfc, $innerPos, 6))));
             }
         }
@@ -79,7 +80,7 @@ class SatHelper {
             case 'A':
                 break;
             default:
-            throw new Exception(yii::t('app', 'RFC "{rfc}" is invalid. Invalid checksum. Checksum must be a number (0-9) or the letter "A". Value reported: {chksum}',
+            throw new CException(yii::t('app', 'RFC "{rfc}" is invalid. Invalid checksum. Checksum must be a number (0-9) or the letter "A". Value reported: {chksum}',
                     array('{rfc}' => $rfc, '{chksum}' => $checkSum)));
         }
         return true;

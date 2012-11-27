@@ -7,17 +7,16 @@
  * property or method in class "Eav".
  *
  * Columns in table "Eav" available as properties of the model,
- * followed by relations of table "Eav" available as properties of the model.
+ * and there are no model relations.
  *
  * @property integer $id
- * @property integer $Entity_id
- * @property string $attribute
+ * @property string $objectName
+ * @property integer $objectId
+ * @property string $code
  * @property string $value
- * @property string $effDt
  *
- * @property Entity $entity
  */
-abstract class BaseEav extends GxActiveRecord {
+abstract class BaseEav extends CActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -32,23 +31,21 @@ abstract class BaseEav extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'attribute';
+		return 'objectName';
 	}
 
 	public function rules() {
 		return array(
-			array('Entity_id', 'required'),
-			array('Entity_id', 'numerical', 'integerOnly'=>true),
-			array('attribute', 'length', 'max'=>45),
-			array('value, effDt', 'safe'),
-			array('attribute, value, effDt', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, Entity_id, attribute, value, effDt', 'safe', 'on'=>'search'),
+			array('objectId', 'numerical', 'integerOnly'=>true),
+			array('objectName, code', 'length', 'max'=>255),
+			array('value', 'safe'),
+			array('objectName, objectId, code, value', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, objectName, objectId, code, value', 'safe', 'on'=>'search'),
 		);
 	}
 
 	public function relations() {
 		return array(
-			'entity' => array(self::BELONGS_TO, 'Entity', 'Entity_id'),
 		);
 	}
 
@@ -60,25 +57,26 @@ abstract class BaseEav extends GxActiveRecord {
 	public function attributeLabels() {
 		return array(
                 			'id' => yii::t('app', 'Id'),
-                        			                        'Entity_id' => yii::t('app', 'Entity'),
-                			'attribute' => yii::t('app', 'Attribute'),
+                			'objectName' => yii::t('app', 'Object Name'),
+                			'objectId' => yii::t('app', 'Object Id'),
+                			'code' => yii::t('app', 'Code'),
                 			'value' => yii::t('app', 'Value'),
-                			'effDt' => yii::t('app', 'Eff Dt'),
-                        			                        'entity' => yii::t('app', 'Entity'),
 		);
 	}
+
 
 	public function search() {
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id);
-		$criteria->compare('Entity_id', $this->Entity_id);
-		$criteria->compare('attribute', $this->attribute, true);
+		$criteria->compare('objectName', $this->objectName, true);
+		$criteria->compare('objectId', $this->objectId);
+		$criteria->compare('code', $this->code, true);
 		$criteria->compare('value', $this->value, true);
-		$criteria->compare('effDt', $this->effDt, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
 		));
 	}
 }

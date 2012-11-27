@@ -117,4 +117,22 @@ class CfdController extends GxController {
 //    Placeholder for Rights
 //    public function actionUpload() {
 //    }
+
+    public function actiondlFile($id, $type) {
+        $model = Cfd::model()->findByPk($id);
+
+        switch ($type) {
+            case 'cfd':
+                $file = Yii::app()->file->set($model->cfdFile->location, true);
+                $file->download(pathinfo($model->cfdFile->location, PATHINFO_BASENAME));
+                break;
+            case 'pdf':
+                $file = Yii::app()->file->set($model->pdfFile->location, true);
+                $file->download($model->pdfFile->name);
+                break;
+            default:
+                throw new CHttpException(404, yii::t('app', 'File type "{type}" not found.', array('{type}' => $type)));
+        }
+    }
+
 }

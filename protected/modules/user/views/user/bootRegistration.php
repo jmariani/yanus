@@ -11,7 +11,7 @@ $this->breadcrumbs=array(
 <?php else: ?>
     <div class="form">
     <?php     /** @var BootActiveForm $form */
-        $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
+        $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
             'id' => 'login-form',
             'enableAjaxValidation'=>false,
             'htmlOptions'=>array('class'=>'well'),
@@ -27,10 +27,11 @@ $this->breadcrumbs=array(
             <?php echo $form->textFieldRow($model,'email'); ?>
             <?php $this->widget('application.extensions.recaptcha.EReCaptcha',
             array('model'=>$model, 'attribute'=>'verifyCode',
-                    'theme'=>'red', 'language'=> yii::app()->getLanguage(),
+                    'theme'=>'white', // 'red', 'white', 'blackglass', 'clean', 'custom'
+                'language'=> yii::app()->getLanguage(),
                     'publicKey'=>'6LeSJ9ESAAAAAC9XmTk28mJphYPulXDCIUjQ1C0g')) ?>
     <div class="form-actions">
-    <?php $this->widget('bootstrap.widgets.BootButton', array(
+    <?php $this->widget('bootstrap.widgets.TbButton', array(
             'buttonType'=>'submit',
             'type'=>'primary',
             'label'=>Yii::t('app', 'Register'),

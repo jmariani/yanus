@@ -16,7 +16,7 @@ $this->menu=array(
 
 <h1><?php echo Yii::t('app', 'View') . ' ' . GxHtml::encode($model->label()) . ' ' . GxHtml::encode($model->invoice); ?></h1>
 
-<?php $this->widget('bootstrap.widgets.BootDetailView', array(
+<?php $this->widget('bootstrap.widgets.TBDetailView', array(
 	'data' => $model,
         'type' => array('striped','bordered'),
 	'attributes' => array(
@@ -24,7 +24,6 @@ $this->menu=array(
 'version',
 'serial',
 'folio',
-'uuid',
 'dttm',
 'seal',
 'paymentType',
@@ -45,17 +44,6 @@ $this->menu=array(
 'sourceSerial',
 'sourceDttm',
 'sourceAmt',
-//'vendorRfc',
-//'vendorName',
-//'customerRfc',
-//'customerName',
-//'taxAmt',
-//'wthAmt',
-'dtsVersion',
-'dtsDttm',
-'dtsSatCertNbr',
-'dtsSatSeal',
-'dtsOriginalString',
 'approvalNbr',
 'approvalYear',
 'md5',

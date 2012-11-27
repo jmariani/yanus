@@ -16,9 +16,6 @@
  * @author jmariani
  */
 class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
-
-    const PARTY_RFC = 'TME1109123E9';
-    const MASTER_ACCOUNT_ALIAS = 'TAMA';
     const DEFAULT_PAYMENT_TYPE = 'PAGO EN UNA SOLA EXHIBICION';
     const DEFAULT_PAYMENT_METHOD = 'NO IDENTIFICADO';
     const DEFAULT_CURRENCY_CODE = 'MXN';
@@ -37,6 +34,7 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
     // Owner data (Castrol)
     const VENDOR_RFC_COL = 7;
     const VENDOR_NAME_COL = 8;
+
     const VENDOR_ADDRESS_STREET_COL = 9;
     const VENDOR_ADDRESS_EXTNUM_COL = 10;
     const VENDOR_ADDRESS_INTNUM_COL = 11;
@@ -45,6 +43,7 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
     const VENDOR_ADDRESS_STATE_COL = 14;
     const VENDOR_ADDRESS_COUNTRY_COL = 15;
     const VENDOR_ADDRESS_ZIPCODE_COL = 16;
+
     const INVOICE_FROM_NAME_COL = 17;
     const INVOICE_FROM_ADDRESS_STREET_COL = 18;
     const INVOICE_FROM_ADDRESS_EXTNUM_COL = 19;
@@ -58,6 +57,7 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
     // Customer address
     const CUSTOMER_RFC_COL = 26;
     const CUSTOMER_NAME_COL = 27;
+
     const CUSTOMER_SOLD_TO_ADDRESS_STREET_COL = 28;
     const CUSTOMER_SOLD_TO_ADDRESS_EXTNUM_COL = 29;
     const CUSTOMER_SOLD_TO_ADDRESS_INTNUM_COL = 30;
@@ -130,27 +130,18 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
     const FOREIGN_DISCOUNT_3 = 88;
     const FOREIGN_DISCOUNT_4 = 89;
 
-    private $fileName;
-    private $logFile;
-    private $fileError;
-    private $nativeXMLFile;
-    private $errors = array();
-    private $row = null;
 
-    private $invoice = false;
-    private $discounts = array();
-    private $taxes = array();
-    private $nativeXml;
-    
-    const LOG_CATEGORY = 'IncomingInvoiceInterfaceFileProcessor';
-
+    private $fileName;  // The file name to be processed
+    private $invoice;   // Invoice object (CFD)
+    private $logFile;   // Log file name.
+    private $row;       // Current processing row.
     /**
      * Processes a file with CASTROL format.
      * @param array $args arguments for the process.
      * The first parameter is the invoice file with path.
      * @return string the translated message
      */
-    private function log($msg, $level = CLogger::LEVEL_INFO, $category = self::LOG_CATEGORY) {
+    private function log($msg, $level = CLogger::LEVEL_INFO, $category = 'application') {
         yii::log($msg, $level, $category);
         $sMsg = yii::t('app', '{date} - [{level}] [row: {row}] - {msg}', array(
             '{date}' => date(DateTime::ISO8601),
@@ -171,28 +162,23 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
         $pathInfo = pathinfo($this->fileName);
 
         $logPath = SystemConfig::getValue(SystemConfig::LOG_PATH);
-        if (!file_exists($logPath))
-            mkdir($logPath, 0777, true);
+        if (!file_exists($logPath)) mkdir($logPath, 0777, true);
 
         $this->logFile = $logPath . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '.log';
         @unlink($this->logFile);
 
-        $nativeXmlPath = SystemConfig::getValue(SystemConfig::NATIVE_XML_STORAGE_PATH);
-        if (!file_exists($nativeXmlPath))
-            mkdir($nativeXmlPath, 0777, true);
-        $nativeXmlFile = $nativeXmlPath . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '.xml';
-        @unlink($nativeXmlFile);
+//        $nativeXmlPath = SystemConfig::getValue(SystemConfig::NATIVE_XML_STORAGE_PATH);
+//        if (!file_exists($nativeXmlPath)) mkdir($nativeXmlPath, 0777, true);
+//        $nativeXmlFile = $nativeXmlPath . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '.xml';
+//        @unlink($nativeXmlFile);
 
-        // Try to lock file to ensure is not still be written.
-        $fp = fopen($this->fileName, 'r');
-        while (!flock($fp, LOCK_EX)) {
-            $this->log(yii::t('app', 'Waiting to lock file {file}', array('{file}' => $this->fileName)));
-        }
-        flock($fp, LOCK_UN);
-
-        $this->log(yii::t('app', 'Processing file {file}', array('{file}' => $this->fileName)), CLogger::LEVEL_INFO);
+//        $this->log(yii::t('app', 'Processing file {file}', array('{file}' => $this->fileName)), CLogger::LEVEL_INFO);
+        YanusLog::log(yii::t('app', 'Processing file "{file}"', array('{file}' => $this->fileName)), $this->logFile);
 
         try {
+            $fHandle = YFileHelper::openExclusive($this->fileName);
+            if (!$fHandle) throw new CException(yii::t('app', 'Could not open file "{file}" for processing.', array('{file}' => $this->fileName)));
+
             // Check if it exists in IncomingInvoiceInterfaceFile
             $model = IncomingInvoiceInterfaceFile::model()->find('fileName = :name', array(':name' => $pathInfo['basename']));
             // If the file name was not found
@@ -204,17 +190,12 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
             $model->receptionDttm = new CDbExpression('NOW()');
             $model->processDttm = null;
             $model->note = null;
-            $model->save();
-
-            // Open file
-            $fHandle = fopen($this->fileName, "r");
-
-            // Setup
-            $invoiceNbr = "XXX";
-
             // Update file status to processing.
             $model->IncomingInvoiceInterfaceFileStatus_id = IncomingInvoiceInterfaceFileStatus::model()->find('code = :code', array(':code' => IncomingInvoiceInterfaceFileStatus::PROCESSING))->id;
             $model->save();
+
+            // Setup
+            $invoiceNbr = "XXX";
 
             // Create Native XML file
             $this->nativeXml = new DOMDocument("1.0", "UTF-8");
@@ -230,6 +211,7 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
             $noteCount = 1;
             $lts = 0;
 
+            // readRow()
             while (($data = fgetcsv($fHandle, 0, '|')) !== FALSE) {
                 $this->row++;
                 $colCount = count($data);
@@ -239,9 +221,7 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
                     throw new CException(yii::t('app', 'Row {row} has {colCount} columns and must have {col_count}.', array('{row}' => $this->row, '{colCount}' => $colCount, '{col_count}' => self::COL_COUNT)));
 
                 // Normalize UTF8
-                for ($i = 0; $i < self::COL_COUNT; $i++) {
-                    $data[$i] = trim(mb_convert_encoding($data[$i], 'utf8'));
-                }
+                $data = self::normalizeRow($data);
 
                 if ($invoiceNbr != $data[self::INVOICE_NUMBER_COL]) {
                     if ($this->invoice) {
@@ -272,6 +252,7 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
 //                        $isPemexInvoiceWithPreInvoice = false;
 //                        $noteCount = 1;
                     }
+                    $this->validateInvoiceHeader($data);
 
                     $invoiceNbr = $data[self::INVOICE_NUMBER_COL];
                     // InvoiceNbr validations
@@ -283,7 +264,7 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
                     $serie = substr($invoiceNbr, 0, 1);
                     $folio = substr($invoiceNbr, 1);
 
-                    $this->testHeader($data);
+//                    $this->testHeader($data);
 
 //                    // Find invoice in database
 //                    // If invoice already found, skip
@@ -298,11 +279,19 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
 //                        continue;
 //                    }
 //
-                    $invoiceDttm = $this->testDttm($data);
+//                    $invoiceDttm = $this->testDttm($data);
 
                     // New Invoice
-                    $this->invoice = $root->appendChild($this->nativeXml->createElement('Cfd'));
-                    $version = SystemConfig::getValue(SystemConfig::CURRENT_CFD_VERSION);
+//                    $this->invoice = $root->appendChild($this->nativeXml->createElement('Cfd'));
+                    $this->invoice = $this->createInvoice($data);
+
+                    $this->invoice->version = SystemConfig::getValue(SystemConfig::CURRENT_CFD_VERSION);
+                    $this->invoice->invoice = $invoiceNbr;
+                    $this->invoice->serial = $serie;
+                    $this->invoice->folio = $folio;
+                    $this->invoice->dttm = $this->validateDttm($data)->format("Y-m-d\TH:i:s");
+                    $this->invoice->paymentType = ($data[self::INVOICE_PAYMENT_TYPE] == 'PAGO EN UNA SOLA EHXIBICION') ? self::DEFAULT_PAYMENT_TYPE : $data[self::INVOICE_PAYMENT_TYPE];
+                    $this->invoice->paymentTerm = $data[self::INVOICE_PAYMENT_TERM];
 
                     $this->invoice->setAttribute('version', SystemConfig::getValue(SystemConfig::CURRENT_CFD_VERSION));
                     $this->invoice->setAttribute('invoice', $invoiceNbr);
@@ -652,16 +641,12 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
             $model->save();
 
             yii::app()->end();
-        } catch (Exception $e) {
-            $this->log($e->getMessage(), CLogger::LEVEL_ERROR, self::LOG_CATEGORY);
+        } catch (CException $e) {
+            YanusLog::log($e->getMessage(), $this->logFile, true, CLogger::LEVEL_ERROR);
             $model->processDttm = new CDbExpression('NOW()');
             $model->IncomingInvoiceInterfaceFileStatus_id = IncomingInvoiceInterfaceFileStatus::model()->find('code = :code', array(':code' => IncomingInvoiceInterfaceFileStatus::ERROR))->id;
             $model->save();
             @unlink($nativeXmlFile);
-//            $this->log('[ERROR] ' . $e->getMessage());
-//            $this->log('[ERROR] ' . $e->getMessage(), $this->logFile);
-//            // Create error file
-//            error_log('[' . date(DateTime::ISO8601) . '] ' . $e->getMessage() . PHP_EOL, 3, $this->fileError);
         }
     }
 
@@ -910,27 +895,31 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
         return $addressRec;
     }
 
-    private function testHeader($data) {
+    private function validateInvoiceHeader($data) {
         // Vendor validations
+        // validate RFC
         if (!$data[self::VENDOR_RFC_COL]) throw new CException(yii::t('app', 'Vendor RFC cannot be null'));
         try {
-            SatRfc::validate($data[self::VENDOR_RFC_COL]);
+            SatHelper::validateRfc($data[self::VENDOR_RFC_COL]);
         } catch (CException $e) {
             throw new CException(yii::t('app', 'Invalid vendor RFC "{rfc}".', array('{rfc}' => $data[self::VENDOR_RFC_COL])));
         }
+
+        // validate name
         if (!$data[self::VENDOR_NAME_COL]) throw new CException(yii::t('app', 'Vendor name cannot be null'));
 
         // Customer validations
+        // validate RFC
         if (!$data[self::CUSTOMER_RFC_COL]) throw new CException(yii::t('app', 'Customer RFC cannot be null'));
         try {
             SatRfc::validate($data[self::CUSTOMER_RFC_COL]);
         } catch (CException $e) {
             throw new CException(yii::t('app', 'Invalid customer RFC "{rfc}".', array('{rfc}' => $data[self::CUSTOMER_RFC_COL])));
         }
-
-        if (!$data[self::BP_CUSTOMER_CODE_COL]) throw new CException(yii::t('app', 'Customer code cannot be null'));
-
+        // customer name
         if (!$data[self::CUSTOMER_NAME_COL]) throw new CException(yii::t('app', 'Customer name cannot be null'));
+        // customer code
+        if (!$data[self::BP_CUSTOMER_CODE_COL]) throw new CException(yii::t('app', 'Customer code cannot be null'));
 
         // Check Invoice Type
         if (!$data[self::INVOICE_DOC_TYPE]) throw new CException(yii::t('app', 'Invoice type cannot be null.'));
@@ -943,16 +932,17 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
         }
 
         if (!$data[self::BP_ORDER_NBR_COL]) throw new CException(yii::t('app', 'BP Order Nº cannot be null.'));
+
         if (!$data[self::TIME_OF_DAY_COL]) throw new CException(yii::t('app', 'Invoice time cannot be null'));
         if (!$data[self::INVOICE_DATE_COL]) throw new CException(yii::t('app', 'Invoice date cannot be null'));
+        $this->validateDttm($data);
 
         // Validate payment term
-        $paymentTerm = trim($data[self::INVOICE_PAYMENT_TERM]);
         if (!$data[self::INVOICE_PAYMENT_TERM]) throw new CException(yii::t('app', 'Payment term cannot be null'));
 
         // Check if payment term exists
-        $paymentTermRec = PaymentTerm::model()->find('name = :name', array(':name' => $data[self::INVOICE_PAYMENT_TERM]));
-        if (!$paymentTermRec) throw new CException(yii::t('app', 'Payment term "{term}" does not exists.', array('{term}' => $data[self::INVOICE_PAYMENT_TERM])));
+        if (!PaymentTerm::model()->find('name = :name', array(':name' => $data[self::INVOICE_PAYMENT_TERM])))
+            throw new CException(yii::t('app', 'Payment term "{term}" does not exists.', array('{term}' => $data[self::INVOICE_PAYMENT_TERM])));
 
         // Validate invoice currency
         if (!$data[self::CURRENCY_COL]) throw new CException(yii::t('app', 'Invoice currency cannot be null'));
@@ -963,18 +953,20 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
 
         // Validate promised date
         $promisedDate = new DateTime($data[self::PROMISED_DATE_COL]);
-        if (!$promisedDate) throw new CException(yii::t('app', 'Promised date format is invalid: "{promisedDt}"', array('{promisedDt}' => $data[self::PROMISED_DATE_COL])));
+        if (!$promisedDate) throw new CException(yii::t('app', 'Invalid promised date "{date}".', array('{date}' => $data[self::PROMISED_DATE_COL])));
 
         // Validate transaction order date
         $transactionOrderDt = new DateTime($data[self::TRANSACTION_ORDER_DATE_COL]);
-        if (!$transactionOrderDt) throw new CException(yii::t('app', 'Transaction order date format is invalid: "{transactionOrderDt}"', array('{transactionOrderDt}' => $data[self::TRANSACTION_ORDER_DATE_COL])));
+        if (!$transactionOrderDt) throw new CException(yii::t('app', 'Invalid transaction order date "{transactionOrderDt}".', array('{transactionOrderDt}' => $data[self::TRANSACTION_ORDER_DATE_COL])));
 
         return;
     }
 
-    private function testDttm($data) {
+    private function validateDttm($data) {
         // Validate invoice date time
-        $invoiceTmStr = $data[self::TIME_OF_DAY_COL];
+        $invoiceTmStr = '0' . $data[self::TIME_OF_DAY_COL];
+        $invoiceTmStr = substr($invoiceTmStr, -6);
+
         if (strlen($invoiceTmStr) == 5) $invoiceTmStr = '0' . $invoiceTmStr;
 
         $invoiceTm = DateTime::createFromFormat("His", $invoiceTmStr);
@@ -986,6 +978,34 @@ class CastrolProcessIncomingInvoiceFileCommand extends CConsoleCommand {
         $invoiceDttm = DateTime::createFromFormat("Y-m-d H:i:s", $invoiceDt->format("Y-m-d") . " " . $invoiceTm->format("H:i:s"), new DateTimeZone('EDT'));
         $invoiceDttm->setTimeZone(new DateTimeZone('CDT'));
         return $invoiceDttm;
+    }
+
+    private static function normalizeRow($data) {
+        // Normalize UTF8
+        for ($i = 0; $i < self::COL_COUNT; $i++) {
+            $data[$i] = trim(mb_convert_encoding($data[$i], 'utf8'));
+        }
+        return $data;
+    }
+
+    private function createInvoice($data) {
+        $cfd = new Cfd();
+
+        $cfd->version = SystemConfig::getValue(SystemConfig::CURRENT_CFD_VERSION);
+        $cfd->invoice = $data[self::INVOICE_NUMBER_COL];
+        $cfd->serial = substr($cfd->invoice, 0, 1);
+        $cfd->folio = substr($cfd->invoice, 1);
+        $cfd->dttm = $this->validateDttm($data)->format("Y-m-d\TH:i:s");
+        $cfd->paymentType = ($data[self::INVOICE_PAYMENT_TYPE] == 'PAGO EN UNA SOLA EHXIBICION') ? self::DEFAULT_PAYMENT_TYPE : $data[self::INVOICE_PAYMENT_TYPE];
+        $cfd->paymentTerm = $data[self::INVOICE_PAYMENT_TERM];
+        $cfd->currency = $data[self::CURRENCY_COL];
+        if ($data[self::CURRENCY_COL] != 'MXP') $cfd->exchangeRate = $data[self::CURRENCY_RATE_COL];
+        $currencyRec = Currency::model()->find('code = :code', array(':code' => $cfd->currency));
+        if ($currencyRec) $cfd->Currency_id = $currencyRec->id;
+        $cfd->voucherType = strtolower($data[self::INVOICE_DOC_TYPE]);
+        $cfd->paymentMethod = self::DEFAULT_PAYMENT_METHOD;
+
+        return $cfd;
     }
 }
 

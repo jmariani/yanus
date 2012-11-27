@@ -7,7 +7,7 @@ class CurrentBehavior extends CActiveRecordBehavior {
 //  public function current($date = null, $column = 'effDt') {
     public function current($column = 'effDt') {
         $this->Owner->getDbCriteria()->mergeWith(array(
-            'order' => $column . ' DESC',
+            'order' => $this->Owner->tableAlias . '.' . $column . ' DESC',
             'condition' => $this->Owner->tableAlias . '.' . $column . ' <= NOW()',
             'limit' => 1
         ));

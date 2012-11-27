@@ -4,14 +4,24 @@ Yii::import('application.models._base.BaseSystemConfig');
 
 class SystemConfig extends BaseSystemConfig {
 
-    const CFD_XSD = 'CFD_XSD_';
+    const CFD_PATH = 'CFD_PATH';
     const CFD_OS_XSLT = 'CFD_OS_XSLT_';
+    const CFD_XSD = 'CFD_XSD_';
+    const TFD_OS_XSLT = 'TFD_OS_XSLT_';
+
+    const CFD_CREATE_XML_CMD = 'CFD_CREATE_XML_CMD';
+    const CFD_PDF_CREATION_CMD = 'CFD_PDF_CREATION_CMD';
+    const CFD_SIGN_XML_CMD = 'CFD_SIGN_XML_CMD';
+    const CFD_STAMP_XML_CMD = 'CFD_STAMP_XML_CMD';
 
     const CURRENT_CFD_VERSION = 'CURRENT_CFD_VERSION';
+    const CURRENT_TFD_VERSION = 'CURRENT_TFD_VERSION';
 
     const DEMO_RFC = 'DEMO_RFC';
 
-    const INCOMING_INVOICE_INTERFACE_FILE_CMD_PROCESSOR = 'INCOMING_INVOICE_INTERFACE_FILE_CMD_PROCESSOR';
+    const INCOMING_INVOICE_INTERFACE_FILE_PROCESS_CMD = 'INCOMING_INVOICE_INTERFACE_FILE_PROCESS_CMD';
+    const INCOMING_INVOICE_INTERFACE_FILE_VALIDATION_CMD = 'INCOMING_INVOICE_INTERFACE_FILE_VALIDATION_CMD';
+
     const INCOMING_INVOICE_INTERFACE_FILE_PATH = 'INCOMING_INVOICE_INTERFACE_FILE_PATH';
 
     const LOG_PATH = 'LOG_PATH';
@@ -26,6 +36,9 @@ class SystemConfig extends BaseSystemConfig {
     const SAT_FILES_PATH = 'SAT_FILES_PATH';
     const SYSTEM_TIMEZONE = 'SYSTEM_TIMEZONE';
 
+    public function __toString() {
+        return $this->value;
+    }
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
@@ -50,7 +63,7 @@ class SystemConfig extends BaseSystemConfig {
     public static function getValue($code) {
         $rec = self::model()->find('code = :code', array(':code' => $code));
         if (!$rec)
-            throw new CException(yii::t('app', 'System Config code {code} is not defined.', array('{code}' => $code)));
+            throw new CException(yii::t('app', 'System Config code "{code}" is not defined.', array('{code}' => $code)));
         else
             return $rec->value;
     }

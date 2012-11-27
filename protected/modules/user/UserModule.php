@@ -61,6 +61,7 @@ class UserModule extends CWebModule {
     public $fieldsMessage = '';
 
     public $loginForm = "/user/login";
+    public $_bootLogin = "/user/_bootLogin";
     public $recoveryForm = "/user/recovery";
     public $registerForm = '/user/registration';
 

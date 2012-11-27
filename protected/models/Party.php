@@ -22,6 +22,36 @@ class Party extends BaseParty {
         return parent::model($className);
     }
 
+    public function addIdentifier($value, $name = PartyIdentifierNameBehavior::RFC) {
+        $partyId = new PartyIdentifier();
+        $partyId->name = $name;
+        $partyId->value = $value;
+        $this->addRelatedObject($partyId);
+    }
+    public function addLocator($locator, $type = PartyLocatorTypeBehavior::PRIMARY, $comment = null) {
+        $pl = new PartyLocator();
+        switch (get_class($locator)) {
+            case 'PhoneNbr':
+                $pl->class = 'phone';
+                break;
+            default:
+                throw new CException('[' . __METHOD__ . '] ' . yii::t('app', 'Invalid party locator class "{class}', array('{class}', get_class($locator))));
+        }
+        $pl->type = $type;
+        $pl->objectId = $locator->id;
+        $pl->comment = $comment;
+        $this->addRelatedObject($pl);
+    }
+    public function addName($fullName = null, $surName = null, $motherFamilyName = null, $firstName = null, $secondName = null) {
+        $name = new PartyName();
+        $name->fullName = $fullName;
+        $name->surName = $surName;
+        $name->motherFamilyName = $motherFamilyName;
+        $name->firstName = $firstName;
+        $name->secondName = $secondName;
+        $this->addRelatedObject($name);
+    }
+
     public function attributeLabels() {
         $attributeLabels = parent::attributeLabels();
         $attributeLabels['customerCode'] = yii::t('app', 'Customer Code');
@@ -34,37 +64,37 @@ class Party extends BaseParty {
         return $attributeLabels;
     }
 
-    public function afterFind() {
-//        if ($this->Name) {
-//            $this->name = $this->Name->fullName;
-//            $this->firstName = $this->Name->firstName;
-//            $this->secondName = $this->Name->secondName;
-//            $this->surName = $this->Name->surName;
-//            $this->motherFamilyName = $this->Name->motherFamilyName;
+//    public function afterFind() {
+////        if ($this->Name) {
+////            $this->name = $this->Name->fullName;
+////            $this->firstName = $this->Name->firstName;
+////            $this->secondName = $this->Name->secondName;
+////            $this->surName = $this->Name->surName;
+////            $this->motherFamilyName = $this->Name->motherFamilyName;
+////        }
+////        if ($this->Rfc)
+////            $this->rfc = $this->Rfc->value;
+////        if ($this->CustomerCode)
+////            $this->customerCode = $this->CustomerCode->value;
+//        foreach ($this->partyIdentifiers as $partyIdentifier) {
+//            $this->identifiers[$partyIdentifier->name] = $partyIdentifier->value;
 //        }
-//        if ($this->Rfc)
-//            $this->rfc = $this->Rfc->value;
-//        if ($this->CustomerCode)
-//            $this->customerCode = $this->CustomerCode->value;
-        foreach ($this->partyIdentifiers as $partyIdentifier) {
-            $this->identifiers[$partyIdentifier->name] = $partyIdentifier->value;
-        }
-        return parent::afterFind();
-    }
+//        return parent::afterFind();
+//    }
 
-    public function afterSave() {
-        if ($this->isNewRecord) {
-            // Create name
-            $this->createName();
-            // Save Identifiers
-        } else {
-            // Update name
-            if ($this->Name && ($this->_name != $this->Name->fullName)) $this->createName();
-        }
-        // Update / create identifiers
-        $this->createIdentifiers();
-        return parent::afterSave();
-    }
+//    public function afterSave() {
+//        if ($this->isNewRecord) {
+//            // Create name
+//            $this->createName();
+//            // Save Identifiers
+//        } else {
+//            // Update name
+//            if ($this->Name && ($this->_name != $this->Name->fullName)) $this->createName();
+//        }
+//        // Update / create identifiers
+//        $this->createIdentifiers();
+//        return parent::afterSave();
+//    }
 
     private function createCustomerCode($customerCode) {
         // Create CustomerCode
@@ -149,19 +179,40 @@ class Party extends BaseParty {
         return $this;
     }
 
+    public function findByPartyIdentifierAndNumber($idCode, $nbr) {
+        $id = PartyIdentifier::model()->find('name = :name and value = :value', array(':name' => $idCode, ':value' => $nbr));
+        if ($id)
+            return $id->party;
+        else
+            return false;
+    }
+
     public function relations() {
         $relations = parent::relations();
-        $relations['currentAttributes'] = array(self::HAS_MANY, 'PartyAttribute', 'Party_id', 'order' => 'effDt DESC', 'limit' => '1',
-            'on' => 'currentAttributes.effDt <= NOW()');
 
-        $relations['CustomerCode'] = array(self::HAS_ONE, 'PartyIdentifier', 'Party_id', 'order' => 'CustomerCode.effDt DESC',
-            'on' => 'CustomerCode.effDt <= NOW() and CustomerCode.name = "' . PartyIdentifier::CUSTOMER_CODE . '"');
+//        $relations['CustomerCode'] = array(self::HAS_ONE, 'PartyIdentifier', 'Party_id', 'order' => 'CustomerCode.effDt DESC',
+//            'on' => 'CustomerCode.effDt <= NOW() and CustomerCode.name = "' . PartyIdentifier::CUSTOMER_CODE . '"');
+//        $relations['Name'] = array(self::HAS_ONE, 'PartyName', 'Party_id', 'order' => 'Name.effDt DESC', 'condition' => 'Name.effDt <= NOW()');
+        $relations['name'] = array(self::HAS_ONE, 'PartyName', 'Party_id', 'scopes' => 'current');
+        $relations['rfc'] = array(self::HAS_ONE, 'PartyIdentifier', 'Party_id', 'scopes' => array('current', 'rfc'));
 
-        $relations['Name'] = array(self::HAS_ONE, 'PartyName', 'Party_id', 'order' => 'Name.effDt DESC',
-            'on' => 'Name.effDt <= NOW()');
+        $relations['Locators'] = array(self::HAS_MANY, 'PartyLocator', 'Party_id');
+        $relations['Phones'] = array(self::HAS_MANY, 'PartyLocator', 'Party_id', 'scopes' => array('phone'));
 
-        $relations['Rfc'] = array(self::HAS_ONE, 'PartyIdentifier', 'Party_id', 'order' => 'Rfc.effDt DESC',
-            'on' => 'Rfc.effDt <= NOW() and Rfc.name = "' . PartyIdentifier::RFC . '"');
+        $relations['primaryPhone'] = array(self::HAS_ONE, 'PartyLocator', 'Party_id', 'scopes' => 'primaryPhone');
+
+        $partyLocatorClass = new PartyLocatorClassBehavior();
+        foreach ($partyLocatorClass->getList() as $key => $value) {
+            // Create relationships like PhoneLocator, AddressLocator, MailLocator, etc.
+//            $relations['PartyHas' . CActiveRecord::generateAttributeLabel($key) . 'Locator'] = array(self::HAS_MANY, 'PartyLocator', 'Party_id', 'scopes' => array('current', CActiveRecord::generateAttributeLabel($key)));
+            $partyLocatorType = new PartyLocatorTypeBehavior();
+            foreach ($partyLocatorType->getList() as $typeKey => $typeValue) {
+                // Create relationships like PrimaryPhoneLocator, BilltoAddressLocator, NotifyMailLocator, etc.
+                $relations[CActiveRecord::generateAttributeLabel($typeKey) . CActiveRecord::generateAttributeLabel($key) . 'Locator'] = array(
+                    self::HAS_ONE, 'PartyLocator', 'Party_id', 'scopes' => array('current', CActiveRecord::generateAttributeLabel($typeKey), CActiveRecord::generateAttributeLabel($key))
+                );
+            }
+        }
         return $relations;
     }
 
@@ -225,17 +276,28 @@ class Party extends BaseParty {
                 ));
     }
 
+    public function getIdentifier($name) {
+        $identifier = PartyIdentifier::model()->find('name = :name and effDt <= NOW() and Party_id = :party',
+                array(':name' => $name, ':party' => $this->id));
+        if ($identifier) return $identifier;
+    }
     // HELPER FUNCTIONS
+    //
     // NAME
-    public function getName(){
-        if (!$this->_name)
-            if ($this->Name) $this->_name = $this->Name->fullName;
-        return $this->_name;
-    }
-    public function setName($value) {
-        $this->_name = $value;
-    }
+//    public function getName(){
+//        if (!$this->_name)
+//            if ($this->Name) $this->_name = $this->Name->fullName;
+//        return $this->_name;
+//    }
+//    public function setName($value) {
+//        $this->_name = $value;
+//    }
 
+    public function getPartyName(){
+        $name = PartyName::model()->find('effDt <= NOW() and Party_id = :party',
+                array(':party' => $this->id));
+        if ($name) return $name;
+    }
     // RFC
     public function getRfc(){
         if ($this->_rfc)

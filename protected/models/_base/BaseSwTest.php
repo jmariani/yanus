@@ -7,13 +7,14 @@
  * property or method in class "SwTest".
  *
  * Columns in table "SwTest" available as properties of the model,
- * and there are no model relations.
+ * followed by relations of table "SwTest" available as properties of the model.
  *
  * @property integer $id
  * @property string $status
  *
+ * @property ObjectHasFileAsset[] $objectHasFileAssets
  */
-abstract class BaseSwTest extends GxActiveRecord {
+abstract class BaseSwTest extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -40,8 +41,10 @@ abstract class BaseSwTest extends GxActiveRecord {
 	}
 
 	public function relations() {
-		return array(
+		$relations = array(
+			'objectHasFileAssets' => array(self::HAS_MANY, 'ObjectHasFileAsset', 'SwTest_id'),
 		);
+                return array_merge($relations, parent::relations());
 	}
 
 	public function pivotModels() {
@@ -53,12 +56,10 @@ abstract class BaseSwTest extends GxActiveRecord {
 		return array(
                 			'id' => yii::t('app', 'Id'),
                 			'status' => yii::t('app', 'Status'),
+                        			                        'objectHasFileAssets' => yii::t('app', 'Object Has File Assets'),
 		);
 	}
 
-    public function defaultScope() {
-        return array('order' => $this->getTableAlias(false, false) . '.' . BaseSwTest::representingColumn() . ' ASC');
-    }
 
 	public function search() {
 		$criteria = new CDbCriteria;

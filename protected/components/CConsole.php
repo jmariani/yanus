@@ -18,6 +18,9 @@
  */
 class CConsole extends CComponent
 {
+    const RUN_SYNC = false;
+    const RUN_ASYNC = true;
+
     /**
      * Path to application's commands script
      * @var string
@@ -83,8 +86,10 @@ class CConsole extends CComponent
 
         $command .= $async ? ' &' : '';
         $ret = '';
-        exec($command, $ret);
+
         error_log($command);
+
+        exec($command, $ret);
         return $ret;
     }
 

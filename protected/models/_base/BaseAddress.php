@@ -93,9 +93,6 @@ abstract class BaseAddress extends GxActiveRecord {
 		);
 	}
 
-    public function defaultScope() {
-        return array('order' => $this->getTableAlias(false, false) . '.' . BaseAddress::representingColumn() . ' ASC');
-    }
 
 	public function search() {
 		$criteria = new CDbCriteria;

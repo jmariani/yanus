@@ -17,6 +17,13 @@ class IncomingInvoiceInterfaceFileController extends GxController {
         );
     }
 
+    public function actiondlFile($id) {
+        $model = IncomingInvoiceInterfaceFile::model()->findByPk($id);
+
+        $file = Yii::app()->file->set($model->fileLocation, true);
+        $file->download(pathinfo($model->fileLocation, PATHINFO_BASENAME));
+
+    }
     public function actionView($id) {
         $this->render('view', array(
             'model' => $this->loadModel($id, 'IncomingInvoiceInterfaceFile'),
