@@ -32,9 +32,8 @@ class IncomingInvoiceInterfaceFileUpload extends CAction {
                         throw new Exception($file->error);
                     } else {
                         // Move file to filesystem
-
-//                        $path = SystemConfig::getValue(SystemConfig::INCOMING_INVOICE_INTERFACE_FILE_PATH);
-                        $fileName = Yii::getPathOfAlias('incomingInvoiceInterfaceFiles') . DIRECTORY_SEPARATOR . $file->name;
+                        $path = IncomingInvoiceInterfaceFile::model()->getFilePath();
+                        $fileName = $path . DIRECTORY_SEPARATOR . $file->name;
                         if (!$file->saveAs($fileName)) {
                             throw new Exception($file->error);
                         } else {

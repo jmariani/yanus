@@ -30,11 +30,10 @@ class IncomingInvoiceInterfaceFile extends BaseIncomingInvoiceInterfaceFile {
         return $behaviors;
     }
 
-    public static function getFilePath() {
-        // protected/files/IncomingInvoiceInterfaceFile
+    public function getFilePath() {
+        // protected/files/upload/IncomingInvoiceInterfaceFile
         // Get path name
-        $pathRec = SystemConfig::model()->find('code = :code', array(':code' => SystemConfig::INCOMING_INVOICE_INTERFACE_FILE_PATH));
-        $path = yii::getPathOfAlias('application') . DIRECTORY_SEPARATOR . $pathRec->value;
+        $path = SystemConfig::getValue(SystemConfig::INCOMING_INVOICE_INTERFACE_FILE_PATH);
         // Check if exists
         if (!file_exists($path)) mkdir($path, 0777, true);
         return $path;

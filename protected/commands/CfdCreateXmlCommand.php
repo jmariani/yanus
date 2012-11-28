@@ -12,6 +12,7 @@
  */
 class CfdCreateXmlCommand extends CConsoleCommand {
     public function run($args) {
+        yii::trace('Creating XML', __METHOD__);
         try {
             $cfd = Cfd::model()->findByPk($args[0]);
             if (!$cfd) throw new Exception(yii::t('app', 'Cannot find CFD with id "{id}"', array('{id}' => $args[0])));
@@ -250,7 +251,7 @@ class CfdCreateXmlCommand extends CConsoleCommand {
                 $cfd->save();
             }
         } catch (Exception $e) {
-            $log = new YanusLog(SystemConfig::getvalue(SystemConfig::LOG_PATH) . DIRECTORY_SEPARATOR . $this->name . '.log');
+            $log = new YanusLog(SystemConfig::getvalue(SystemConfig::LOG_PATH) . DIRECTORY_SEPARATOR . __CLASS__ . '.log');
             $log->log($e->getMessage(), CLogger::LEVEL_ERROR);
         }
     }

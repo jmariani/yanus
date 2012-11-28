@@ -749,13 +749,14 @@ class Cfd extends BaseCfd {
 
     public function getFileBasename($createPath = true) {
         $processInvoiceDttm = new DateTime($this->dttm);
-        $path = yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . 'cfd' . DIRECTORY_SEPARATOR .
+        $path = SystemConfig::getValue(SystemConfig::CFD_PATH) . DIRECTORY_SEPARATOR .
                 $this->vendorParty->rfc . DIRECTORY_SEPARATOR .
                 $processInvoiceDttm->format('Y') . DIRECTORY_SEPARATOR .
                 $processInvoiceDttm->format('m') . DIRECTORY_SEPARATOR .
                 $processInvoiceDttm->format('d') . DIRECTORY_SEPARATOR .
                 $this->invoice;
         if ($createPath) {
+            yii::trace('Creating folder ' . $path, __METHOD__);
             if (!file_exists($path)) mkdir($path, 0777, true);
         }
         return $path . DIRECTORY_SEPARATOR .
@@ -1038,12 +1039,13 @@ class Cfd extends BaseCfd {
 
     public function runCreateXml() {
         // Run creation command
+        yii::trace('Creating XML for invoice ' . $this->vendorParty->rfc . '_' . $this->invoice . '_' . $this->customerParty->rfc, __METHOD__);
         try {
             $cmd = SystemConfig::getValue(SystemConfig::CFD_CREATE_XML_CMD);
             $console = new CConsole();
             $console->runCommand($cmd, array($this->id), CConsole::RUN_ASYNC);
         } catch (Exception $e) {
-            error_log('[error] Cfd::runCreateXml: ' . $e->getMessage());
+            yii::trace('[error] ' . $e->getMessage(), __METHOD__);
             $this->swNextStatus(cfd::STATUS_ERROR);
             $this->save();
         }

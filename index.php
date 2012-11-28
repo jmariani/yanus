@@ -26,20 +26,4 @@ defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', $env->yiiTraceLevel);
 require_once($env->yiiPath);
 $env->runYiiStatics(); // like Yii::setPathOfAlias()
 $app = Yii::createWebApplication($env->configWeb);
-
-// set 'files' alias
-// /Applications/MAMP/public_html/yanus/protected/files
-Yii::setPathOfAlias('files', Yii::getPathOfAlias('application') . DIRECTORY_SEPARATOR . 'files');
-if (!file_exists(Yii::getPathOfAlias('files'))) mkdir(yii::getPathOfAlias('files'), 0777, true);
-
-// set 'upload' alias
-// /Applications/MAMP/public_html/yanus/protected/files/upload
-Yii::setPathOfAlias('upload', Yii::getPathOfAlias('files') . DIRECTORY_SEPARATOR . 'upload');
-if (!file_exists(Yii::getPathOfAlias('upload'))) mkdir(yii::getPathOfAlias('upload'), 0777, true);
-
-// set 'incomingInvoiceInterfaceFiles' alias
-// /Applications/MAMP/public_html/yanus/protected/files/upload/incomingInvoiceInterfaceFiles
-Yii::setPathOfAlias('incomingInvoiceInterfaceFiles', Yii::getPathOfAlias('upload') . DIRECTORY_SEPARATOR . 'incomingInvoiceInterfaceFiles');
-if (!file_exists(Yii::getPathOfAlias('incomingInvoiceInterfaceFiles'))) mkdir(yii::getPathOfAlias('incomingInvoiceInterfaceFiles'), 0777, true);
-
 $app->run();
