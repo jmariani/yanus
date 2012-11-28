@@ -26,7 +26,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2012-11-09 14:53:49 +0000</string>
+	<string>2012-11-27 19:43:56 +0000</string>
 	<key>Modifier</key>
 	<string>Jorge Mariani</string>
 	<key>NotesVisible</key>
@@ -2364,7 +2364,7 @@ ProcessDTTM = null}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>ID</key>
-					<integer>274</integer>
+					<integer>278</integer>
 					<key>Magnets</key>
 					<array>
 						<string>{1, 0.5}</string>
@@ -2414,7 +2414,7 @@ INCOMING_INVOICE_INTERFACE_FILE_VALIDATION_CMD}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
 					<key>ID</key>
-					<integer>276</integer>
+					<integer>277</integer>
 					<key>Magnets</key>
 					<array>
 						<string>{0, 1}</string>
@@ -3387,11 +3387,11 @@ INCOMING_INVOICE_INTERFACE_FILE_VALIDATION_CMD}</string>
 	<key>WindowInfo</key>
 	<dict>
 		<key>CurrentSheet</key>
-		<integer>2</integer>
+		<integer>1</integer>
 		<key>ExpandedCanvases</key>
 		<array/>
 		<key>Frame</key>
-		<string>{{355, 41}, {928, 1137}}</string>
+		<string>{{55, 41}, {928, 1137}}</string>
 		<key>ListView</key>
 		<true/>
 		<key>OutlineWidth</key>

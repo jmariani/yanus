@@ -87,7 +87,7 @@ class CConsole extends CComponent
         $command .= $async ? ' &' : '';
         $ret = '';
 
-        error_log($command);
+        yii::trace('Running command "' . $command . '"', __METHOD__);
 
         exec($command, $ret);
         return $ret;

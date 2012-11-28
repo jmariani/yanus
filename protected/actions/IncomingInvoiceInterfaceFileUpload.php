@@ -17,13 +17,11 @@ class IncomingInvoiceInterfaceFileUpload extends CAction {
         // create the Model
         $model = new $model_class();
 
-//        CVarDumper::dump(Yii::app()->user->checkAccess('Cfd.Upload'));
         // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
+//         $this->performAjaxValidation($model);
         if (isset($_POST[$model_class])) {
             try {
                 // Get a file instance
-                $cfile = yii::app()->file->set('fileName');
                 $file = CUploadedFile::getInstance($model, 'fileName');
                 // If no file was selected to upload
                 if (!$file) {
@@ -32,13 +30,13 @@ class IncomingInvoiceInterfaceFileUpload extends CAction {
                     // If the file has an upload error
                     if ($file->hasError) {
                         throw new Exception($file->error);
-//                        $model->addError('fileName', yii::t('app', 'The file "{file}" cannot be uploaded.' . ' ' . $file->error, array('{file}' => $file->name)));
                     } else {
                         // Move file to filesystem
-                        $path = SystemConfig::getValue(SystemConfig::INCOMING_INVOICE_INTERFACE_FILE_PATH);
-                        if (!$file->saveAs($path . DIRECTORY_SEPARATOR . $file->name)) {
+
+//                        $path = SystemConfig::getValue(SystemConfig::INCOMING_INVOICE_INTERFACE_FILE_PATH);
+                        $fileName = Yii::getPathOfAlias('incomingInvoiceInterfaceFiles') . DIRECTORY_SEPARATOR . $file->name;
+                        if (!$file->saveAs($fileName)) {
                             throw new Exception($file->error);
-//                            $model->addError('fileName', yii::t('app', 'Error uploading file "{file}".' . ' ' . $file->error, array('{file}' => $file->name)));
                         } else {
                             // Find file in model by name
                             $model = IncomingInvoiceInterfaceFile::model()->find('fileName = :name', array(':name' => $file->name));
@@ -48,24 +46,15 @@ class IncomingInvoiceInterfaceFileUpload extends CAction {
                             $model = new IncomingInvoiceInterfaceFile();
                             $model->fileName = $file->name;
                             $model->receptionDttm = new CDbExpression('NOW()');
-                            $model->validationDttm = null;
-                            $model->processDttm = null;
-                            $model->note = null;
-                            $model->fileLocation = $path . DIRECTORY_SEPARATOR . $file->name;
+                            $model->fileLocation = $fileName;
                             // Save the model
                             if ($model->save()) {
                                 // Run validation command
                                 $model->runValidation();
                                 $controller->redirect('admin');
-
-//                                // Validate
-//                                if ($model->save()) {
-//                                    $model->scenario = IncomingInvoiceInterfaceFile::SCENARIO_PROCESS;
-//                                    if ($model->save()) $controller->redirect('admin');
-//                                    else $model->delete();
-//                                } else $model->delete();
-                            } else
-                                CVarDumper::dump($model->getErrors());
+                            }
+//                            else
+//                                CVarDumper::dump($model->getErrors());
                         }
                     }
                 }

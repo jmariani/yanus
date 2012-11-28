@@ -24,16 +24,9 @@ class IncomingInvoiceInterfaceFile extends BaseIncomingInvoiceInterfaceFile {
         return parent::model($className);
     }
 
-    public function attributeLabels() {
-        $attributeLabels = parent::attributeLabels();
-//        $attributeLabels['IncomingInvoiceInterfaceFileStatus_id'] = 'Status';
-//        $attributeLabels['incomingInvoiceInterfaceFileStatus'] = 'Status';
-        return $attributeLabels;
-    }
-
     public function behaviors() {
         $behaviors = parent::behaviors();
-        $behaviors['swBehavior'] = array('class' => 'application.extensions.simpleWorkflow.SWActiveRecordBehavior', 'transitionBeforeSave' => true);
+        $behaviors['swBehavior'] = array('class' => 'application.extensions.simpleWorkflow.SWActiveRecordBehavior', 'transitionBeforeSave' => true, 'enableEvent' => false);
         return $behaviors;
     }
 

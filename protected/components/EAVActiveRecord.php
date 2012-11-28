@@ -18,12 +18,12 @@ class EAVActiveRecord extends SWActiveRecord {
     private $_dirty = false;
 
     public function __get($name) {
-        yii::trace('__get("' . $name . '")', get_class($this));
+//        yii::trace('__get("' . $name . '")', get_class($this));
         if (isset($this->_eav[strtoupper($name)])) {
-            yii::trace('Getting EAV ' . $name);
+//            yii::trace('Getting EAV ' . $name);
             return $this->_eav[strtoupper($name)];
         } else {
-            yii::trace('Getting Standard ' . $name);
+//            yii::trace('Getting Standard ' . $name);
             return parent::__get($name);
         }
     }
@@ -163,16 +163,12 @@ class EAVActiveRecord extends SWActiveRecord {
     }
 
     public function beforeValidate() {
-        error_log(get_class($this) . '.beforeValidate');
         foreach ($this->getMetaData()->relations as $name => $relation) {
             switch (get_class($relation)) {
                 case 'CBelongsToRelation':
-                    error_log('testing ' . $name);
                     $fk = $relation->foreignKey;
-                    error_log('fk: ' . $fk);
                     if (!$this->$fk) {
                         $className = $relation->className;
-                        error_log('classname: ' . $className);
                         if ($this->$name) {
                             if ($this->$name->isNewRecord)
                                 $this->$name->save();
@@ -228,7 +224,7 @@ class EAVActiveRecord extends SWActiveRecord {
 
     public function setAttribute($name, $value) {
         if (!parent::setAttribute($name, $value)) {
-            yii::trace('setAttribute("' . $name . '")', get_class($this));
+//            yii::trace('setAttribute("' . $name . '")', get_class($this));
             if (!EavCode::model()->find('code = :code', array(':code' => strtolower($name))))
                 return false;
             $this->_eav[strtoupper($name)] = $value; // If code found set value

@@ -4,6 +4,7 @@
  * Main configuration.
  * All properties can be overridden in mode_<mode>.php files
  */
+
 return array(
     // Set yiiPath (relative to Environment.php)
     //$yii=dirname(__FILE__).'/../../framework/yii.php';
@@ -18,7 +19,8 @@ return array(
         // uncomment the following to define a path alias
         //'local' => 'path/to/local-folder'
 //        'cfd' => dirname(__FILE__) . '/files/cfd'
-        'log' => dirname(__FILE__) . DIRECTORY_SEPARATOR . 'protected' . DIRECTORY_SEPARATOR . 'runtime' . DIRECTORY_SEPARATOR . 'log'
+        'log' => dirname(__FILE__) . DIRECTORY_SEPARATOR . 'protected' . DIRECTORY_SEPARATOR . 'runtime' . DIRECTORY_SEPARATOR . 'log',
+        'upload' => dirname(__FILE__) . DIRECTORY_SEPARATOR . 'protected' . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . 'upload'
     ),
     // This is the main Web application configuration. Any writable
     // CWebApplication properties can be configured here.
@@ -77,6 +79,12 @@ return array(
                         'class' => 'CFileLogRoute',
                         'categories' => 'castrolprocessincominginvoicefile',
                         'logFile' => 'castrolprocessincominginvoicefile.log'
+                    ),
+                    array(
+                        'class' => 'CFileLogRoute',
+                        'categories' => 'application.simpleWorkflow',
+//                        'levels' => 'trace, info',
+                        'logFile' => 'simpleWorkflow.log'
                     ),
                     // uncomment the following to show log messages on web pages
                     array(
@@ -293,6 +301,12 @@ return array(
                         'class' => 'CFileLogRoute',
                         'categories' => 'ProcessIncomingInvoiceNativeXmlFile',
                         'logFile' => 'processincominginvoicevativexmlfile.log'
+                    ),
+                    array(
+                        'class' => 'CFileLogRoute',
+                        'categories' => 'application.simpleWorkflow',
+//                        'levels' => 'trace, info',
+                        'logFile' => 'simpleWorkflow.log'
                     ),
                 // uncomment the following to show log messages on web pages
 //                    array(

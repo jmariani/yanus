@@ -147,8 +147,7 @@ class GamaHelper {
                                 $cfd->paymentType = 'PAGO EN UNA SOLA EXHIBICION';
                                 $cfd->paymentTerm = $data[GamaHelper::PAYMENT_TERM_COL];
                                 $cfd->currency = 'MXP';
-                                if ($currency)
-                                    $cfd->currency0 = $currency;
+                                if ($currency) $cfd->currency0 = $currency;
                                 $cfd->voucherType = ($data[GamaHelper::DOCUMENT_TYPE_COL] == 0 ? 'ingreso' : 'egreso');
                                 $cfd->paymentMethod = $data[GamaHelper::PAYMENT_METHOD_COL];
 
