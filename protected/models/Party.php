@@ -259,11 +259,11 @@ class Party extends BaseParty {
 //        $criteria->compare('name', $this->name, true);
         if (!is_null($company))
             $criteria->scopes = ($company ? 'company' : 'person');
-        $criteria->mergeWith(array(
-            'join' => 'LEFT JOIN PartyRelationship pr ON pr.Party_id = t.id',
-            'condition' => 'pr.PartyRelationshipType_id = ' . PartyRelationshipType::model()->find('code = :code', array(':code' => PartyRelationshipType::CUSTOMER))->id,
-                )
-        );
+//        $criteria->mergeWith(array(
+//            'join' => 'LEFT JOIN PartyRelationship pr ON pr.Party_id = t.id',
+//            'condition' => 'pr.PartyRelationshipType_id = ' . PartyRelationshipType::model()->find('code = :code', array(':code' => PartyRelationshipType::CUSTOMER))->id,
+//                )
+//        );
 
 //        $criteria->with = array(
 //            'currentName' => array('together' => true),

@@ -38,14 +38,45 @@ $this->widget('bootstrap.widgets.TbAlert', array(
 
 <?php echo $form->errorSummary($model); ?>
 <?php echo $form->textFieldRow($model, 'nbr', array('maxlength' => 45)); ?>
-<?php echo $form->datepickerRow($model, 'dt'
+<?php
+
+    echo $form->juiDatepickerRow($model, 'dt'
             ,array(
 ////                        'hint'=>'Click inside! This is a super cool date field.',
-                'prepend'=>'<i class="icon-calendar"></i>',
-                'options' => array('language' => 'es', 'format' => 'dd/mm/yyyy', 'autoclose' => true, 'todayBtn' => true, 'todayHighlight' => true)
+//                'prepend'=>'<i class="icon-calendar"></i>',
+                'options' => array('format' => 'dd/mm/yyyy',
+                    'autoclose' => true,
+                    'todayBtn' => true,
+                    'todayHighlight' => true
+                    )
             )
         );
 ?>
+<!--
+<div class="row">
+<?php // echo $form->labelEx($model,'dt'); ?>
+
+<?php
+
+//    $this->widget('ext.YAltJuiDatePicker.YAltJuiDatePicker', array(
+//        'model'=>$model,
+//  'attribute'=>'fancyDate',
+////    'name'=>'dt',
+//    // additional javascript options for the date picker plugin
+//    'options'=>array(
+//        'showAnim'=>'fold',
+////        'flat' => true,
+//        'altField' => 'dt',
+//        'altFormat' => 'yy-mm-dd'
+//    ),
+//    'htmlOptions'=>array(
+//        'style'=>'height:20px;'
+//    ),
+//));
+    ?>
+<?php // echo $form->error($model,'dt'); ?>
+ </div>
+-->
 <?php echo $form->textAreaRow($model, 'office'); ?>
 <div class="form-actions">
         <?php $this->widget('bootstrap.widgets.TbButton', array(

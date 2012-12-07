@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -12,7 +12,7 @@
         <![endif]-->
 
         <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/main.css" />
-<!--	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/form.css" />-->
+	<!--<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/form.css" />-->
 <!--	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/buttons.css" />-->
         <!--<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/icons.css" />-->
         <!--<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/tables.css" />-->
@@ -33,7 +33,7 @@
             'brandUrl' => 'http://gamautomotriz.com/',
 //            'brandUrl' => yii::app()->getBaseUrl() . '/site/index',
             'brandOptions' => array('font-weight' => 'bold', 'float' => 'right'),
-            'type' => 'inverse',
+//            'type' => 'inverse',
 
 //            'fluid'=>false,
             'collapse' => false, // requires bootstrap-responsive.css
@@ -125,7 +125,7 @@
                     $this->widget('bootstrap.widgets.TbMenu', array(
                         'items' => array(
                             array('label' => yii::t('app', 'Billing'), 'url' => array('/site/page', 'view' => 'billing')),
-                            array('label' => yii::t('app', 'Files'), 'url' => array('/site/page', 'view' => 'files')),
+                            array('label' => yii::t('app', 'Files'), 'url' => array('/site/page', 'view' => 'files'), 'icon' => 'icon-file'),
                             array('label' => 'Graphs', 'url' => array('/site/page', 'view' => 'graphs'), 'itemOptions' => array('class' => 'icon_chart')),
                             array('label' => 'Form', 'url' => array('/site/page', 'view' => 'forms')),
                             array('label' => 'Interface', 'url' => array('/site/page', 'view' => 'interface')),

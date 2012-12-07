@@ -10,7 +10,7 @@
 
 <?php echo '<?php '; ?>
     /** @var BootActiveForm $form */
-    $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
+    $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	'id' => '<?php echo $this->class2id($this->modelClass); ?>-form',
 	'enableAjaxValidation' => <?php echo $ajax; ?>,
         'htmlOptions'=>array('class'=>'well'),
@@ -33,7 +33,7 @@
 <?php endforeach; ?>
 
 	<div class="form-actions">
-		<?php echo "<?php \$this->widget('bootstrap.widgets.BootButton', array(
+		<?php echo "<?php \$this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'submit',
 			'type'=>'primary',
 			'label'=>\$model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Save'),

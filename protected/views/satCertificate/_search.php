@@ -1,5 +1,5 @@
 <div class="wide form">
-<?php $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
+<?php $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	'action' => Yii::app()->createUrl($this->route),
 	'method' => 'get',
         'htmlOptions'=>array('class'=>'well'),
@@ -107,7 +107,7 @@
 	</div>
 
 	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.BootButton', array(
+		<?php $this->widget('bootstrap.widgets.TbButton', array(
 			'type'=>'primary',
                         'buttonType'=>'submit',
                         'icon' => 'search',

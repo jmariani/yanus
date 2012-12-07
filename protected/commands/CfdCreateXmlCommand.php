@@ -12,21 +12,28 @@
  */
 class CfdCreateXmlCommand extends CConsoleCommand {
     public function run($args) {
-        yii::trace('Creating XML', __METHOD__);
+        yii::trace('Start run', __METHOD__);
+        $cfds = Cfd::model()->findAll('status = :status', array(':status' => 'swCfd/' . cfd::STATUS_NEW));
+        foreach ($cfds as $cfd) {
+            $this->createXml($cfd);
+        }
+    }
+
+    private function createXml(Cfd $cfd) {
         try {
-            $cfd = Cfd::model()->findByPk($args[0]);
-            if (!$cfd) throw new Exception(yii::t('app', 'Cannot find CFD with id "{id}"', array('{id}' => $args[0])));
-            yii::trace(yii::t('app', 'Creating XML file'),__METHOD__);
+//            $cfd = Cfd::model()->findByPk($args[0]);
+            if (!$cfd) throw new Exception(yii::t('yanus', 'Cannot find CFD with id "{id}"', array('{id}' => $args[0])));
+            yii::trace(yii::t('yanus', 'Creating XML file'),__METHOD__);
 
             // This will create a SAT compliant XML
             try {
-                error_log('[info] ' . $this->name . ': Processing CFD id ' . $cfd->id . ' - Status: ' . $cfd->status);
+                yii::trace(yii::t('yanus', 'Processing CFD id {id}', array('{id}' => $cfd->id)),__METHOD__);
                 $cfd->swNextStatus(Cfd::STATUS_CREATING_XML);
                 $cfd->save();
                 $runMode = SystemConfig::getValue(SystemConfig::RUN_MODE);
                 if ($runMode == SystemConfig::RUN_MODE_PRODUCTION) {
-                    if (!$cfd->vendorParty) throw new CException(yii::t('app', 'CFD has no vendor defined.'));
-                    if (!$cfd->vendorParty->rfc) throw new CException(yii::t('app', 'CFD Vendor has no RFC defined.'));
+                    if (!$cfd->vendorParty) throw new CException(yii::t('yanus', 'CFD has no vendor defined.'));
+                    if (!$cfd->vendorParty->rfc) throw new CException(yii::t('yanus', 'CFD Vendor has no RFC defined.'));
                     else $vendorRfc = $cfd->vendorParty->rfc;
                     $certificate = $cfd->satCertificate;
                     $cfdDate = new DateTime($cfd->dttm);
@@ -38,12 +45,12 @@ class CfdCreateXmlCommand extends CConsoleCommand {
                     // Get certificate for demo RFC
                     $certificate = SatCertificate::model()->current()->find('rfc = :rfc', array(':rfc' => $vendorRfc));
                     if (!$certificate)
-                        throw new CException(yii::t('app', 'Cannot find a valid certificate for DEMO RFC "{rfc}"', array('{rfc}' => $vendorRfc)));
+                        throw new CException(yii::t('yanus', 'Cannot find a valid certificate for DEMO RFC "{rfc}"', array('{rfc}' => $vendorRfc)));
                 }
                 $cfdPath = SystemConfig::getvalue(SystemConfig::CFD_PATH);
 
                 if (!$cfd->vendorParty->name)
-                    throw new CException(yii::t('app', 'CFD Vendor has no name defined.'));
+                    throw new CException(yii::t('yanus', 'CFD Vendor has no name defined.'));
                 else
                     $vendorName = $cfd->vendorParty->name;
 
@@ -242,17 +249,19 @@ class CfdCreateXmlCommand extends CConsoleCommand {
                 $cfd->swNextStatus(Cfd::STATUS_XML_CREATED);
                 $cfd->save();
 
-                $cfd->runSignXml();
+//                $cfd->runSignXml();
 
             } catch (Exception $e) {
-                $log = new YanusLog(SystemConfig::getvalue(SystemConfig::LOG_PATH) . DIRECTORY_SEPARATOR . $this->name . '.log');
-                $log->log($e->getMessage(), CLogger::LEVEL_ERROR);
+                yii::log($e->getMessage(), CLogger::LEVEL_ERROR, __METHOD__);
+//                $log = new YanusLog(SystemConfig::getvalue(SystemConfig::LOG_PATH) . DIRECTORY_SEPARATOR . $this->name . '.log');
+//                $log->log($e->getMessage(), CLogger::LEVEL_ERROR);
                 $cfd->swNextStatus(cfd::STATUS_XML_CREATION_ERROR);
                 $cfd->save();
             }
         } catch (Exception $e) {
-            $log = new YanusLog(SystemConfig::getvalue(SystemConfig::LOG_PATH) . DIRECTORY_SEPARATOR . __CLASS__ . '.log');
-            $log->log($e->getMessage(), CLogger::LEVEL_ERROR);
+            yii::log($e->getMessage(), CLogger::LEVEL_ERROR, __METHOD__);
+//            $log = new YanusLog(SystemConfig::getvalue(SystemConfig::LOG_PATH) . DIRECTORY_SEPARATOR . __CLASS__ . '.log');
+//            $log->log($e->getMessage(), CLogger::LEVEL_ERROR);
         }
     }
 }

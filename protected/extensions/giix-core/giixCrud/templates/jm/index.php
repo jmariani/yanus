@@ -19,7 +19,7 @@ $this->menu = array(
 
 <h1><?php echo '<?php'; ?> echo GxHtml::encode(<?php echo $this->modelClass; ?>::label(2)); ?></h1>
 
-<?php echo "<?php"; ?> $this->widget('bootstrap.widgets.BootListView',array(
+<?php echo "<?php"; ?> $this->widget('bootstrap.widgets.TbListView',array(
 	'dataProvider'=>$dataProvider,
 	'itemView'=>'_view',
 )); <?php '?>'; ?>

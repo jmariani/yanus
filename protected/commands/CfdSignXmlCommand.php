@@ -12,9 +12,17 @@
  */
 class CfdSignXmlCommand extends CConsoleCommand {
     public function run($args) {
+        yii::trace('Start run', __METHOD__);
+        $cfds = Cfd::model()->findAll('status = :status', array(':status' => 'swCfd/' . cfd::STATUS_XML_CREATED));
+        foreach ($cfds as $cfd) {
+            $this->signXml($cfd);
+        }
+    }
+
+    private function signXml(Cfd $cfd) {
         try {
-            $cfd = Cfd::model()->findByPk($args[0]);
-            if (!$cfd) throw new Exception(yii::t('app', 'Cannot find CFD id "{id}"', array('{id}' => $args[0])));
+//            $cfd = Cfd::model()->findByPk($args[0]);
+//            if (!$cfd) throw new Exception(yii::t('yanus', 'Cannot find CFD id "{id}"', array('{id}' => $args[0])));
             // This will create a SAT compliant XML
             try {
                 $cfd->swNextStatus(Cfd::STATUS_SIGNING_XML);
@@ -22,7 +30,7 @@ class CfdSignXmlCommand extends CConsoleCommand {
 
                 $xmlFile = $cfd->cfdFile->location;
                 $xml = @simplexml_load_file($xmlFile);
-                if (!$xml) throw new Exception(yii::t('app', 'Failed to load XML file "{file}"', array('{file}' => $xmlFile)));
+                if (!$xml) throw new Exception(yii::t('yanus', 'Failed to load XML file "{file}"', array('{file}' => $xmlFile)));
                 // Get original string
                 $cfd->originalString = $cfd->createOriginalString($xml);
                 $cfd->seal = $cfd->createSignature(simplexml_load_string($xml->saveXML()), $cfd->satCertificate);
@@ -31,16 +39,18 @@ class CfdSignXmlCommand extends CConsoleCommand {
                 $xml->saveXML($xmlFile);
                 $cfd->swNextStatus(cfd::STATUS_XML_SIGNED);
                 $cfd->save();
-                $cfd->runStampXml();
+//                $cfd->runStampXml();
             } catch (Exception $e) {
-                $log = new YanusLog(pathinfo($cfd->cfdFile->location, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR . pathinfo($cfd->cfdFile->location, PATHINFO_FILENAME) . '.log');
-                $log->log($e->getMessage(), CLogger::LEVEL_ERROR);
+                yii::log($e->getMessage(), CLogger::LEVEL_ERROR, __METHOD__);
+//                $log = new YanusLog(pathinfo($cfd->cfdFile->location, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR . pathinfo($cfd->cfdFile->location, PATHINFO_FILENAME) . '.log');
+//                $log->log($e->getMessage(), CLogger::LEVEL_ERROR);
                 $cfd->swNextStatus(cfd::STATUS_XML_SIGNATURE_ERROR);
                 $cfd->save();
             }
         } catch (Exception $e) {
-            $log = new YanusLog(SystemConfig::getvalue(SystemConfig::LOG_PATH) . DIRECTORY_SEPARATOR . __CLASS__ . '.log');
-            $log->log($e->getMessage(), CLogger::LEVEL_ERROR);
+            yii::log($e->getMessage(), CLogger::LEVEL_ERROR, __METHOD__);
+//            $log = new YanusLog(SystemConfig::getvalue(SystemConfig::LOG_PATH) . DIRECTORY_SEPARATOR . __CLASS__ . '.log');
+//            $log->log($e->getMessage(), CLogger::LEVEL_ERROR);
         }
     }
 }

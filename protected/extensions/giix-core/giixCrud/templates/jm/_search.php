@@ -5,7 +5,7 @@
  */
 ?>
 <div class="wide form">
-<?php echo "<?php \$form = \$this->beginWidget('bootstrap.widgets.BootActiveForm', array(
+<?php echo "<?php \$form = \$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	'action' => Yii::app()->createUrl(\$this->route),
 	'method' => 'get',
         'htmlOptions'=>array('class'=>'well'),
@@ -31,7 +31,7 @@
 
 <?php endforeach; ?>
 	<div class="form-actions">
-		<?php echo "<?php \$this->widget('bootstrap.widgets.BootButton', array(
+		<?php echo "<?php \$this->widget('bootstrap.widgets.TbButton', array(
 			'type'=>'primary',
                         'buttonType'=>'submit',
                         'icon' => 'search',

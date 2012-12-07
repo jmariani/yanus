@@ -1,17 +1,10 @@
 <?php
+$this->layout = '//layouts/column1';
 
 $this->breadcrumbs = array(
 	$model->label(2) => array('admin'),
 	Yii::t('app', 'Manage'),
 );
-
-$this->layout = '//layouts/column1';
-
-//$this->menu = array(
-//		array('label'=>Yii::t('app', 'List') . ' ' . $model->label(2), 'url'=>array('index')),
-//		array('label'=>Yii::t('app', 'Create') . ' ' . $model->label(), 'url'=>array('create')),
-//	);
-
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){
 	$('.search-form').toggle();
@@ -26,52 +19,50 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
-<div class="page-header">
-    <h1><?php echo Yii::t('app', 'Manage') . ' ' . GxHtml::encode($model->label(2)); ?></h1>
-</div>
-
-<!--<div class="flash-notice"><?php // echo Yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done'); ?>.</div>-->
+<?php $box = $this->beginWidget('bootstrap.widgets.TbBox', array(
+	'title' => Yii::t('app', 'Manage') . ' ' . $model->label(2),
+        'headerIcon' => 'icon-file',
+	// when displaying a table, if we include bootstra-widget-table class
+	// the table will be 0-padding to the box
+//	'htmlOptions' => array('class'=>'bootstrap-widget-table')
+    'headerButtonActionsLabel' => yii::t('yanus', 'Actions'),
+    'headerActions' => array(
+	    array('label'=>Yii::t('app', 'Upload new') . ' ' . $model->label(), 'url' => array('upload'), 'icon'=>'upload'),
+//	    array('label'=>'second action', 'url'=>'#', 'icon'=>'icon-headphones'),
+//	    '---',
+//	    array('label'=>'third action', 'url'=>'#', 'icon'=>'icon-facetime-video')
+    )
+));?>
 <?php
-Yii::app()->user->setFlash('info', '<strong>Note: </strong> ' . Yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done'));
-$this->widget('bootstrap.widgets.TbAlert', array(
-    'block'=>true, // display a larger alert block?
-    'fade'=>true, // use transitions?
-    'closeText'=>false, // close link text - if set to false, no close link is displayed
-//    'alerts'=>array( // configurations per alert type
-//        'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'), // success, info, warning, error or danger
-//        'info'=>array('block'=>true, 'fade'=>true, ), // success, info, warning, error or danger
+//$this->widget('bootstrap.widgets.TbButtonGroup', array(
+//    'buttons'=>array(
+////        array(
+////            'buttonType'=>'link',
+////            'icon'=>'search',
+////            'url' => '#',
+////            'htmlOptions' => array('class' => 'search-button', 'rel'=>'tooltip', 'title'=>Yii::t('app', 'Advanced Search'))),
+////        array(
+////            'buttonType'=>'link',
+////            'icon'=>'plus',
+////            'url' => array('create'),
+////            'htmlOptions' => array('rel' => 'tooltip', 'title' => Yii::t('app', 'Create new' . ' ' . $model->label()), )),
+//        array(
+//            'buttonType'=>'link',
+//            'icon'=>'upload',
+//            'url' => array('upload'),
+//            'htmlOptions' => array('rel' => 'tooltip', 'title' => Yii::t('app', 'Upload new') . ' ' . $model->label(), )),
 //    ),
-));
+//));
 ?>
-
-<?php $this->widget('bootstrap.widgets.TbButtonGroup', array(
-    'buttons'=>array(
-//        array(
-//            'buttonType'=>'link',
-//            'icon'=>'search',
-//            'url' => '#',
-//            'htmlOptions' => array('class' => 'search-button', 'rel'=>'tooltip', 'title'=>Yii::t('app', 'Advanced Search'))),
-//        array(
-//            'buttonType'=>'link',
-//            'icon'=>'plus',
-//            'url' => array('create'),
-//            'htmlOptions' => array('rel' => 'tooltip', 'title' => Yii::t('app', 'Create new' . ' ' . $model->label()), )),
-        array(
-            'buttonType'=>'link',
-            'icon'=>'upload',
-            'url' => array('upload'),
-            'htmlOptions' => array('rel' => 'tooltip', 'title' => Yii::t('app', 'Upload new') . ' ' . $model->label(), )),
-    ),
-));
-?>
-<?php $this->widget('application.extensions.PageSize.PageSize', array(
-        'mGridId'=>'incoming-invoice-interface-file-grid',
-        'mPageSize' => @$_GET['pageSize'],
-        'mDefPageSize' => Yii::app()->params['defaultPageSize'],
-        'mPageSizeOptions'=>Yii::app()->params['pageSizeOptions'],// Optional, you can use with the widget default
-        'label' => yii::t('app', 'Items per page'),
-        'htmlOptions' => array('class' => 'pull-right'),
-));
+<?php
+//$this->widget('application.extensions.PageSize.PageSize', array(
+//        'mGridId'=>'incoming-invoice-interface-file-grid',
+//        'mPageSize' => @$_GET['pageSize'],
+//        'mDefPageSize' => Yii::app()->params['defaultPageSize'],
+//        'mPageSizeOptions'=>Yii::app()->params['pageSizeOptions'],// Optional, you can use with the widget default
+//        'label' => yii::t('app', 'Items per page'),
+//        'htmlOptions' => array('class' => 'pull-right'),
+//));
 ?>
 
 <!--
@@ -96,7 +87,7 @@ $this->widget('bootstrap.widgets.TbAlert', array(
             array(
                 'type' => 'raw',
                 'name' => 'status',
-                'value'=>'CHtml::tag("span", array("class" => "label " . $data->getStatusLabelClass()), $data->swGetStatus()->getLabel(), true)',
+                'value'=>'CHtml::tag("span", array("class" => "badge " . $data->getStatusLabelClass()), $data->swGetStatus()->getLabel(), true)',
                 'filter'=> SWHelper::allStatuslistData($model),
             ),
             array(
@@ -109,7 +100,7 @@ $this->widget('bootstrap.widgets.TbAlert', array(
             'receptionDttm',
             'validationDttm',
             'processDttm',
-		'note',
+//		'note',
 //                array(
 //                    'class'=>'bootstrap.widgets.BootButtonColumn',
 //                    'htmlOptions'=>array('style'=>'width: 50px'),
@@ -120,13 +111,14 @@ $this->widget('bootstrap.widgets.TbAlert', array(
 //    'summaryCssClass' => 'alert alert-info', // override default css
         'pager' => array(
                 'class' => 'tbpager', // **use extended CLinkPager class**
-                'cssFile' => false, //prevent Yii autoloading css
-                'alignment' => TbPager::ALIGNMENT_CENTER,
+//                'cssFile' => false, //prevent Yii autoloading css
+//                'alignment' => TbPager::ALIGNMENT_CENTER,
                 'displayFirstAndLast' => true,
-                'header' => false, // hide 'go to page' header
+//                'header' => false, // hide 'go to page' header
                 'firstPageLabel' => '&lt;&lt;', // change pager button labels
 //                'prevPageLabel' => '&lt;',
 //                'nextPageLabel' => '&gt;',
                 'lastPageLabel' => '&gt;&gt;',
             ),
 )); ?>
+<?php $this->endWidget();?>

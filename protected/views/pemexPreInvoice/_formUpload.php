@@ -2,7 +2,7 @@
 
 
 <?php     /** @var BootActiveForm $form */
-    $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
+    $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	'id' => 'pemex-pre-invoice-form',
 	'enableAjaxValidation' => false,
         'htmlOptions'=>array('class'=>'well', 'enctype' => 'multipart/form-data'),
@@ -16,7 +16,7 @@
         <?php echo $form->fileFieldRow($model, 'pemexPreInvoiceFile'); ?>
 
 	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.BootButton', array(
+		<?php $this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'submit',
 			'type'=>'primary',
 			'label'=>$model->isNewRecord ? Yii::t('app', 'Upload') : Yii::t('app', 'Save'),

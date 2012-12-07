@@ -12,16 +12,26 @@
  */
 class CfdStampXmlCommand extends CConsoleCommand {
     public function run($args) {
+        yii::trace('Start run', __METHOD__);
+        $cfds = Cfd::model()->findAll('status = :status', array(':status' => 'swCfd/' . cfd::STATUS_XML_SIGNED));
+        foreach ($cfds as $cfd) {
+            $this->stampXml($cfd);
+        }
+    }
+
+    private function stampXml(Cfd $cfd) {
         libxml_use_internal_errors(true);
 
         $log = false;
 
         // This will create a SAT compliant XML
         try {
-            $cfd = Cfd::model()->findByPk($args[0]);
-            if (!$cfd) throw new CException(yii::t('app', 'CFD with id "{id}" not found.', array('{id}' => $args[0])));
-            $log = new YanusLog(pathinfo($cfd->cfdFile->location, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR . pathinfo($cfd->cfdFile->location, PATHINFO_FILENAME) . '.log');
+//            $cfd = Cfd::model()->findByPk($args[0]);
+//            if (!$cfd) throw new CException(yii::t('app', 'CFD with id "{id}" not found.', array('{id}' => $args[0])));
+//            $log = new YanusLog(pathinfo($cfd->cfdFile->location, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR . pathinfo($cfd->cfdFile->location, PATHINFO_FILENAME) . '.log');
 
+            $cfd->swNextStatus(Cfd::STATUS_STAMPING_XML);
+            $cfd->save();
             $xml = new DOMDocument("1.0", "UTF-8");
             $xml->load($cfd->cfdFile->location);
             if (!$xml) throw new CException(yii::t('app', 'Failed to load CFD XML file'));
@@ -131,8 +141,9 @@ class CfdStampXmlCommand extends CConsoleCommand {
             if (!$cfd->save()) print_r($cfd->getErrors());
         } catch (Exception $e) {
 //            echo $e->getMessage();
-            if (!$log) $log = new YanusLog(SystemConfig::getValue(SystemConfig::LOG_PATH) . DIRECTORY_SEPARATOR . $this->name . '.log');
-            $log->log($e->getMessage(), CLogger::LEVEL_ERROR);
+            yii::log($e->getMessage(), CLogger::LEVEL_ERROR, __METHOD__);
+//            if (!$log) $log = new YanusLog(SystemConfig::getValue(SystemConfig::LOG_PATH) . DIRECTORY_SEPARATOR . $this->name . '.log');
+//            $log->log($e->getMessage(), CLogger::LEVEL_ERROR);
             $cfd->swNextStatus(cfd::STATUS_XML_STAMP_ERROR);
             $cfd->save();
         }

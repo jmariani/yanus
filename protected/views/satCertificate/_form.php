@@ -1,7 +1,7 @@
 <div class="well">
 <?php
     /** @var BootActiveForm $form */
-    $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
+    $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id' => 'register-form-form',
         'htmlOptions'=>array('class'=>'well', 'enctype' => 'multipart/form-data'),
         'inlineErrors'=>true, // how to display errors, inline or block?
@@ -15,7 +15,7 @@
     <?php echo $form->fileFieldRow($model, 'keyFile', array('hint'=>yii::t('app', 'Please choose the key file.'))); ?>
     <?php echo $form->passwordFieldRow($model, 'keyPassword', array('hint'=>yii::t('app', 'Please enter key file password.'))); ?>
     <div class="form-actions">
-            <?php $this->widget('bootstrap.widgets.BootButton', array(
+            <?php $this->widget('bootstrap.widgets.TbButton', array(
                     'buttonType'=>'submit',
                     'type'=>'primary',
                     'label'=>$model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Save'),

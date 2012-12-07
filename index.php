@@ -26,4 +26,7 @@ defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL', $env->yiiTraceLevel);
 require_once($env->yiiPath);
 $env->runYiiStatics(); // like Yii::setPathOfAlias()
 $app = Yii::createWebApplication($env->configWeb);
+//print_r($_GET);
+//echo SystemConfig::getValue(SystemConfig::CFD_CREATE_XML_CMD) . PHP_EOL;
+//echo $_SERVER['SERVER_NAME'];
 $app->run();

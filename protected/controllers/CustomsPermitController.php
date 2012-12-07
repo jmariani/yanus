@@ -14,6 +14,7 @@ class CustomsPermitController extends GxController {
         $model = new CustomsPermit;
 
         if (isset($_POST['CustomsPermit'])) {
+//            CVarDumper::dump($_POST['CustomsPermit']);
             $model->setAttributes($_POST['CustomsPermit']);
             if ($model->save()) {
                 if (Yii::app()->getRequest()->getIsAjaxRequest())

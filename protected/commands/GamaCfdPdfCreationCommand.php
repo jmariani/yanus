@@ -48,8 +48,16 @@ class GamaCfdPdfCreationCommand extends CConsoleCommand {
     private $cbb;
 
     public function run($args) {
+        yii::trace('Start run', __METHOD__);
+        $cfds = Cfd::model()->findAll('status = :status', array(':status' => 'swCfd/' . cfd::STATUS_XML_STAMPED));
+        foreach ($cfds as $cfd) {
+            $this->createPdf($cfd);
+        }
+    }
+
+    private function createPdf(Cfd $cfd) {
         try {
-            $cfd = Cfd::model()->findByPk($args[0]);
+//            $cfd = Cfd::model()->findByPk($args[0]);
             $cfd->swNextStatus(cfd::STATUS_CREATING_PDF);
             $cfd->save();
             $fName = pathinfo($cfd->cfdFile->location, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR . pathinfo($cfd->cfdFile->location, PATHINFO_FILENAME) . '.pdf';
@@ -71,6 +79,7 @@ class GamaCfdPdfCreationCommand extends CConsoleCommand {
             $cfd->swNextStatus(cfd::STATUS_READY);
             $cfd->save();
         } catch (Exception $e) {
+            yii::log($e->getMessage(), CLogger::LEVEL_ERROR, __METHOD__);
             $cfd->swNextStatus(cfd::STATUS_PDF_CREATION_ERROR);
             $cfd->save();
         }

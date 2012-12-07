@@ -1,6 +1,6 @@
 <div class="form">
 <?php     /** @var BootActiveForm $form */
-    $form = $this->beginWidget('bootstrap.widgets.BootActiveForm', array(
+    $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	'id' => 'sat-certificate-upload-form',
 	'enableAjaxValidation' => false,
         'htmlOptions'=>array('class'=>'well', 'enctype' => 'multipart/form-data'),
@@ -14,7 +14,7 @@
     <?php echo $form->fileFieldRow($model, 'keyFile'); ?>
     <?php echo $form->passwordFieldRow($model, 'keyPassword'); ?>
     <div class="form-actions">
-            <?php $this->widget('bootstrap.widgets.BootButton', array(
+            <?php $this->widget('bootstrap.widgets.TbButton', array(
                     'buttonType'=>'submit',
                     'type'=>'primary',
                     'label'=>Yii::t('app', 'Upload'),

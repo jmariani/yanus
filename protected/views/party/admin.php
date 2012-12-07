@@ -25,16 +25,32 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
+<?php $box = $this->beginWidget('bootstrap.widgets.TbBox', array(
+	'title' => Yii::t('app', 'Manage') . ' ' . yii::t('app', 'Invoice Notification Mail Addresses'),
+        'headerIcon' => 'icon-envelope',
+	// when displaying a table, if we include bootstra-widget-table class
+	// the table will be 0-padding to the box
+//	'htmlOptions' => array('class'=>'bootstrap-widget-table')
+//    'headerButtonActionsLabel' => 'My actions',
+    'headerActions' => array(
+	    array('label'=>'first action', 'url'=>'#', 'icon'=>'plus'),
+	    array('label'=>'second action', 'url'=>'#', 'icon'=>'icon-headphones'),
+	    '---',
+	    array('label'=>'third action', 'url'=>'#', 'icon'=>'icon-facetime-video')
+    )
+));?>
 
-<h1><?php echo Yii::t('app', 'Manage') . ' ' . GxHtml::encode(yii::t('app', ($model->person ? 'Persons' : 'Companies'))); ?></h1>
+<!--<h1><?php echo Yii::t('app', 'Manage') . ' ' . GxHtml::encode(yii::t('app', ($model->person ? 'Persons' : 'Companies'))); ?></h1>-->
 
-<div class="flash-notice"><?php echo Yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done'); ?>.</div>
-<?php $this->widget('bootstrap.widgets.BootButtonGroup', array(
-    'buttons'=>array(
-        array('buttonType'=>'link', 'icon'=>'search', 'label'=>Yii::t('app', 'Advanced Search'), 'url' => '#', 'htmlOptions' => array('class' => 'search-button')),
-        array('buttonType'=>'link', 'icon'=>'plus', 'label'=>Yii::t('app', 'Create new' . ' ' . yii::t('app', ($model->person ? 'Person' : 'Company'))), 'url' => array(($model->person ? 'createPerson' : 'createCompany'))),
-    ),
-)); ?>
+<!--<div class="flash-notice"><?php echo Yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done'); ?>.</div>-->
+<?php
+//    $this->widget('bootstrap.widgets.TbButtonGroup', array(
+//        'buttons'=>array(
+//            array('buttonType'=>'link', 'icon'=>'search', 'label'=>Yii::t('app', 'Advanced Search'), 'url' => '#', 'htmlOptions' => array('class' => 'search-button')),
+//            array('buttonType'=>'link', 'icon'=>'plus', 'label'=>Yii::t('app', 'Create new' . ' ' . yii::t('app', ($model->person ? 'Person' : 'Company'))), 'url' => array(($model->person ? 'createPerson' : 'createCompany'))),
+//        ),
+//    ));
+?>
 <!--
 ";?>
 ";?>
@@ -45,8 +61,10 @@ $('.search-form form').submit(function(){
 	'model' => $model,
 )); ?>
 </div><!-- search-form -->
+<!--
 <div align="right" class="row">
-<?php $this->widget('application.extensions.PageSize.PageSize', array(
+<?php
+    $this->widget('application.extensions.PageSize.PageSize', array(
         'mGridId'=>'party-grid',
         'mPageSize' => @$_GET['pageSize'],
         'mDefPageSize' => Yii::app()->params['defaultPageSize'],
@@ -54,8 +72,9 @@ $('.search-form form').submit(function(){
         'label' => yii::t('app', 'Items per page')
 ));
 ?>
-</div>
-<?php $this->widget('bootstrap.widgets.BootGridView',array(
+</div>-->
+
+<?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'party-grid',
 	'dataProvider'=>$model->search(!$model->person),
         'type'=>'striped bordered condensed',
@@ -63,8 +82,21 @@ $('.search-form form').submit(function(){
 	'columns'=>array(
 		'name',
                 array(
-                    'class'=>'bootstrap.widgets.BootButtonColumn',
+                    'header' => yii::t('app', 'Email'),
+                    'type' => 'raw',
+//                    'name' => 'invoice',
+                    'value' => 'invoice@invoice.com.mx',
+                ),
+                array(
+                    'header' => yii::t('app', 'Active'),
+                    'type' => 'raw',
+//                    'name' => 'invoice',
+                    'value' => '',
+                ),
+                array(
+                    'class'=>'bootstrap.widgets.TbButtonColumn',
                     'htmlOptions'=>array('style'=>'width: 50px'),
                 ),
 	),
 )); ?>
+<?php $this->endWidget();?>

@@ -4,6 +4,13 @@ Yii::import('application.models._base.BaseCustomsPermit');
 
 class CustomsPermit extends BaseCustomsPermit {
 
+    public $fancyDate;
+
+    public function beforeSave() {
+        $dt = date_create_from_format('d/m/Y', $this->dt);
+        $this->dt = $dt->format('Y-m-d');
+        return parent::beforeSave();
+    }
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }

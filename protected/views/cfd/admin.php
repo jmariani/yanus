@@ -24,37 +24,52 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
+<?php $box = $this->beginWidget('bootstrap.widgets.TbBox', array(
+	'title' => Yii::t('app', 'Manage') . ' ' . $model->label(2),
+//        'headerIcon' => 'icon-home',
+	// when displaying a table, if we include bootstra-widget-table class
+	// the table will be 0-padding to the box
+//	'htmlOptions' => array('class'=>'bootstrap-widget-table')
+//    'headerButtonActionsLabel' => 'My actions',
+    'headerActions' => array(
+	    array('label'=>'first action', 'url'=>'#', 'icon'=>'plus'),
+	    array('label'=>'second action', 'url'=>'#', 'icon'=>'icon-headphones'),
+	    '---',
+	    array('label'=>'third action', 'url'=>'#', 'icon'=>'icon-facetime-video')
+    )
+));?>
 
-<h1><?php echo Yii::t('app', 'Manage') . ' ' . GxHtml::encode($model->label(2)); ?></h1>
+
+<!--<h1><?php echo Yii::t('app', 'Manage') . ' ' . GxHtml::encode($model->label(2)); ?></h1>-->
 
 <?php
-Yii::app()->user->setFlash('info', '<strong>Note: </strong> ' . Yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done'));
-$this->widget('bootstrap.widgets.TbAlert', array(
-    'block' => true, // display a larger alert block?
-    'fade' => true, // use transitions?
-    'closeText' => false, // close link text - if set to false, no close link is displayed
-//    'alerts'=>array( // configurations per alert type
-//        'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'), // success, info, warning, error or danger
-//        'info'=>array('block'=>true, 'fade'=>true, ), // success, info, warning, error or danger
-//    ),
-));
+//Yii::app()->user->setFlash('info', '<strong>Note: </strong> ' . Yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done'));
+//$this->widget('bootstrap.widgets.TbAlert', array(
+//    'block' => true, // display a larger alert block?
+//    'fade' => true, // use transitions?
+//    'closeText' => false, // close link text - if set to false, no close link is displayed
+////    'alerts'=>array( // configurations per alert type
+////        'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'), // success, info, warning, error or danger
+////        'info'=>array('block'=>true, 'fade'=>true, ), // success, info, warning, error or danger
+////    ),
+//));
 ?>
 
 <?php
-$this->widget('bootstrap.widgets.TbButtonGroup', array(
-    'buttons' => array(
-        array(
-            'buttonType' => 'link',
-            'icon' => 'search',
-            'url' => '#',
-            'htmlOptions' => array('class' => 'search-button', 'rel' => 'tooltip', 'title' => Yii::t('app', 'Advanced Search'))),
-        array(
-            'buttonType' => 'link',
-            'icon' => 'plus',
-            'url' => array('create'),
-            'htmlOptions' => array('rel' => 'tooltip', 'title' => Yii::t('app', 'Create new' . ' ' . $model->label()),)),
-    ),
-));
+//$this->widget('bootstrap.widgets.TbButtonGroup', array(
+//    'buttons' => array(
+//        array(
+//            'buttonType' => 'link',
+//            'icon' => 'search',
+//            'url' => '#',
+//            'htmlOptions' => array('class' => 'search-button', 'rel' => 'tooltip', 'title' => Yii::t('app', 'Advanced Search'))),
+//        array(
+//            'buttonType' => 'link',
+//            'icon' => 'plus',
+//            'url' => array('create'),
+//            'htmlOptions' => array('rel' => 'tooltip', 'title' => Yii::t('app', 'Create new' . ' ' . $model->label()),)),
+//    ),
+//));
 ?>
 
 <!--
@@ -69,24 +84,26 @@ $this->widget('bootstrap.widgets.TbButtonGroup', array(
     ));
     ?>
 </div><!-- search-form -->
+<!--
 <div align="right" class="row">
     <?php
-    $this->widget('application.extensions.PageSize.PageSize', array(
-        'mGridId' => 'cfd-grid',
-        'mPageSize' => @$_GET['pageSize'],
-        'mDefPageSize' => Yii::app()->params['defaultPageSize'],
-        'mPageSizeOptions' => Yii::app()->params['pageSizeOptions'], // Optional, you can use with the widget default
-        'label' => yii::t('app', 'Items per page')
-    ));
+//    $this->widget('application.extensions.PageSize.PageSize', array(
+//        'mGridId' => 'cfd-grid',
+//        'mPageSize' => @$_GET['pageSize'],
+//        'mDefPageSize' => Yii::app()->params['defaultPageSize'],
+//        'mPageSizeOptions' => Yii::app()->params['pageSizeOptions'], // Optional, you can use with the widget default
+//        'label' => yii::t('app', 'Items per page')
+//    ));
     ?>
 </div>
+-->
 <?php
 $this->widget('bootstrap.widgets.TbGridView', array(
     'id' => 'cfd-grid',
     'dataProvider' => $model->search(),
     'type' => 'striped bordered condensed',
     'filter' => $model,
-                'responsiveTable' => true,
+//                'responsiveTable' => true,
 
     'columns' => array(
         array(
@@ -98,7 +115,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
         array(
             'name' => 'status',
             'type' => 'raw',
-            'value' => 'CHtml::tag("span", array("class" => "label " . $data->getStatusLabelClass()), $data->swGetStatus()->getLabel(), true)',
+            'value' => 'CHtml::tag("span", array("class" => "badge " . $data->getStatusLabelClass()), $data->swGetStatus()->getLabel(), true)',
             'filter' => SWHelper::allStatuslistData($model),
         ),
 //		array(
@@ -239,3 +256,4 @@ $this->widget('bootstrap.widgets.TbGridView', array(
     ),
 ));
 ?>
+<?php $this->endWidget();?>

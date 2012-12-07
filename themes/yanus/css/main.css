@@ -4,14 +4,16 @@ body
 	padding: 0;
 	color: #555;
 	font: normal 10pt Arial,Helvetica,sans-serif;
-	background: #EFEFEF;
+	background: gray;
+        background-image: url(../images/background.png);
+    background-color: #cccccc;
 }
 
 #page
 {
 	margin-bottom: 5px;
 	background: white;
-	border: 1px solid #CCCCCC;
+	/*border: 1px solid #CCCCCC;*/
 }
 
 #topnav
@@ -35,8 +37,10 @@ body
 {
 	margin: 0;
 	padding: 0;
-	border-top: 1px solid #CCCCCC;
-	background-color:#333333;
+	/*border-top: 1px solid #CCCCCC;*/
+	/*background-color:#333333;*/
+        background-color:black;
+        /*background-image:url(../images/background.png);*/
 }
 
 #content
@@ -146,6 +150,10 @@ body
 #mainmenu ul li a:hover, #mainmenu ul li.active a
 {
 	color: #cccc;
+}
+
+.breadcrumb {
+    margin:0;
 }
 .infoBar {
   border: solid 1px #CCCCCC;

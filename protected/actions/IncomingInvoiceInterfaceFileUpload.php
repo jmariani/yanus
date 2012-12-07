@@ -9,6 +9,7 @@
  */
 class IncomingInvoiceInterfaceFileUpload extends CAction {
     public function run() {
+
         $controller = $this->getController();
 
         // get the Model Name
@@ -49,7 +50,7 @@ class IncomingInvoiceInterfaceFileUpload extends CAction {
                             // Save the model
                             if ($model->save()) {
                                 // Run validation command
-                                $model->runValidation();
+//                                $model->runValidation();
                                 $controller->redirect('admin');
                             }
 //                            else

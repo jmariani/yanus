@@ -94,4 +94,16 @@ $this->widget('bootstrap.widgets.TbAlert', array(
 //                    'htmlOptions'=>array('style'=>'width: 50px'),
 //                ),
 	),
+        'pager' => array(
+                'class' => 'tbpager', // **use extended CLinkPager class**
+                'cssFile' => false, //prevent Yii autoloading css
+                'alignment' => TbPager::ALIGNMENT_CENTER,
+                'displayFirstAndLast' => true,
+                'header' => false, // hide 'go to page' header
+                'firstPageLabel' => '&lt;&lt;', // change pager button labels
+//                'prevPageLabel' => '&lt;',
+//                'nextPageLabel' => '&gt;',
+                'lastPageLabel' => '&gt;&gt;',
+            ),
+
 )); ?>

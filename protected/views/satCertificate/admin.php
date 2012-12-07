@@ -30,7 +30,7 @@ $('.search-form form').submit(function(){
 
 <div class="flash-notice"><?php echo Yii::t('app', 'You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done'); ?>.</div>
 
-<?php $this->widget('bootstrap.widgets.BootButtonGroup', array(
+<?php $this->widget('bootstrap.widgets.TbButtonGroup', array(
     'buttons'=>array(
 //        array(
 //            'buttonType'=>'link',
@@ -70,7 +70,7 @@ $('.search-form form').submit(function(){
 ));
 ?>
 </div>
-<?php $this->widget('bootstrap.widgets.BootGridView',array(
+<?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'sat-certificate-grid',
 	'dataProvider'=>$model->search(),
         'type'=>'striped bordered condensed',
@@ -88,9 +88,9 @@ $('.search-form form').submit(function(){
 		'keyPassword',
 		'issuerName',
 		*/
-                array(
-                    'class'=>'bootstrap.widgets.BootButtonColumn',
-                    'htmlOptions'=>array('style'=>'width: 50px'),
-                ),
+//                array(
+//                    'class'=>'bootstrap.widgets.TbButtonColumn',
+//                    'htmlOptions'=>array('style'=>'width: 50px'),
+//                ),
 	),
 )); ?>
