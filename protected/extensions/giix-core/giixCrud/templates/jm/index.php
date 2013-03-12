@@ -4,8 +4,10 @@
  * - $this: the CrudCode object
  */
 ?>
+
 <?php
 echo "<?php\n
+//\$this->layout = '//layouts/column1';
 \$this->breadcrumbs = array(
 	{$this->modelClass}::label(2),
 );\n";

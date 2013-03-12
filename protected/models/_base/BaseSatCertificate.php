@@ -22,10 +22,8 @@
  * @property string $issuerName
  *
  * @property Cfd[] $cfds
- * @property Cfd[] $cfds1
- * @property Party[] $parties
  */
-abstract class BaseSatCertificate extends GxActiveRecord {
+abstract class BaseSatCertificate extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -36,13 +34,19 @@ abstract class BaseSatCertificate extends GxActiveRecord {
 	}
 
 	public static function label($n = 1) {
-        return Yii::t('app', 'SAT Certificate|SAT Certificates', $n);
+        return Yii::t('app', 'Sat Certificate|Sat Certificates', $n);
 	}
 
 	public static function representingColumn() {
 		return 'nbr';
 	}
 
+	public function relations() {
+		$relations = array(
+			'cfds' => array(self::HAS_MANY, 'Cfd', 'SatCertificate_id'),
+		);
+                return array_merge($relations, parent::relations());
+	}
 	public function rules() {
 		return array(
 			array('nbr, keyPassword', 'length', 'max'=>45),
@@ -53,44 +57,6 @@ abstract class BaseSatCertificate extends GxActiveRecord {
 			array('id, nbr, serial, validFrom, validTo, name, rfc, pem, keyPem, keyPassword, issuerName', 'safe', 'on'=>'search'),
 		);
 	}
-
-	public function relations() {
-		return array(
-			'cfds' => array(self::HAS_MANY, 'Cfd', 'dtsSatCertificate_id'),
-			'cfds1' => array(self::HAS_MANY, 'Cfd', 'SatCertificate_id'),
-			'parties' => array(self::MANY_MANY, 'Party', 'Party_has_SatCertificate(SatCertificate_id, Party_id)'),
-		);
-	}
-
-	public function pivotModels() {
-		return array(
-			'parties' => 'PartyHasSatCertificate',
-		);
-	}
-
-	public function attributeLabels() {
-		return array(
-                			'id' => yii::t('app', 'Id'),
-                			'nbr' => yii::t('app', 'Nbr'),
-                			'serial' => yii::t('app', 'Serial'),
-                			'validFrom' => yii::t('app', 'Valid From'),
-                			'validTo' => yii::t('app', 'Valid To'),
-                			'name' => yii::t('app', 'Name'),
-                			'rfc' => yii::t('app', 'Rfc'),
-                			'pem' => yii::t('app', 'Pem'),
-                			'keyPem' => yii::t('app', 'Key Pem'),
-                			'keyPassword' => yii::t('app', 'Key Password'),
-                			'issuerName' => yii::t('app', 'Issuer Name'),
-                        			                        'cfds' => yii::t('app', 'Cfds'),
-                        			                        'cfds1' => yii::t('app', 'Cfds1'),
-                        			                        'parties' => yii::t('app', 'Parties'),
-		);
-	}
-
-    public function defaultScope() {
-        return array('order' => $this->getTableAlias(false, false) . '.' . BaseSatCertificate::representingColumn() . ' ASC');
-    }
-
 	public function search() {
 		$criteria = new CDbCriteria;
 
@@ -109,6 +75,33 @@ abstract class BaseSatCertificate extends GxActiveRecord {
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
                         'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+                        'sort' => array(
+                            'defaultOrder' => array(
+                                $this->representingColumn() => CSort::SORT_ASC
+                            )
+                        )
 		));
+	}
+
+	public function pivotModels() {
+		return array(
+		);
+	}
+
+	public function attributeLabels() {
+		return array(
+                			'id' => yii::t('app', 'Id'),
+                			'nbr' => yii::t('app', 'Nbr'),
+                			'serial' => yii::t('app', 'Serial'),
+                			'validFrom' => yii::t('app', 'Valid From'),
+                			'validTo' => yii::t('app', 'Valid To'),
+                			'name' => yii::t('app', 'Name'),
+                			'rfc' => yii::t('app', 'Rfc'),
+                			'pem' => yii::t('app', 'Pem'),
+                			'keyPem' => yii::t('app', 'Key Pem'),
+                			'keyPassword' => yii::t('app', 'Key Password'),
+                			'issuerName' => yii::t('app', 'Issuer Name'),
+                        			                        'cfds' => yii::t('app', 'Cfds'),
+		);
 	}
 }

@@ -2,7 +2,7 @@
 
 class StateController extends GxController {
 
-
+        public $defaultAction = 'admin';
 	public function actionView($id) {
 		$this->render('view', array(
 			'model' => $this->loadModel($id, 'State'),
@@ -20,7 +20,7 @@ class StateController extends GxController {
 				if (Yii::app()->getRequest()->getIsAjaxRequest())
 					Yii::app()->end();
 				else
-					$this->redirect(array('view', 'id' => $model->id));
+					$this->redirect(array('admin', 'id' => $model->id));
 			}
 		}
 
@@ -35,7 +35,8 @@ class StateController extends GxController {
 			$model->setAttributes($_POST['State']);
 
 			if ($model->save()) {
-				$this->redirect(array('view', 'id' => $model->id));
+				// $this->redirect(array('admin', 'id' => $model->));
+                                $this->redirect(array('admin'));
 			}
 		}
 
@@ -56,6 +57,7 @@ class StateController extends GxController {
 
 	public function actionIndex() {
 		$dataProvider = new CActiveDataProvider('State');
+                $dataProvider->sort->defaultOrder = State::representingColumn() . ' ASC';
 		$this->render('index', array(
 			'dataProvider' => $dataProvider,
 		));

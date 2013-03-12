@@ -29,7 +29,7 @@ class SWNode extends CComponent {
 	 * @var array array of transitions that exist between this node and other nodes
 	 */
 	private $_tr=array();
-	
+
 	/**
 	 * Creates a workflow node object from a string.
 	 * If no workflowId is specified in the nodeId, then the $defaultWorkflowId
@@ -52,7 +52,7 @@ class SWNode extends CComponent {
 	 */
 	public function __construct($node, $defaultWorkflowId=null, $key=null){
 		$st=array();
-		
+
 		if( $node instanceof SWNode )
 		{
 			// copy constructor : does not copy transitions, constraints and metadata
@@ -99,7 +99,7 @@ class SWNode extends CComponent {
 			if( $str==null ){
 				throw new SWException(Yii::t('simpleWorkflow','failed to create node'));
 			}
-				
+
 			if(strstr($str,'/') == true){
 				$st=SWNode::parseNodeId($str);
 			}else {
@@ -108,10 +108,10 @@ class SWNode extends CComponent {
 		}
 		if( array_key_exists('workflow',$st)==false or array_key_exists('node',$st)==false)
 			throw new SWException(Yii::t('simpleWorkflow','failed to create node'));
-			
+
 		$this->_ownerWf = $st['workflow'];
 		$this->_id 	    = $st['node'];
-		
+
 		if(!isset($this->_label))
 			$this->_label=$this->_id;
 	}
@@ -126,7 +126,7 @@ class SWNode extends CComponent {
 		try{
 			return parent::__get($name);
 		}catch(CException $e){
-			
+
 			if(isset($this->_metadata[$name])){
 				return $this->_metadata[$name];
 			}else{
@@ -172,6 +172,7 @@ class SWNode extends CComponent {
 			throw new SWException(__FUNCTION__. 'incorrect arg type : string or array expected');
 		}
 	}
+
 	/**
 	 * Parse a status name and return it as an array. The string passed as argument
 	 * may be a complete status name (e.g workflowId/nodeId) and if no workflowId is
@@ -221,17 +222,17 @@ class SWNode extends CComponent {
 		return $this->_constraint;
 	}
 	public function getTransition($swNodeEnd){
-		
+
 		if( ! $swNodeEnd instanceof SWNode )
 			throw new SWException(Yii::t('simpleWorkflow','SWNode object expected'));
-		
+
 		if( $this->_tr == null or
 			count($this->_tr)==0 or
 			!isset($this->_tr[$swNodeEnd->toString()]))
 		{
 			return null;
 		}else {
-			
+
 			return $this->_tr[$swNodeEnd->toString()];
 		}
 	}

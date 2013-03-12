@@ -17,12 +17,10 @@
  * @property string $certificate
  * @property string $stamp
  * @property string $originalString
- * @property integer $SatCertificate_id
  *
- * @property SatCertificate $satCertificate
  * @property Cfd $cfd
  */
-abstract class BaseSatStamp extends GxActiveRecord {
+abstract class BaseSatStamp extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -40,22 +38,38 @@ abstract class BaseSatStamp extends GxActiveRecord {
 		return 'uuid';
 	}
 
+	public function relations() {
+		$relations = array(
+			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
+		);
+                return array_merge($relations, parent::relations());
+	}
 	public function rules() {
 		return array(
 			array('Cfd_id', 'required'),
-			array('Cfd_id, SatCertificate_id', 'numerical', 'integerOnly'=>true),
+			array('Cfd_id', 'numerical', 'integerOnly'=>true),
 			array('uuid, version, dttm, certificate', 'length', 'max'=>45),
 			array('stamp, originalString', 'safe'),
-			array('uuid, version, dttm, certificate, stamp, originalString, SatCertificate_id', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, Cfd_id, uuid, version, dttm, certificate, stamp, originalString, SatCertificate_id', 'safe', 'on'=>'search'),
+			array('uuid, version, dttm, certificate, stamp, originalString', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, Cfd_id, uuid, version, dttm, certificate, stamp, originalString', 'safe', 'on'=>'search'),
 		);
 	}
+	public function search() {
+		$criteria = new CDbCriteria;
 
-	public function relations() {
-		return array(
-			'satCertificate' => array(self::BELONGS_TO, 'SatCertificate', 'SatCertificate_id'),
-			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
-		);
+		$criteria->compare('id', $this->id);
+		$criteria->compare('Cfd_id', $this->Cfd_id);
+		$criteria->compare('uuid', $this->uuid, true);
+		$criteria->compare('version', $this->version, true);
+		$criteria->compare('dttm', $this->dttm, true);
+		$criteria->compare('certificate', $this->certificate, true);
+		$criteria->compare('stamp', $this->stamp, true);
+		$criteria->compare('originalString', $this->originalString, true);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+		));
 	}
 
 	public function pivotModels() {
@@ -73,29 +87,7 @@ abstract class BaseSatStamp extends GxActiveRecord {
                 			'certificate' => yii::t('app', 'Certificate'),
                 			'stamp' => yii::t('app', 'Stamp'),
                 			'originalString' => yii::t('app', 'Original String'),
-                        			                        'SatCertificate_id' => yii::t('app', 'Sat Certificate'),
-                        			                        'satCertificate' => yii::t('app', 'Sat Certificate'),
                         			                        'cfd' => yii::t('app', 'Cfd'),
 		);
-	}
-
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('Cfd_id', $this->Cfd_id);
-		$criteria->compare('uuid', $this->uuid, true);
-		$criteria->compare('version', $this->version, true);
-		$criteria->compare('dttm', $this->dttm, true);
-		$criteria->compare('certificate', $this->certificate, true);
-		$criteria->compare('stamp', $this->stamp, true);
-		$criteria->compare('originalString', $this->originalString, true);
-		$criteria->compare('SatCertificate_id', $this->SatCertificate_id);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

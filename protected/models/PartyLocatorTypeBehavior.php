@@ -17,8 +17,8 @@ class PartyLocatorTypeBehavior extends ListBehavior {
 
     public function data() {
         return array(
-            self::PRIMARY => array('text' => yii::t('app', CModel::generateAttributeLabel(self::PRIMARY))),
-            self::INVOICE_NOTIFICATION => array('text' => yii::t('app', CModel::generateAttributeLabel(self::INVOICE_NOTIFICATION))),
+            self::PRIMARY => array('text' => yii::t('app', yii::app()->string->generateAttributeLabel(self::PRIMARY))),
+            self::INVOICE_NOTIFICATION => array('text' => yii::t('app', yii::app()->string->generateAttributeLabel(self::INVOICE_NOTIFICATION))),
         );
     }
 }

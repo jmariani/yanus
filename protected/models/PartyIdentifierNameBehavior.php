@@ -16,8 +16,8 @@ class PartyIdentifierNameBehavior extends ListBehavior {
 
     public function data() {
         return array(
-            self::CUSTOMER_CODE => array('text' => yii::t('app', CModel::generateAttributeLabel(self::CUSTOMER_CODE))),
-            self::RFC => array('text' => yii::t('app', CModel::generateAttributeLabel(self::RFC))),
+            self::CUSTOMER_CODE => array('text' => yii::t('app', yii::app()->string->generateAttributeLabel(self::CUSTOMER_CODE))),
+            self::RFC => array('text' => yii::t('app', yii::app()->string->generateAttributeLabel(self::RFC))),
         );
     }
 }

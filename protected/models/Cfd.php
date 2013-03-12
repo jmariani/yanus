@@ -36,37 +36,31 @@ class Cfd extends BaseCfd {
     public $_customsPermits = array(); //Array of customs permits.
     public $discounts = array(); // Array of CfdDiscount.
 //    public $fileAssets = array(); // of CfdHasFileAsset
-    public $items = array(); // of CfdItem
     public $parties = array(); // of Cfd_Has_Party
     public $notes = array(); // Array of notes.
     public $taxes = array(); // Array of tax objects.
     public $taxRegimes = array(); // of CfdTaxRegime.
     public $vendorFiscalAddress;
     public $vendorSearch;
-    // RelatedData
-    // RelatedData['CfdItem'] = array(CfdItem1, CfdItem2, etc)
-    // RelatedData['CfdAttribute'] = array(CfdAttribute1, CfdAttribute2, etc)
-
     public $relatedData = array();
 
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
 
-    public function addAddress($address, $name = null, $reference = null, $type = AddressTypeBehavior::PRIMARY) {
-        $cfdAddress = new CfdAddress();
-        $cfdAddress->name = $name;
-        $cfdAddress->reference = $reference;
-        $cfdAddress->address = $address;
-        $cfdAddress->type = $type;
-        $this->addRelatedObject($cfdAddress);
-    }
-
-    public function addParty($party, $type = CfdPartyTypeBehavior::VENDOR) {
-        $cfdVendorParty = new CfdHasParty();
-        $cfdVendorParty->party = $party;
-        $cfdVendorParty->type = $type;
-        $this->addRelatedObject($cfdVendorParty);
+    public function attachFileAsset($file, $type) {
+        $fileAsset = FileAsset::model()->find('location = :location', array(':location' => $file));
+        if (!$fileAsset) {
+            $fileAsset = new FileAsset();
+            $fileAsset->location = $file;
+            $fileAsset->save();
+        }
+        $cfdHasFileAsset = new CfdHasFileAsset();
+        $cfdHasFileAsset->fileAsset = $fileAsset;
+//        $cfdHasFileAsset->cfd = $cfd;
+        $cfdHasFileAsset->type = $type;
+//        $cfdHasFileAsset->save();
+        $this->addRelatedObject($cfdHasFileAsset);
     }
 
     public function behaviors() {
@@ -84,6 +78,23 @@ class Cfd extends BaseCfd {
         return $behaviors;
     }
 
+    /**
+     * byMd5
+     * Named scope to filter Cfds by md5
+     * @param string md5
+     * @return Owner
+     */
+    public function byMd5($md5) {
+        $criteria = new CDbCriteria();
+        $criteria->compare('md5', $md5);
+        $criteria = $this->getDbCriteria()->mergeWith($criteria);
+        return $this;
+    }
+
+    public function createMd5($vendorRfc, $invoiceNbr, $customerRfc) {
+        return md5($vendorRfc . '_' . $invoiceNbr . '_' . $customerRfc);
+    }
+
     /*
      * Creates original string
      */
@@ -95,7 +106,7 @@ class Cfd extends BaseCfd {
                 $xmlFile = $this->cfdFile->location;
                 $xml = @simplexml_load_file($xmlFile);
                 if (!$xml)
-                    throw new CException(yii::t('app', 'Error loading CFD XML file "{file}"', array('{file}' => $xmlFile)));
+                    throw new CException(yii::t('yanus', 'Error loading CFD XML file "{file}"', array('{file}' => $xmlFile)));
             }
 
             $xslt = new XSLTProcessor();
@@ -105,43 +116,47 @@ class Cfd extends BaseCfd {
             $xsltFile = SatHelper::getXslt(SystemConfig::CFD_OS_XSLT . $version);
 
             if (!@$xsl->load($xsltFile, LIBXML_NOCDATA))
-                throw new CException(yii::t('app', 'Error retrieving XSLT file "{file}"', array('{file}' => $xsltFile)));
+                throw new CException(yii::t('yanus', 'Error retrieving XSLT file "{file}"', array('{file}' => $xsltFile)));
 
             if (!@$xslt->importStylesheet($xsl))
-                throw new CException(yii::t('app', 'Error importing stylesheet "{file}"', array('{file}' => $xsltFile)));
+                throw new CException(yii::t('yanus', 'Error importing stylesheet "{file}"', array('{file}' => $xsltFile)));
 
             $dom = new DOMDocument("1.0", "UTF-8");
             if (!$dom->loadXML($xml->saveXML()))
-                throw new CException(yii::t('app', 'Error loading CFD XML file'));
+                throw new CException(yii::t('yanus', 'Error loading CFD XML file'));
 
             $originalString = $xslt->transformToXml($dom);
             if (!$originalString)
-                throw new CException(yii::t('app', 'Error retrieving original string'));
+                throw new CException(yii::t('yanus', 'Error retrieving original string'));
             else
                 return $originalString;
         } catch (Exception $e) {
             foreach (libxml_get_errors() as $xmlError) {
-                error_log('[error][libxml] ' . $xmlError->message . ' ' . yii::t('app', 'at line') . ': ' . $xmlError->line);
+                error_log('[error][libxml] ' . $xmlError->message . ' ' . yii::t('yanus', 'at line') . ': ' . $xmlError->line);
             }
             throw new CException($e->getMessage());
         }
     }
 
-    public function createSignature(SimpleXMLElement $xml, SatCertificate $certificate) {
+    public function createSignature(SimpleXMLElement $xml) {
         if (!$this->originalString)
             $this->originalString = $this->createOriginalString($xml);
 
+        $certificateNbr = $xml->attributes()->noCertificado;
+        $certificate = SatCertificate::model()->find('nbr = :nbr', array(':nbr' => $certificateNbr));
+        if (!$certificate)
+            throw new CException(yii::t('yanus', 'Cannot find certificate Nº "{nbr}"', array('{nbr}' => $certificateNbr)));
         $pemKey = "-----BEGIN ENCRYPTED PRIVATE KEY-----\n" . chunk_split($certificate->keyPem, 64, "\n") . "-----END ENCRYPTED PRIVATE KEY-----\n";
 
         $pkeyid = openssl_get_privatekey(array($pemKey, $certificate->keyPassword));
         if (!$pkeyid) {
-            $this->addError('id', yii::t('app', 'Cannot retrieve private key from certificate'));
-            throw new CException(yii::t('app', 'Cannot retrieve private key from certificate'));
+            $this->addError('id', yii::t('yanus', 'Cannot retrieve private key from certificate'));
+            throw new CException(yii::t('yanus', 'Cannot retrieve private key from certificate'));
             return false;
         }
         if (!openssl_sign($this->originalString, $cryptStamp, $pkeyid, OPENSSL_ALGO_SHA1)) {
-            $this->addError('id', yii::t('app', 'Error signing CFD'));
-            throw new CException(yii::t('app', 'Error signing CFD'));
+            $this->addError('id', yii::t('yanus', 'Error signing CFD'));
+            throw new CException(yii::t('yanus', 'Error signing CFD'));
             return false;
         }
         openssl_free_key($pkeyid);
@@ -158,9 +173,9 @@ class Cfd extends BaseCfd {
 //            $runMode = SystemConfig::getValue(SystemConfig::RUN_MODE);
 //            if ($runMode == SystemConfig::RUN_MODE_PRODUCTION) {
 //                if (!$this->VendorParty)
-//                    throw new CException(yii::t('app', 'CFD has no vendor defined.'));
+//                    throw new CException(yii::t('yanus', 'CFD has no vendor defined.'));
 //                if (!$this->VendorParty->Rfc)
-//                    throw new CException(yii::t('app', 'CFD Vendor has no RFC defined.'));
+//                    throw new CException(yii::t('yanus', 'CFD Vendor has no RFC defined.'));
 //                else
 //                    $vendorRfc = $this->VendorParty->rfc;
 //                $certificate = $this->satCertificate;
@@ -173,14 +188,14 @@ class Cfd extends BaseCfd {
 //                // Get certificate for demo RFC
 //                $certificate = SatCertificate::model()->current()->find('rfc = :rfc', array(':rfc' => $vendorRfc));
 //                if (!$certificate) {
-//                    $this->addError('satCertificate_id', yii::t('app', 'Cannot find a valid certificate for RFC "{rfc}"', array('{rfc}' => $vendorRfc)));
-//                    throw new CException(yii::t('app', 'Cannot find a valid certificate for RFC "{rfc}"', array('{rfc}' => $vendorRfc)));
+//                    $this->addError('satCertificate_id', yii::t('yanus', 'Cannot find a valid certificate for RFC "{rfc}"', array('{rfc}' => $vendorRfc)));
+//                    throw new CException(yii::t('yanus', 'Cannot find a valid certificate for RFC "{rfc}"', array('{rfc}' => $vendorRfc)));
 //                }
 //            }
 //            $cfdPath = SystemConfig::getvalue(SystemConfig::CFD_PATH);
 //
 //            if (!$this->VendorParty->Name)
-//                throw new CException(yii::t('app', 'CFD Vendor has no name defined.'));
+//                throw new CException(yii::t('yanus', 'CFD Vendor has no name defined.'));
 //            else
 //                $vendorName = $this->VendorParty->Name;
 //
@@ -419,8 +434,8 @@ class Cfd extends BaseCfd {
 //        return true;
 //
 //        if (!$this->id) {
-//            $this->addError('id', yii::t('app', 'Invoice must be saved before a CFD can be created.'));
-//            throw new CException(yii::t('app', 'Invoice must be saved before a CFD can be created.'));
+//            $this->addError('id', yii::t('yanus', 'Invoice must be saved before a CFD can be created.'));
+//            throw new CException(yii::t('yanus', 'Invoice must be saved before a CFD can be created.'));
 //        }
 //        // This will create a SAT compliant XML
 //        // Returns the XML
@@ -440,8 +455,8 @@ class Cfd extends BaseCfd {
 //            // Get certificate for demo RFC
 //            $certificate = SatCertificate::model()->current()->find('rfc = :rfc', array(':rfc' => $vendorRfc));
 //            if (!$certificate) {
-//                $this->addError('satCertificate_id', yii::t('app', 'Cannot find a valid certificate for RFC "{rfc}"', array('{rfc}' => $vendorRfc)));
-//                throw new CException(yii::t('app', 'Cannot find a valid certificate for RFC "{rfc}"', array('{rfc}' => $vendorRfc)));
+//                $this->addError('satCertificate_id', yii::t('yanus', 'Cannot find a valid certificate for RFC "{rfc}"', array('{rfc}' => $vendorRfc)));
+//                throw new CException(yii::t('yanus', 'Cannot find a valid certificate for RFC "{rfc}"', array('{rfc}' => $vendorRfc)));
 //            }
 //            $vendorName = $certificate->name;
 //        }
@@ -644,11 +659,11 @@ class Cfd extends BaseCfd {
 ////
 ////        $pkeyid = openssl_get_privatekey(array($pemKey, $certificate->keyPassword));
 ////        if (!$pkeyid) {
-////            $this->addError('id', yii::t('app', 'Cannot retrieve private key from certificate'));
+////            $this->addError('id', yii::t('yanus', 'Cannot retrieve private key from certificate'));
 ////            return false;
 ////        }
 ////        if (!openssl_sign($originalString, $cryptStamp, $pkeyid, OPENSSL_ALGO_SHA1)) {
-////            $this->addError('id', yii::t('app', 'Error signing CFD'));
+////            $this->addError('id', yii::t('yanus', 'Error signing CFD'));
 ////            return false;
 ////        }
 ////        openssl_free_key($pkeyid);
@@ -687,7 +702,7 @@ class Cfd extends BaseCfd {
 ////            $xslTfd = new DOMDocument("1.0", "UTF-8");
 ////            $xslTfd->substituteEntities = true;
 ////            if (!$xslTfd->load(Yii::app()->params['XSLT_OS_TFD1.0'], LIBXML_NOCDATA)) {
-////                $this->addError('id', yii::t('app', 'Cannot retrieve XSLT file "{file}"', array('{file}' => $xslTfd)));
+////                $this->addError('id', yii::t('yanus', 'Cannot retrieve XSLT file "{file}"', array('{file}' => $xslTfd)));
 ////                return false;
 ////            }
 ////            $xsltTfd->importStylesheet($xslTfd);
@@ -695,9 +710,9 @@ class Cfd extends BaseCfd {
 ////            $originalTfdString = $xsltTfd->transformToXml($dom);
 ////            if (!$originalTfdString) {
 ////                $errors = array();
-////                $errors[] = yii::t('app', 'Error while creating TFD original string');
+////                $errors[] = yii::t('yanus', 'Error while creating TFD original string');
 ////                foreach (libxml_get_errors() as $xmlError) {
-////                    $errors[] = $xmlError->message . ' ' . yii::t('app', 'at line') . ': ' . $xmlError->line;
+////                    $errors[] = $xmlError->message . ' ' . yii::t('yanus', 'at line') . ': ' . $xmlError->line;
 ////                }
 ////                $this->addErrors(array('id' => $errors));
 ////                return false;
@@ -747,41 +762,56 @@ class Cfd extends BaseCfd {
         );
     }
 
+    public function findByInvoiceAndVendorCustomerPrimaryIdentifier($invoice, $vendorPrimaryId, $customerPrimaryId) {
+        $criteria = new CDbCriteria();
+        $criteria->with = array(
+            'vendor' => array(
+                'with' => array(
+                    'primaryIdentifier' => array(
+                        'with' => array('identifier' => array('alias' => 'vendorIdentifier')),
+                        'alias' => 'vendorPartyIdentifier'))),
+            'customer' => array(
+                'with' => array(
+                    'primaryIdentifier' => array(
+                        'with' => array('identifier' => array('alias' => 'customerIdentifier')),
+                        'alias' => 'customerPartyIdentifier'))),
+        );
+        $criteria->condition = 'vendorIdentifier.value = :vendorId and customerIdentifier.value = :customerId and t.invoice = :invoice';
+        $criteria->params = array(
+            ':vendorId' => $vendorPrimaryId,
+            ':customerId' => $customerPrimaryId,
+            ':invoice' => $invoice
+        );
+        $criteria->limit = 1;
+        return Cfd::model()->find($criteria);
+    }
+
     public function getFileBasename($createPath = true) {
         $processInvoiceDttm = new DateTime($this->dttm);
-        $path = SystemConfig::getValue(SystemConfig::CFD_PATH) . DIRECTORY_SEPARATOR .
-                $this->vendorParty->rfc . DIRECTORY_SEPARATOR .
+        $path = yii::getPathOfAlias('cfd') . DIRECTORY_SEPARATOR .
+                $this->vendor->rfc . DIRECTORY_SEPARATOR .
                 $processInvoiceDttm->format('Y') . DIRECTORY_SEPARATOR .
                 $processInvoiceDttm->format('m') . DIRECTORY_SEPARATOR .
                 $processInvoiceDttm->format('d') . DIRECTORY_SEPARATOR .
                 $this->invoice;
         if ($createPath) {
-            yii::trace('Creating folder ' . $path, __METHOD__);
-            if (!file_exists($path)) mkdir($path, 0777, true);
+            if (!yii::app()->file->set($path)->exists)
+                yii::app()->file->set($path)->createDir();
         }
         return $path . DIRECTORY_SEPARATOR .
-                $this->vendorParty->rfc . '_' . $this->invoice . '_' . $this->customerParty->rfc;
-    }
-
-    public function getBasePath() {
-        $processInvoiceDttm = new DateTime($this->dttm);
-        return yii::getPathOfAlias('application') . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . __CLASS__ .
-                DIRECTORY_SEPARATOR . $this->vendorRfc . DIRECTORY_SEPARATOR .
-                $processInvoiceDttm->format('Y') . DIRECTORY_SEPARATOR .
-                $processInvoiceDttm->format('m') . DIRECTORY_SEPARATOR .
-                $processInvoiceDttm->format('d') . DIRECTORY_SEPARATOR .
-                $this->invoice;
+                $this->vendor->rfc . '_' . $this->invoice . '_' . $this->customer->rfc;
     }
 
     public function getCustomsPermits() {
-        // Returns an array of CustomsPermit $permit[CustomsPermit->nbr] = CustomsPermit
-        $permits = array();
-        foreach ($this->cfdItems as $items) {
-            foreach ($item->customsPermits as $customPermit) {
-                $permits[$customPermit->nbr] = $customPermit;
-            }
-        }
-        return $permits;
+        $customsPermits = yii::app()->db->createCommand()
+                ->select(array('c.nbr', 'c.dt', 'c.office'))
+                ->from('CfdItem a')
+                ->leftJoin('CfdItem_has_CustomsPermit b', 'b.CfdItem_id = a.id')
+                ->leftJoin('CustomsPermit c', 'c.id = b.CustomsPermit_id')
+                ->where(array('and', 'a.Cfd_id = :id', 'c.nbr is not null'), array(':id' => $this->id))
+                ->group('c.nbr')
+                ->queryAll(true);
+        return (empty($customsPermits)?false:$customsPermits);
     }
 
     public function getDiscount() {
@@ -856,14 +886,6 @@ class Cfd extends BaseCfd {
                 return 'label-info';
                 break;
         }
-    }
-
-    public function getSubTotal() {
-        $total = 0;
-        foreach ($this->cfdItems as $item) {
-            $total += $item->total;
-        }
-        return $total;
     }
 
     public function getTotal() {
@@ -1009,6 +1031,33 @@ class Cfd extends BaseCfd {
         $relations['cfdFile'] = array(self::HAS_ONE, 'FileAsset', array('FileAsset_id' => 'id'), 'through' => 'CfdHasCfdFileAsset');
         $relations['logFile'] = array(self::HAS_ONE, 'FileAsset', array('FileAsset_id' => 'id'), 'through' => 'CfdHasLogFileAsset');
         $relations['pdfFile'] = array(self::HAS_ONE, 'FileAsset', array('FileAsset_id' => 'id'), 'through' => 'CfdHasGraphicRepresentationFileAsset');
+
+//        'cfdParties' => array(self::HAS_MANY, 'CfdParty', 'Cfd_id'),
+        $relations['vendorParty'] = array(self::HAS_ONE, 'CfdParty', array('Cfd_id' => 'id'), 'scopes' => CfdPartyTypeBehavior::VENDOR);
+        $relations['vendor'] = array(self::HAS_ONE, 'Party', array('Party_id' => 'id'), 'through' => 'vendorParty');
+        $relations['customerParty'] = array(self::HAS_ONE, 'CfdParty', array('Cfd_id' => 'id'), 'scopes' => CfdPartyTypeBehavior::CUSTOMER);
+        $relations['customer'] = array(self::HAS_ONE, 'Party', array('Party_id' => 'id'), 'through' => 'customerParty');
+
+        $relations['cfdFileAsset'] = array(self::HAS_ONE, 'CfdHasFileAsset', array('Cfd_id' => 'id'), 'scopes' => CfdFileAssetTypeBehavior::CFD);
+        $relations['cfdFile'] = array(self::HAS_ONE, 'FileAsset', array('FileAsset_id' => 'id'), 'through' => 'cfdFileAsset');
+
+        $relations['graphicVersionFileAsset'] = array(self::HAS_ONE, 'CfdHasFileAsset', array('Cfd_id' => 'id'), 'scopes' => CfdFileAssetTypeBehavior::GRAPHIC_VERSION);
+        $relations['graphicVersionFile'] = array(self::HAS_ONE, 'FileAsset', array('FileAsset_id' => 'id'), 'through' => 'graphicVersionFileAsset');
+
+        $relations['cfdPrimaryAddress'] = array(self::HAS_ONE, 'CfdAddress', array('Cfd_id' => 'id'), 'scopes' => AddressTypeBehavior::PRIMARY);
+        $relations['primaryAddress'] = array(self::HAS_ONE, 'Address', array('Address_id' => 'id'), 'through' => 'cfdPrimaryAddress');
+
+        $relations['cfdBilledFromAddress'] = array(self::HAS_ONE, 'CfdAddress', array('Cfd_id' => 'id'), 'scopes' => AddressTypeBehavior::BILLED_FROM);
+        $relations['billedFromAddress'] = array(self::HAS_ONE, 'Address', array('Address_id' => 'id'), 'through' => 'cfdBilledFromAddress');
+
+        $relations['cfdBillToAddress'] = array(self::HAS_ONE, 'CfdAddress', array('Cfd_id' => 'id'), 'scopes' => AddressTypeBehavior::BILL_TO);
+        $relations['billToAddress'] = array(self::HAS_ONE, 'Address', array('Address_id' => 'id'), 'through' => 'cfdBillToAddress');
+
+        $relations['cfdShipToAddress'] = array(self::HAS_ONE, 'CfdAddress', array('Cfd_id' => 'id'), 'scopes' => AddressTypeBehavior::SHIP_TO);
+        $relations['shipToAddress'] = array(self::HAS_ONE, 'Address', array('Address_id' => 'id'), 'through' => 'cfdShipToAddress');
+
+        $relations['satStamp'] = array(self::HAS_ONE, 'SatStamp', 'Cfd_id');
+
         return array_merge($relations, parent::relations());
     }
 
@@ -1345,12 +1394,12 @@ class Cfd extends BaseCfd {
         // Get CFD version.
         $this->version = (string) $xml->attributes()->version;
         if (!$this->version) {
-            $this->addError('cfdXmlFile', yii::t('app', 'Failed to retrieve CFD version'));
+            $this->addError('cfdXmlFile', yii::t('yanus', 'Failed to retrieve CFD version'));
             return false;
         }
         $this->dttm = (string) $xml->attributes()->fecha;
         if (!$this->dttm) {
-            $this->addError('cfdXmlFile', yii::t('app', 'Failed to retrieve CFD issuing date'));
+            $this->addError('cfdXmlFile', yii::t('yanus', 'Failed to retrieve CFD issuing date'));
             return false;
         }
 
@@ -1360,7 +1409,7 @@ class Cfd extends BaseCfd {
             case "2.0":
                 // Test version
                 if ($this->dttm >= '2012-07-01') {
-                    $this->addError('cfdXmlFile', yii::t('app', 'Error: CFD Version {v} is deprecated since 01-Jul-2012', array('{v}' => '2.0')));
+                    $this->addError('cfdXmlFile', yii::t('yanus', 'Error: CFD Version {v} is deprecated since 01-Jul-2012', array('{v}' => '2.0')));
                     return false;
                 }
             case "2.2":
@@ -1369,14 +1418,14 @@ class Cfd extends BaseCfd {
             case "3.0":
                 // Test version
                 if ($this->dttm >= '2012-07-01') {
-                    $this->addError('cfdXmlFile', yii::t('app', 'Error: CFD Version {v} is deprecated since 01-Jul-2012', array('{v}' => '3.0')));
+                    $this->addError('cfdXmlFile', yii::t('yanus', 'Error: CFD Version {v} is deprecated since 01-Jul-2012', array('{v}' => '3.0')));
                     return false;
                 }
             case "3.2":
                 $strXml = preg_replace('{<cfdi:Addenda.*/cfdi:Addenda>}is', '<cfdi:Addenda/>', $strXml);
                 break;
             default:
-                $this->addError('cfdXmlFile', yii::t('app', 'Invalid CFD version "{version}"', array('{version}' => $this->version)));
+                $this->addError('cfdXmlFile', yii::t('yanus', 'Invalid CFD version "{version}"', array('{version}' => $this->version)));
                 return false;
         }
         $xml = simplexml_load_string($strXml);
@@ -1478,12 +1527,12 @@ class Cfd extends BaseCfd {
                 $criteria->compare('serial', $this->serial);
             if (!SatFoliosCfd::model()->find($criteria)) {
                 $errors = array();
-                $errors[] = yii::t('app', 'Invalid approval number / year or invalid serial or folio');
-                $errors[] = yii::t('app', 'Approval number: {n}', array('{n}' => $this->approvalNbr));
-                $errors[] = yii::t('app', 'Approval year: {n}', array('{n}' => $this->approvalYear));
+                $errors[] = yii::t('yanus', 'Invalid approval number / year or invalid serial or folio');
+                $errors[] = yii::t('yanus', 'Approval number: {n}', array('{n}' => $this->approvalNbr));
+                $errors[] = yii::t('yanus', 'Approval year: {n}', array('{n}' => $this->approvalYear));
                 if ($this->serial)
-                    $errors[] = yii::t('app', 'CFD Serial: {n}', array('{n}' => $this->serial));
-                $errors[] = yii::t('app', 'CFD Folio: {n}', array('{n}' => $this->folio));
+                    $errors[] = yii::t('yanus', 'CFD Serial: {n}', array('{n}' => $this->serial));
+                $errors[] = yii::t('yanus', 'CFD Folio: {n}', array('{n}' => $this->folio));
                 $this->addErrors(array('cfdXmlFile' => $errors));
                 return false;
             }
@@ -1608,7 +1657,7 @@ class Cfd extends BaseCfd {
                             }
                             // Check item arithmetics
                             if (number_format($cfdItem->amt, 2) != number_format($cfdItem->qty * $cfdItem->unitPrice, 2)) {
-                                $this->addError('cfdXmlFile', yii::t('app', 'Arithmetic error on item {item} - "{desc}". Amount is {amt} and must be {realamt}', array(
+                                $this->addError('cfdXmlFile', yii::t('yanus', 'Arithmetic error on item {item} - "{desc}". Amount is {amt} and must be {realamt}', array(
                                             '{item}' => $itemCount,
                                             '{desc}' => $cfdItem->description,
                                             '{amt}' => number_format($cfdItem->amt, 2),
@@ -1657,7 +1706,7 @@ class Cfd extends BaseCfd {
                         }
                         if ($this->wthAmt != 0) {
                             if (number_format($this->wthAmt, 2) != number_format($withHoldingSum, 2)) {
-                                $this->addError('cfdXmlFile', yii::t('app', 'Arithmetic error: Withholdings total is {wt} and must be {cwt}', array('{wt}' => number_format($this->wthAmt, 2), '{cwt}' => number_format($withHoldingSum, 2))));
+                                $this->addError('cfdXmlFile', yii::t('yanus', 'Arithmetic error: Withholdings total is {wt} and must be {cwt}', array('{wt}' => number_format($this->wthAmt, 2), '{cwt}' => number_format($withHoldingSum, 2))));
                                 return false;
                             }
                         } else {
@@ -1665,7 +1714,7 @@ class Cfd extends BaseCfd {
                         }
                         if ($this->taxAmt != 0) {
                             if (number_format($this->taxAmt, 2) != number_format($taxSum, 2)) {
-                                $this->addError('cfdXmlFile', yii::t('app', 'Arithmetic error: Tax total is {wt} and must be {cwt}', array('{wt}' => number_format($this->taxAmt, 2), '{cwt}' => number_format($taxSum, 2))));
+                                $this->addError('cfdXmlFile', yii::t('yanus', 'Arithmetic error: Tax total is {wt} and must be {cwt}', array('{wt}' => number_format($this->taxAmt, 2), '{cwt}' => number_format($taxSum, 2))));
                                 return false;
                             }
                         } else {
@@ -1688,7 +1737,7 @@ class Cfd extends BaseCfd {
                                                     break;
                                                 case "selloCFD":
                                                     if (trim($aValue) != trim($this->seal)) {
-                                                        $this->addError('cfdXmlFile', yii::t('app', 'The CFD seal in the Digital Tax Stamp is different from the CFD seal'));
+                                                        $this->addError('cfdXmlFile', yii::t('yanus', 'The CFD seal in the Digital Tax Stamp is different from the CFD seal'));
                                                         return false;
                                                     }
                                                     break;
@@ -1697,11 +1746,11 @@ class Cfd extends BaseCfd {
                                                     $dt = new DateTime($this->dttm);
                                                     $interval = $ft->diff($dt);
                                                     if ($interval->h < 0) {
-                                                        $this->addError('cfdXmlFile', yii::t('app', 'Digital Tax Stamp date "{dtsdt}" is older than the CFD issuing date "{cfddt}"', array('{dtsdt}' => $ft->format(DateTime::ISO8601), '{cfddt}' => $dt->format(DateTime::ISO8601))));
+                                                        $this->addError('cfdXmlFile', yii::t('yanus', 'Digital Tax Stamp date "{dtsdt}" is older than the CFD issuing date "{cfddt}"', array('{dtsdt}' => $ft->format(DateTime::ISO8601), '{cfddt}' => $dt->format(DateTime::ISO8601))));
                                                         return false;
                                                     }
                                                     if ($interval->h > 72) {
-                                                        $this->addError('cfdXmlFile', yii::t('app', 'Digital Tax Stamp date "{dtsdt}" cannot be more than 72Hs from CFD issuing date "{cfddt}"', array('{dtsdt}' => $ft->format(DateTime::ISO8601), '{cfddt}' => $dt->format(DateTime::ISO8601))));
+                                                        $this->addError('cfdXmlFile', yii::t('yanus', 'Digital Tax Stamp date "{dtsdt}" cannot be more than 72Hs from CFD issuing date "{cfddt}"', array('{dtsdt}' => $ft->format(DateTime::ISO8601), '{cfddt}' => $dt->format(DateTime::ISO8601))));
                                                         return false;
                                                     }
                                                     break;
@@ -1747,7 +1796,7 @@ class Cfd extends BaseCfd {
                                         }
                                         if ($this->localWhtAmt != 0) {
                                             if (number_format($this->localWhtAmt, 2) != number_format($localWhtSum, 2)) {
-                                                $this->addError('cfdXmlFile', yii::t('app', 'Arithmetic error: Local withholdings total is {wt} and must be {cwt}', array('{wt}' => number_format($this->localWhtAmt, 2), '{cwt}' => number_format($localWhtSum, 2))));
+                                                $this->addError('cfdXmlFile', yii::t('yanus', 'Arithmetic error: Local withholdings total is {wt} and must be {cwt}', array('{wt}' => number_format($this->localWhtAmt, 2), '{cwt}' => number_format($localWhtSum, 2))));
                                                 return false;
                                             }
                                         } else {
@@ -1755,7 +1804,7 @@ class Cfd extends BaseCfd {
                                         }
                                         if ($this->localTaxAmt != 0) {
                                             if (number_format($this->localTaxAmt, 2) != number_format($localTaxSum, 2)) {
-                                                $this->addError('cfdXmlFile', yii::t('app', 'Arithmetic error: Local tax total is {wt} and must be {cwt}', array('{wt}' => number_format($this->localTaxAmt, 2), '{cwt}' => number_format($localTaxSum, 2))));
+                                                $this->addError('cfdXmlFile', yii::t('yanus', 'Arithmetic error: Local tax total is {wt} and must be {cwt}', array('{wt}' => number_format($this->localTaxAmt, 2), '{cwt}' => number_format($localTaxSum, 2))));
                                                 return false;
                                             }
                                         } else {
@@ -1772,7 +1821,7 @@ class Cfd extends BaseCfd {
 
         // Validate aritmetics.
         if (number_format($this->subTotal, 2) != number_format($subTotal, 2)) {
-            $this->addError('cfdXmlFile', yii::t('app', 'Arithmetic error: CFD Subtotal is {amt} and must be {realamt}', array(
+            $this->addError('cfdXmlFile', yii::t('yanus', 'Arithmetic error: CFD Subtotal is {amt} and must be {realamt}', array(
                         '{amt}' => number_format($this->subTotal, 2),
                         '{realamt}' => number_format($subTotal, 2)
                     )));
@@ -1781,23 +1830,23 @@ class Cfd extends BaseCfd {
         $total = $this->subTotal - $this->discount + $this->taxAmt + $this->localTaxAmt - $this->wthAmt - $this->localWhtAmt;
         if (number_format($this->total, 2) != number_format($total, 2)) {
             $errors = array();
-            $errors[] = yii::t('app', 'Arithmetic error: CFD Total is {amt} and must be {realamt}', array(
+            $errors[] = yii::t('yanus', 'Arithmetic error: CFD Total is {amt} and must be {realamt}', array(
                         '{amt}' => number_format($this->total, 2),
                         '{realamt}' => number_format($total, 2)
                     ));
-            $errors[] = yii::t('app', 'CFD subtotal: {st}', array('{st}' => number_format($this->subTotal, 2)));
-            $errors[] = yii::t('app', 'CFD discount: {st}', array('{st}' => number_format($this->discount, 2)));
-            $errors[] = yii::t('app', 'CFD tax amount: {st}', array('{st}' => number_format($this->taxAmt, 2)));
-            $errors[] = yii::t('app', 'CFD withholding amount: {st}', array('{st}' => number_format($this->wthAmt, 2)));
-            $errors[] = yii::t('app', 'CFD local tax amount: {st}', array('{st}' => number_format($this->localTaxAmt, 2)));
-            $errors[] = yii::t('app', 'CFD local withholding amount: {st}', array('{st}' => number_format($this->localWhtAmt, 2)));
+            $errors[] = yii::t('yanus', 'CFD subtotal: {st}', array('{st}' => number_format($this->subTotal, 2)));
+            $errors[] = yii::t('yanus', 'CFD discount: {st}', array('{st}' => number_format($this->discount, 2)));
+            $errors[] = yii::t('yanus', 'CFD tax amount: {st}', array('{st}' => number_format($this->taxAmt, 2)));
+            $errors[] = yii::t('yanus', 'CFD withholding amount: {st}', array('{st}' => number_format($this->wthAmt, 2)));
+            $errors[] = yii::t('yanus', 'CFD local tax amount: {st}', array('{st}' => number_format($this->localTaxAmt, 2)));
+            $errors[] = yii::t('yanus', 'CFD local withholding amount: {st}', array('{st}' => number_format($this->localWhtAmt, 2)));
             $this->addErrors(array('cfdXmlFile' => $errors));
             return false;
         }
 
         // Validate if already exists
         if (Cfd::model()->find('md5 = :md5', array(':md5' => md5($this->getHash())))) {
-            $this->addError('cfdXmlFile', yii::t('app', 'CFD was already uploaded to the site.'));
+            $this->addError('cfdXmlFile', yii::t('yanus', 'CFD was already uploaded to the site.'));
             return false;
         }
         return true;
@@ -1853,7 +1902,7 @@ class Cfd extends BaseCfd {
         if (!@$cfdDoc->schemaValidateSource($xsd)) {
             $errors = array();
             foreach (libxml_get_errors() as $xmlError) {
-                $errors[] = $xmlError->message . ' ' . yii::t('app', 'at line') . ': ' . $xmlError->line;
+                $errors[] = $xmlError->message . ' ' . yii::t('yanus', 'at line') . ': ' . $xmlError->line;
             }
             $this->addErrors(array('cfdXmlFile' => $errors));
             return false;
@@ -1876,7 +1925,7 @@ class Cfd extends BaseCfd {
         $this->SatCertificate_id = $certificate->id;
 
         if (!($certificate->validFrom <= $this->dttm && $this->dttm <= $certificate->validTo)) {
-            $this->addError('cfdXmlFile', yii::t('app', 'CFD Issuing date "{cfddt}" is not between the range of valid certificate dates "{vf}" - "{vt}".', array('{cfddt}' => $this->dttm, '{vf}' => $certificate->validFrom, '{vt}' => $certificate->validTo)));
+            $this->addError('cfdXmlFile', yii::t('yanus', 'CFD Issuing date "{cfddt}" is not between the range of valid certificate dates "{vf}" - "{vt}".', array('{cfddt}' => $this->dttm, '{vf}' => $certificate->validFrom, '{vt}' => $certificate->validTo)));
             return false;
         }
         $cfdSxe = dom_import_simplexml($xml);
@@ -1908,7 +1957,7 @@ class Cfd extends BaseCfd {
         // Get Original String
         $this->originalString = $xslt->transformToXml($dom);
         if (!$this->originalString) {
-            $this->addError('cfdXmlFile', yii::t('app', 'Unable to extract original string from CFD'));
+            $this->addError('cfdXmlFile', yii::t('yanus', 'Unable to extract original string from CFD'));
             return false;
         }
 
@@ -1918,7 +1967,7 @@ class Cfd extends BaseCfd {
         // Get public key
         $pk = @openssl_get_publickey(openssl_x509_read($certificate->Pem));
         if (!$pk) {
-            $this->addError('cfdXmlFile', yii::t('app', 'Unable to extract public key from certificate.'));
+            $this->addError('cfdXmlFile', yii::t('yanus', 'Unable to extract public key from certificate.'));
             return false;
         }
 
@@ -1937,18 +1986,18 @@ class Cfd extends BaseCfd {
                     if ($verify > 0) {
                         // Yes it was.
                         // Trigger an error
-                        $this->addError('cfdXmlFile', yii::t('app', 'CFD was signed with MD5 algorithm and must be signed with SHA-1 algorithm.'));
+                        $this->addError('cfdXmlFile', yii::t('yanus', 'CFD was signed with MD5 algorithm and must be signed with SHA-1 algorithm.'));
                         return false;
                     }
                 } else {
-                    $this->addError('cfdXmlFile', yii::t('app', 'Invalid CFD signature.'));
+                    $this->addError('cfdXmlFile', yii::t('yanus', 'Invalid CFD signature.'));
                     return false;
                 }
                 break;
             case -1:
                 //Bad
                 openssl_free_key($pk);
-                $this->addError('cfdXmlFile', yii::t('app', 'Failed to verify CFD signature.'));
+                $this->addError('cfdXmlFile', yii::t('yanus', 'Failed to verify CFD signature.'));
                 return false;
                 break;
             default:
@@ -1967,14 +2016,14 @@ class Cfd extends BaseCfd {
         // Get TFD version
         $this->dtsVersion = $xml->attributes()->version;
         if (!$this->dtsVersion) {
-            $this->addError('cfdXmlFile', yii::t('app', 'Digital Tax Seal version not found.'));
+            $this->addError('cfdXmlFile', yii::t('yanus', 'Digital Tax Seal version not found.'));
             return false;
         }
 
         $xsd = @file_get_contents(Yii::app()->params['XSD_TFD' . $this->dtsVersion]);
 
         if (!$xsd) {
-            $this->addError('cfdXmlFile', yii::t('app', 'Failed to download Digital Tax Seal schema "{file}"', array('{file}' => Yii::app()->params['XSD_TFD' . $this->dtsVersion])));
+            $this->addError('cfdXmlFile', yii::t('yanus', 'Failed to download Digital Tax Seal schema "{file}"', array('{file}' => Yii::app()->params['XSD_TFD' . $this->dtsVersion])));
             return false;
         }
 
@@ -1985,9 +2034,9 @@ class Cfd extends BaseCfd {
 
         if (!@$cfdDoc->schemaValidateSource($xsd)) {
             $errors = array();
-            $errors[] = yii::t('app', 'Digital Tax Seal schema validation failed');
+            $errors[] = yii::t('yanus', 'Digital Tax Seal schema validation failed');
             foreach (libxml_get_errors() as $xmlError) {
-                $errors[] = $xmlError->message . ' ' . yii::t('app', 'at line') . ': ' . $xmlError->line;
+                $errors[] = $xmlError->message . ' ' . yii::t('yanus', 'at line') . ': ' . $xmlError->line;
             }
             $this->addErrors(array('cfdXmlFile' => $errors));
             return false;
@@ -2036,7 +2085,7 @@ class Cfd extends BaseCfd {
         $xsl = new DOMDocument();
         if (!@$xsl->load($xsltFile, LIBXML_NOCDATA)) {
             $errors = array();
-            $errors[] = yii::t('app', 'Failed to download XSLT file "{file}"', array('{file}' => $xsltFile));
+            $errors[] = yii::t('yanus', 'Failed to download XSLT file "{file}"', array('{file}' => $xsltFile));
             foreach (libxml_get_errors() as $xmlError) {
                 $errors[] = $xmlError->message;
             }
@@ -2047,7 +2096,7 @@ class Cfd extends BaseCfd {
         // Get Original String
         $originalString = $xslt->transformToXml($dom);
         if (!$this->originalString) {
-            $this->addError('cfdXmlFile', yii::t('app', 'Unable to extract original string from TFD'));
+            $this->addError('cfdXmlFile', yii::t('yanus', 'Unable to extract original string from TFD'));
             return false;
         }
 
@@ -2057,7 +2106,7 @@ class Cfd extends BaseCfd {
         // Get public key
         $pk = openssl_get_publickey(openssl_x509_read($pem));
         if (!$pk) {
-            $this->addError('cfdXmlFile', yii::t('app', 'Unable to extract public key from TFD certificate.'));
+            $this->addError('cfdXmlFile', yii::t('yanus', 'Unable to extract public key from TFD certificate.'));
             return false;
         }
 
@@ -2066,13 +2115,13 @@ class Cfd extends BaseCfd {
 
         switch ($verify) {
             case 0:
-                $this->addError('cfdXmlFile', yii::t('app', 'Invalid TFD signature.'));
+                $this->addError('cfdXmlFile', yii::t('yanus', 'Invalid TFD signature.'));
                 return false;
                 break;
             case -1:
                 //Bad
                 openssl_free_key($pk);
-                $this->addError('cfdXmlFile', yii::t('app', 'Failed to verify TFD signature.'));
+                $this->addError('cfdXmlFile', yii::t('yanus', 'Failed to verify TFD signature.'));
                 return false;
                 break;
             default:

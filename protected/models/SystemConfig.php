@@ -55,7 +55,7 @@ class SystemConfig extends BaseSystemConfig {
     public static function getRecord($code) {
         $rec = self::model()->find('code = :code', array(':code' => $code));
         if (!$rec)
-            throw new CException(yii::t('app', 'System Config code {code} is not defined.', array('{code}' => $code)));
+            throw new CException(yii::t('yanus', 'System Config code {code} is not defined.', array('{code}' => $code)));
         else
             return $rec;
     }
@@ -63,7 +63,7 @@ class SystemConfig extends BaseSystemConfig {
     public static function getValue($code) {
         $rec = self::model()->find('code = :code', array(':code' => $code));
         if (!$rec)
-            throw new CException(yii::t('app', 'System Config code "{code}" is not defined.', array('{code}' => $code)));
+            throw new CException(yii::t('yanus', 'System Config code "{code}" is not defined.', array('{code}' => $code)));
         else
             return $rec->value;
     }

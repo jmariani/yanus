@@ -10,17 +10,17 @@
  * followed by relations of table "CfdAddress" available as properties of the model.
  *
  * @property integer $id
- * @property string $name
- * @property string $reference
  * @property integer $Cfd_id
  * @property integer $Address_id
+ * @property string $name
  * @property string $type
+ * @property string $reference
  *
- * @property Cfd $cfd
  * @property Address $address
+ * @property Cfd $cfd
  */
-//abstract class BaseCfdAddress extends GxActiveRecord {
 abstract class BaseCfdAddress extends EAVActiveRecord {
+
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
 	}
@@ -37,22 +37,37 @@ abstract class BaseCfdAddress extends EAVActiveRecord {
 		return 'name';
 	}
 
+	public function relations() {
+		$relations = array(
+			'address' => array(self::BELONGS_TO, 'Address', 'Address_id'),
+			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
+		);
+                return array_merge($relations, parent::relations());
+	}
 	public function rules() {
 		return array(
 			array('Cfd_id, Address_id', 'required'),
 			array('Cfd_id, Address_id', 'numerical', 'integerOnly'=>true),
-			array('type', 'length', 'max'=>255),
+			array('type', 'length', 'max'=>45),
 			array('name, reference', 'safe'),
-			array('name, reference, type', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, name, reference, Cfd_id, Address_id, type', 'safe', 'on'=>'search'),
+			array('name, type, reference', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, Cfd_id, Address_id, name, type, reference', 'safe', 'on'=>'search'),
 		);
 	}
+	public function search() {
+		$criteria = new CDbCriteria;
 
-	public function relations() {
-		return array(
-			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
-			'address' => array(self::BELONGS_TO, 'Address', 'Address_id'),
-		);
+		$criteria->compare('id', $this->id);
+		$criteria->compare('Cfd_id', $this->Cfd_id);
+		$criteria->compare('Address_id', $this->Address_id);
+		$criteria->compare('name', $this->name, true);
+		$criteria->compare('type', $this->type, true);
+		$criteria->compare('reference', $this->reference, true);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+		));
 	}
 
 	public function pivotModels() {
@@ -63,30 +78,13 @@ abstract class BaseCfdAddress extends EAVActiveRecord {
 	public function attributeLabels() {
 		return array(
                 			'id' => yii::t('app', 'Id'),
-                			'name' => yii::t('app', 'Name'),
-                			'reference' => yii::t('app', 'Reference'),
                         			                        'Cfd_id' => yii::t('app', 'Cfd'),
                         			                        'Address_id' => yii::t('app', 'Address'),
+                			'name' => yii::t('app', 'Name'),
                 			'type' => yii::t('app', 'Type'),
-                        			                        'cfd' => yii::t('app', 'Cfd'),
+                			'reference' => yii::t('app', 'Reference'),
                         			                        'address' => yii::t('app', 'Address'),
+                        			                        'cfd' => yii::t('app', 'Cfd'),
 		);
-	}
-
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('name', $this->name, true);
-		$criteria->compare('reference', $this->reference, true);
-		$criteria->compare('Cfd_id', $this->Cfd_id);
-		$criteria->compare('Address_id', $this->Address_id);
-		$criteria->compare('type', $this->type, true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

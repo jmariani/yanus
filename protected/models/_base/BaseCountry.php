@@ -10,16 +10,13 @@
  * followed by relations of table "Country" available as properties of the model.
  *
  * @property integer $id
- * @property string $name
  * @property string $code
+ * @property string $name
  * @property integer $active
- * @property integer $useAsAutomobileCountryOfOrigin
  *
- * @property Address[] $addresses
- * @property Automobile[] $automobiles
  * @property State[] $states
  */
-abstract class BaseCountry extends GxActiveRecord {
+abstract class BaseCountry extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -34,25 +31,37 @@ abstract class BaseCountry extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'name';
-	}
-
-	public function rules() {
-		return array(
-			array('name, code', 'required'),
-			array('active, useAsAutomobileCountryOfOrigin', 'numerical', 'integerOnly'=>true),
-			array('code', 'length', 'max'=>45),
-			array('active, useAsAutomobileCountryOfOrigin', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, name, code, active, useAsAutomobileCountryOfOrigin', 'safe', 'on'=>'search'),
-		);
+		return 'code';
 	}
 
 	public function relations() {
-		return array(
-			'addresses' => array(self::HAS_MANY, 'Address', 'Country_id'),
-			'automobiles' => array(self::HAS_MANY, 'Automobile', 'Country_id'),
+		$relations = array(
 			'states' => array(self::HAS_MANY, 'State', 'Country_id'),
 		);
+                return array_merge($relations, parent::relations());
+	}
+	public function rules() {
+		return array(
+			array('code', 'required'),
+			array('active', 'numerical', 'integerOnly'=>true),
+			array('code', 'length', 'max'=>45),
+			array('name', 'safe'),
+			array('name, active', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, code, name, active', 'safe', 'on'=>'search'),
+		);
+	}
+	public function search() {
+		$criteria = new CDbCriteria;
+
+		$criteria->compare('id', $this->id);
+		$criteria->compare('code', $this->code, true);
+		$criteria->compare('name', $this->name, true);
+		$criteria->compare('active', $this->active);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+		));
 	}
 
 	public function pivotModels() {
@@ -63,32 +72,10 @@ abstract class BaseCountry extends GxActiveRecord {
 	public function attributeLabels() {
 		return array(
                 			'id' => yii::t('app', 'Id'),
-                			'name' => yii::t('app', 'Name'),
                 			'code' => yii::t('app', 'Code'),
+                			'name' => yii::t('app', 'Name'),
                 			'active' => yii::t('app', 'Active'),
-                			'useAsAutomobileCountryOfOrigin' => yii::t('app', 'Use As Automobile Country Of Origin'),
-                        			                        'addresses' => yii::t('app', 'Addresses'),
-                        			                        'automobiles' => yii::t('app', 'Automobiles'),
                         			                        'states' => yii::t('app', 'States'),
 		);
-	}
-
-    public function defaultScope() {
-        return array('order' => $this->getTableAlias(false, false) . '.' . BaseCountry::representingColumn() . ' ASC');
-    }
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('name', $this->name, true);
-		$criteria->compare('code', $this->code, true);
-		$criteria->compare('active', $this->active);
-		$criteria->compare('useAsAutomobileCountryOfOrigin', $this->useAsAutomobileCountryOfOrigin);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

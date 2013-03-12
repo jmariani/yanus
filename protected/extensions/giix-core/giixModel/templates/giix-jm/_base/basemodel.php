@@ -64,7 +64,7 @@ abstract class <?php echo $this->baseModelClass; ?> extends EAVActiveRecord {
 	}
 
 	public static function label($n = 1) {
-        return Yii::t('app', '<?php echo CActiveRecord::generateAttributeLabel($modelClass); ?>|<?php echo $this->pluralize(CActiveRecord::generateAttributeLabel($modelClass)); ?>', $n);
+        return Yii::t('app', '<?php echo $this->generateAttributeLabel($modelClass); ?>|<?php echo $this->pluralize($this->generateAttributeLabel($modelClass)); ?>', $n);
 	}
 
 	public static function representingColumn() {
@@ -79,6 +79,14 @@ abstract class <?php echo $this->baseModelClass; ?> extends EAVActiveRecord {
 <?php endif; ?>
 	}
 
+	public function relations() {
+		$relations = array(
+<?php foreach($relations as $name=>$relation): ?>
+			<?php echo "'{$name}' => {$relation},\n"; ?>
+<?php endforeach; ?>
+		);
+                return array_merge($relations, parent::relations());
+	}
 	public function rules() {
 		return array(
 <?php foreach($rules as $rule): ?>
@@ -87,14 +95,23 @@ abstract class <?php echo $this->baseModelClass; ?> extends EAVActiveRecord {
 			array('<?php echo implode(', ', array_keys($columns)); ?>', 'safe', 'on'=>'search'),
 		);
 	}
+	public function search() {
+		$criteria = new CDbCriteria;
 
-	public function relations() {
-		$relations = array(
-<?php foreach($relations as $name=>$relation): ?>
-			<?php echo "'{$name}' => {$relation},\n"; ?>
+<?php foreach($columns as $name=>$column): ?>
+<?php $partial = ($column->type==='string' and !$column->isForeignKey); ?>
+		$criteria->compare('<?php echo $name; ?>', $this-><?php echo $name; ?><?php echo $partial ? ', true' : ''; ?>);
 <?php endforeach; ?>
-		);
-                return array_merge($relations, parent::relations());
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+                        'sort' => array(
+                            'defaultOrder' => array(
+                                $this->representingColumn() => CSort::SORT_ASC
+                            )
+                        )
+		));
 	}
 
 	public function pivotModels() {
@@ -109,30 +126,15 @@ abstract class <?php echo $this->baseModelClass; ?> extends EAVActiveRecord {
 		return array(
 <?php foreach($labels as $name=>$label): ?>
 <?php if($label === null): ?>
-                        <?php $label = "yii::t('app', '" . CActiveRecord::generateAttributeLabel(
+                        <?php $label = "yii::t('app', '" . $this->generateAttributeLabel(
                                 (substr($name, -3) == '_id') ? substr($name, 0, strlen($name) - 3) : $name) . "')";?>
 			<?php // echo "'{$name}' => null,\n"; ?>
                         <?php echo "'{$name}' => {$label},\n"; ?>
 <?php else: ?>
-                <?php $label = "yii::t('app', '" . CActiveRecord::generateAttributeLabel($name) . "')";?>
+                <?php $label = "yii::t('app', '" . $this->generateAttributeLabel($name) . "')";?>
 			<?php echo "'{$name}' => {$label},\n"; ?>
 <?php endif; ?>
 <?php endforeach; ?>
 		);
-	}
-
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-<?php foreach($columns as $name=>$column): ?>
-<?php $partial = ($column->type==='string' and !$column->isForeignKey); ?>
-		$criteria->compare('<?php echo $name; ?>', $this-><?php echo $name; ?><?php echo $partial ? ', true' : ''; ?>);
-<?php endforeach; ?>
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

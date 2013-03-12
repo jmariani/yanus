@@ -5,23 +5,24 @@
  */
 ?>
 <?php
-echo "<?php\n
-\$this->breadcrumbs = array(
-	\$model->label(2) => array('admin'),
-	Yii::t('app', 'Create'),
-);\n";
+echo <<< 'EOT'
+<?php
+//    $this->layout = '//layouts/column1';
+    $this->breadcrumbs = array($model->label(2) => array('admin'), Yii::t('app', 'Create'),);
 ?>
-
-$this->menu = array(
-	array('label'=>Yii::t('app', 'List') . ' ' . $model->label(2), 'url' => array('index')),
-	array('label'=>Yii::t('app', 'Manage') . ' ' . $model->label(2), 'url' => array('admin')),
-);
+EOT;
+echo PHP_EOL;
 ?>
-
-<h1><?php echo '<?php'; ?> echo Yii::t('app', 'Create') . ' ' . GxHtml::encode($model->label()); ?></h1>
-
-<?php echo "<?php\n"; ?>
-$this->renderPartial('_form', array(
-		'model' => $model,
-		'buttons' => 'create'));
-<?php echo '?>'; ?>
+<?php echo <<<'EOT'
+<?php $box = $this->beginWidget('bootstrap.widgets.TbBox', array(
+	'title' => Yii::t('app', 'Create') . ' ' . $model->label(),
+        'headerIcon' => 'icon-file',
+));
+$this->renderPartial('_form', array( 'model' => $model, 'mode'=>'create', 'buttons' => 'create'));
+?>
+EOT;
+echo PHP_EOL;
+echo <<<'EOT'
+<?php $this->endWidget();?>
+EOT;
+?>

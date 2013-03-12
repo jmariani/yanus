@@ -11,16 +11,14 @@
  *
  * @property integer $id
  * @property integer $person
+ * @property string $effDt
  *
- * @property CfdHasParty[] $cfdHasParties
- * @property PartyAttribute[] $partyAttributes
- * @property PartyHasIdentifiers[] $partyHasIdentifiers
- * @property PartyHasRelationship[] $partyHasRelationships
- * @property PartyHasRelationship[] $partyHasRelationships1
+ * @property CfdParty[] $cfdParties
  * @property PartyIdentifier[] $partyIdentifiers
- * @property PartyLocator[] $partyLocators
+ * @property PartyMail[] $partyMails
  * @property PartyName[] $partyNames
- * @property SatCertificate[] $satCertificates
+ * @property PartyPaymentMethod[] $partyPaymentMethods
+ * @property PartyRole[] $partyRoles
  */
 abstract class BaseParty extends EAVActiveRecord {
 
@@ -37,34 +35,48 @@ abstract class BaseParty extends EAVActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'id';
-	}
-
-	public function rules() {
-		return array(
-			array('person', 'numerical', 'integerOnly'=>true),
-			array('person', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, person', 'safe', 'on'=>'search'),
-		);
+		return 'effDt';
 	}
 
 	public function relations() {
-		return array(
-			'cfdHasParties' => array(self::HAS_MANY, 'CfdHasParty', 'Party_id'),
-			'partyAttributes' => array(self::HAS_MANY, 'PartyAttribute', 'Party_id'),
-			'partyHasIdentifiers' => array(self::HAS_MANY, 'PartyHasIdentifiers', 'Party_id'),
-			'partyHasRelationships' => array(self::HAS_MANY, 'PartyHasRelationship', 'Party_id'),
-			'partyHasRelationships1' => array(self::HAS_MANY, 'PartyHasRelationship', 'RelatedParty_id'),
+		$relations = array(
+			'cfdParties' => array(self::HAS_MANY, 'CfdParty', 'Party_id'),
 			'partyIdentifiers' => array(self::HAS_MANY, 'PartyIdentifier', 'Party_id'),
-			'partyLocators' => array(self::HAS_MANY, 'PartyLocator', 'Party_id'),
+			'partyMails' => array(self::HAS_MANY, 'PartyMail', 'Party_id'),
 			'partyNames' => array(self::HAS_MANY, 'PartyName', 'Party_id'),
-			'satCertificates' => array(self::MANY_MANY, 'SatCertificate', 'Party_has_SatCertificate(Party_id, SatCertificate_id)'),
+			'partyPaymentMethods' => array(self::HAS_MANY, 'PartyPaymentMethod', 'Party_id'),
+			'partyRoles' => array(self::HAS_MANY, 'PartyRole', 'Party_id'),
 		);
+                return array_merge($relations, parent::relations());
+	}
+	public function rules() {
+		return array(
+			array('person', 'numerical', 'integerOnly'=>true),
+			array('effDt', 'safe'),
+			array('person, effDt', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, person, effDt', 'safe', 'on'=>'search'),
+		);
+	}
+	public function search() {
+		$criteria = new CDbCriteria;
+
+		$criteria->compare('id', $this->id);
+		$criteria->compare('person', $this->person);
+		$criteria->compare('effDt', $this->effDt, true);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+                        'sort' => array(
+                            'defaultOrder' => array(
+                                $this->representingColumn() => CSort::SORT_ASC
+                            )
+                        )
+		));
 	}
 
 	public function pivotModels() {
 		return array(
-			'satCertificates' => 'PartyHasSatCertificate',
 		);
 	}
 
@@ -72,28 +84,13 @@ abstract class BaseParty extends EAVActiveRecord {
 		return array(
                 			'id' => yii::t('app', 'Id'),
                 			'person' => yii::t('app', 'Person'),
-                        			                        'cfdHasParties' => yii::t('app', 'Cfd Has Parties'),
-                        			                        'partyAttributes' => yii::t('app', 'Party Attributes'),
-                        			                        'partyHasIdentifiers' => yii::t('app', 'Party Has Identifiers'),
-                        			                        'partyHasRelationships' => yii::t('app', 'Party Has Relationships'),
-                        			                        'partyHasRelationships1' => yii::t('app', 'Party Has Relationships1'),
+                			'effDt' => yii::t('app', 'Eff Dt'),
+                        			                        'cfdParties' => yii::t('app', 'Cfd Parties'),
                         			                        'partyIdentifiers' => yii::t('app', 'Party Identifiers'),
-                        			                        'partyLocators' => yii::t('app', 'Party Locators'),
+                        			                        'partyMails' => yii::t('app', 'Party Mails'),
                         			                        'partyNames' => yii::t('app', 'Party Names'),
-                        			                        'satCertificates' => yii::t('app', 'Sat Certificates'),
+                        			                        'partyPaymentMethods' => yii::t('app', 'Party Payment Methods'),
+                        			                        'partyRoles' => yii::t('app', 'Party Roles'),
 		);
-	}
-
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('person', $this->person);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

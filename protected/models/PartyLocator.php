@@ -44,7 +44,7 @@ class PartyLocator extends BasePartyLocator {
 //        $partyLocatorType = new PartyLocatorTypeBehavior();
 
 //        foreach ($partyLocatorType->getList() as $key => $value) {
-//                    $relations[CActiveRecord::generateAttributeLabel($key)] = array(self::BELONGS_TO, 'PhoneNbr', 'objectId',
+//                    $relations[yii::app()->string->generateAttributeLabel($key)] = array(self::BELONGS_TO, 'PhoneNbr', 'objectId',
 //                'condition' => $this->getTableAlias(false, false) . '.type = "' . $key . '"'
 //        }
 
@@ -90,18 +90,18 @@ class PartyLocator extends BasePartyLocator {
         $type = new PartyLocatorTypeBehavior();
         foreach ($type->getList() as $typeKey => $typeValue) {
             // This will create a scope like Primary, Billto, etc.
-            $scopes[CActiveRecord::generateAttributeLabel($typeKey)] = array(
+            $scopes[yii::app()->string->generateAttributeLabel($typeKey)] = array(
                 'condition' => $this->getTableAlias(false, false) . '.type = "' . $typeKey . '"');
         }
         foreach ($class->getList() as $classKey => $classValue) {
             // This will create a scope like Phone, Address, etc.
-            $scopes[CActiveRecord::generateAttributeLabel($classKey)] = array(
+            $scopes[yii::app()->string->generateAttributeLabel($classKey)] = array(
                 'condition' => $this->getTableAlias(false, false) . '.class = "' . $classKey . '"');
         }
         foreach ($type->getList() as $typeKey => $typeValue) {
             foreach ($class->getList() as $classKey => $classValue) {
                 // This will create a scope like primaryPhone, primaryAddress, billToAddress, etc.
-                $scopes[$typeKey . CActiveRecord::generateAttributeLabel($classKey)] = array(
+                $scopes[$typeKey . yii::app()->string->generateAttributeLabel($classKey)] = array(
                     'condition' => $this->getTableAlias(false, false) . '.type = "' . $typeKey . '" and ' .
                     $this->getTableAlias(false, false) . '.class = "' . $classKey . '"');
             }

@@ -150,16 +150,6 @@ class SatCertificate extends BaseSatCertificate {
 //        $this->name = trim($data['subject']['name']);
     }
 
-    public function rules() {
-        $rules = parent::rules();
-        $rules[] = array('keyFile, certificateFile', 'safe');
-        $rules[] = array('certificateFile', 'file', 'types' => 'cer', 'allowEmpty' => false, 'on' => 'upload');
-        $rules[] = array('keyFile', 'file', 'types' => 'key', 'allowEmpty' => false, 'on' => 'upload');
-        $rules[] = array('keyPassword', 'required', 'on' => 'upload');
-        $rules[] = array('nbr', 'unique');
-        return $rules;
-    }
-
     public function scopes() {
 //        $x = CfdHasFileAsset::model()->find($condition, $params)
         $scopes = parent::scopes();
@@ -167,15 +157,25 @@ class SatCertificate extends BaseSatCertificate {
         return $scopes;
     }
 
-    public function current($date = null) {
+    public function current(DateTime $date = null) {
         $criteria = new CDbCriteria();
         if (is_null($date))
-            $date = date(DateTime::ISO8601);
+            $date = new DateTime();
         $criteria->addCondition('validFrom <= :date1');
         $criteria->addCondition('validTo >= :date2');
-        $criteria->params = array(':date1' => $date, ':date2' => $date);
+        $criteria->params = array(':date1' => $date->format(DateTime::ISO8601), ':date2' => $date->format(DateTime::ISO8601));
         $this->getDbCriteria()->mergeWith($criteria);
         return $this;
     }
 
+    public function validAsOf(DateTime $date) {
+        return $this->current($date);
+    }
+
+    public function byRfc($rfc) {
+        $criteria = new CDbCriteria();
+        $criteria->compare('rfc', $rfc);
+        $this->getDbCriteria()->mergeWith($criteria);
+        return $this;
+    }
 }

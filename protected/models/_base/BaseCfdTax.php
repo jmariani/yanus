@@ -19,7 +19,7 @@
  *
  * @property Cfd $cfd
  */
-abstract class BaseCfdTax extends GxActiveRecord {
+abstract class BaseCfdTax extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -37,6 +37,12 @@ abstract class BaseCfdTax extends GxActiveRecord {
 		return 'name';
 	}
 
+	public function relations() {
+		$relations = array(
+			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
+		);
+                return array_merge($relations, parent::relations());
+	}
 	public function rules() {
 		return array(
 			array('Cfd_id', 'required'),
@@ -47,11 +53,21 @@ abstract class BaseCfdTax extends GxActiveRecord {
 			array('id, Cfd_id, name, rate, amt, local, withHolding', 'safe', 'on'=>'search'),
 		);
 	}
+	public function search() {
+		$criteria = new CDbCriteria;
 
-	public function relations() {
-		return array(
-			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
-		);
+		$criteria->compare('id', $this->id);
+		$criteria->compare('Cfd_id', $this->Cfd_id);
+		$criteria->compare('name', $this->name, true);
+		$criteria->compare('rate', $this->rate, true);
+		$criteria->compare('amt', $this->amt, true);
+		$criteria->compare('local', $this->local);
+		$criteria->compare('withHolding', $this->withHolding);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+		));
 	}
 
 	public function pivotModels() {
@@ -70,26 +86,5 @@ abstract class BaseCfdTax extends GxActiveRecord {
                 			'withHolding' => yii::t('app', 'With Holding'),
                         			                        'cfd' => yii::t('app', 'Cfd'),
 		);
-	}
-
-    public function defaultScope() {
-        return array('order' => $this->getTableAlias(false, false) . '.' . BaseCfdTax::representingColumn() . ' ASC');
-    }
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('Cfd_id', $this->Cfd_id);
-		$criteria->compare('name', $this->name, true);
-		$criteria->compare('rate', $this->rate, true);
-		$criteria->compare('amt', $this->amt, true);
-		$criteria->compare('local', $this->local);
-		$criteria->compare('withHolding', $this->withHolding);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

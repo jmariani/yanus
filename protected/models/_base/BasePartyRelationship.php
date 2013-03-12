@@ -10,15 +10,17 @@
  * followed by relations of table "PartyRelationship" available as properties of the model.
  *
  * @property integer $id
- * @property integer $Party_id
- * @property integer $PartyRelationshipType_id
- * @property integer $RelatedParty_id
+ * @property integer $fromPartyRole_id
+ * @property integer $toPartyRole_id
+ * @property integer $enabled
+ * @property string $effDt
+ * @property string $type
+ * @property string $identifier
  *
- * @property Party $party
- * @property PartyRelationshipType $partyRelationshipType
- * @property Party $relatedParty
+ * @property PartyRole $fromPartyRole
+ * @property PartyRole $toPartyRole
  */
-abstract class BasePartyRelationship extends GxActiveRecord {
+abstract class BasePartyRelationship extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -33,23 +35,41 @@ abstract class BasePartyRelationship extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'id';
-	}
-
-	public function rules() {
-		return array(
-			array('Party_id, PartyRelationshipType_id, RelatedParty_id', 'required'),
-			array('Party_id, PartyRelationshipType_id, RelatedParty_id', 'numerical', 'integerOnly'=>true),
-			array('id, Party_id, PartyRelationshipType_id, RelatedParty_id', 'safe', 'on'=>'search'),
-		);
+		return 'effDt';
 	}
 
 	public function relations() {
-		return array(
-			'party' => array(self::BELONGS_TO, 'Party', 'Party_id'),
-			'partyRelationshipType' => array(self::BELONGS_TO, 'PartyRelationshipType', 'PartyRelationshipType_id'),
-			'relatedParty' => array(self::BELONGS_TO, 'Party', 'RelatedParty_id'),
+		$relations = array(
+			'fromPartyRole' => array(self::BELONGS_TO, 'PartyRole', 'fromPartyRole_id'),
+			'toPartyRole' => array(self::BELONGS_TO, 'PartyRole', 'toPartyRole_id'),
 		);
+                return array_merge($relations, parent::relations());
+	}
+	public function rules() {
+		return array(
+			array('fromPartyRole_id, toPartyRole_id', 'required'),
+			array('fromPartyRole_id, toPartyRole_id, enabled', 'numerical', 'integerOnly'=>true),
+			array('type, identifier', 'length', 'max'=>45),
+			array('effDt', 'safe'),
+			array('enabled, effDt, type, identifier', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, fromPartyRole_id, toPartyRole_id, enabled, effDt, type, identifier', 'safe', 'on'=>'search'),
+		);
+	}
+	public function search() {
+		$criteria = new CDbCriteria;
+
+		$criteria->compare('id', $this->id);
+		$criteria->compare('fromPartyRole_id', $this->fromPartyRole_id);
+		$criteria->compare('toPartyRole_id', $this->toPartyRole_id);
+		$criteria->compare('enabled', $this->enabled);
+		$criteria->compare('effDt', $this->effDt, true);
+		$criteria->compare('type', $this->type, true);
+		$criteria->compare('identifier', $this->identifier, true);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+		));
 	}
 
 	public function pivotModels() {
@@ -60,30 +80,14 @@ abstract class BasePartyRelationship extends GxActiveRecord {
 	public function attributeLabels() {
 		return array(
                 			'id' => yii::t('app', 'Id'),
-                        			                        'Party_id' => yii::t('app', 'Party'),
-                        			                        'PartyRelationshipType_id' => yii::t('app', 'Party Relationship Type'),
-                        			                        'RelatedParty_id' => yii::t('app', 'Related Party'),
-                        			                        'party' => yii::t('app', 'Party'),
-                        			                        'partyRelationshipType' => yii::t('app', 'Party Relationship Type'),
-                        			                        'relatedParty' => yii::t('app', 'Related Party'),
+                        			                        'fromPartyRole_id' => yii::t('app', 'From Party Role'),
+                        			                        'toPartyRole_id' => yii::t('app', 'To Party Role'),
+                			'enabled' => yii::t('app', 'Enabled'),
+                			'effDt' => yii::t('app', 'Eff Dt'),
+                			'type' => yii::t('app', 'Type'),
+                			'identifier' => yii::t('app', 'Identifier'),
+                        			                        'fromPartyRole' => yii::t('app', 'From Party Role'),
+                        			                        'toPartyRole' => yii::t('app', 'To Party Role'),
 		);
-	}
-
-    public function defaultScope() {
-        return array('order' => $this->getTableAlias(false, false) . '.' . BasePartyRelationship::representingColumn() . ' ASC');
-    }
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('Party_id', $this->Party_id);
-		$criteria->compare('PartyRelationshipType_id', $this->PartyRelationshipType_id);
-		$criteria->compare('RelatedParty_id', $this->RelatedParty_id);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

@@ -10,17 +10,14 @@
  * followed by relations of table "PartyName" available as properties of the model.
  *
  * @property integer $id
- * @property integer $Party_id
- * @property string $fullName
- * @property string $surName
- * @property string $motherFamilyName
- * @property string $firstName
- * @property string $secondName
+ * @property string $value
+ * @property string $type
  * @property string $effDt
+ * @property integer $Party_id
  *
  * @property Party $party
  */
-abstract class BasePartyName extends GxActiveRecord {
+abstract class BasePartyName extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -35,23 +32,43 @@ abstract class BasePartyName extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'fullName';
+		return 'value';
 	}
 
+	public function relations() {
+		$relations = array(
+			'party' => array(self::BELONGS_TO, 'Party', 'Party_id'),
+		);
+                return array_merge($relations, parent::relations());
+	}
 	public function rules() {
 		return array(
 			array('Party_id', 'required'),
 			array('Party_id', 'numerical', 'integerOnly'=>true),
-			array('fullName, surName, motherFamilyName, firstName, secondName, effDt', 'safe'),
-			array('fullName, surName, motherFamilyName, firstName, secondName, effDt', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, Party_id, fullName, surName, motherFamilyName, firstName, secondName, effDt', 'safe', 'on'=>'search'),
+			array('type', 'length', 'max'=>45),
+			array('value, effDt', 'safe'),
+			array('value, type, effDt', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, value, type, effDt, Party_id', 'safe', 'on'=>'search'),
 		);
 	}
+	public function search() {
+		$criteria = new CDbCriteria;
 
-	public function relations() {
-		return array(
-			'party' => array(self::BELONGS_TO, 'Party', 'Party_id'),
-		);
+		$criteria->compare('id', $this->id);
+		$criteria->compare('value', $this->value, true);
+		$criteria->compare('type', $this->type, true);
+		$criteria->compare('effDt', $this->effDt, true);
+		$criteria->compare('Party_id', $this->Party_id);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+                        'sort' => array(
+                            'defaultOrder' => array(
+                                $this->representingColumn() => CSort::SORT_ASC
+                            )
+                        )
+		));
 	}
 
 	public function pivotModels() {
@@ -62,33 +79,11 @@ abstract class BasePartyName extends GxActiveRecord {
 	public function attributeLabels() {
 		return array(
                 			'id' => yii::t('app', 'Id'),
-                        			                        'Party_id' => yii::t('app', 'Party'),
-                			'fullName' => yii::t('app', 'Full Name'),
-                			'surName' => yii::t('app', 'Sur Name'),
-                			'motherFamilyName' => yii::t('app', 'Mother Family Name'),
-                			'firstName' => yii::t('app', 'First Name'),
-                			'secondName' => yii::t('app', 'Second Name'),
+                			'value' => yii::t('app', 'Value'),
+                			'type' => yii::t('app', 'Type'),
                 			'effDt' => yii::t('app', 'Eff Dt'),
+                        			                        'Party_id' => yii::t('app', 'Party'),
                         			                        'party' => yii::t('app', 'Party'),
 		);
-	}
-
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('Party_id', $this->Party_id);
-		$criteria->compare('fullName', $this->fullName, true);
-		$criteria->compare('surName', $this->surName, true);
-		$criteria->compare('motherFamilyName', $this->motherFamilyName, true);
-		$criteria->compare('firstName', $this->firstName, true);
-		$criteria->compare('secondName', $this->secondName, true);
-		$criteria->compare('effDt', $this->effDt, true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

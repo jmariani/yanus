@@ -14,7 +14,7 @@
  * @property string $location
  * @property string $creationDttm
  *
- * @property ObjectHasFileAsset[] $objectHasFileAssets
+ * @property CfdHasFileAsset[] $cfdHasFileAssets
  */
 abstract class BaseFileAsset extends EAVActiveRecord {
 
@@ -34,6 +34,12 @@ abstract class BaseFileAsset extends EAVActiveRecord {
 		return 'name';
 	}
 
+	public function relations() {
+		$relations = array(
+			'cfdHasFileAssets' => array(self::HAS_MANY, 'CfdHasFileAsset', 'FileAsset_id'),
+		);
+                return array_merge($relations, parent::relations());
+	}
 	public function rules() {
 		return array(
 			array('name, location, creationDttm', 'safe'),
@@ -41,12 +47,18 @@ abstract class BaseFileAsset extends EAVActiveRecord {
 			array('id, name, location, creationDttm', 'safe', 'on'=>'search'),
 		);
 	}
+	public function search() {
+		$criteria = new CDbCriteria;
 
-	public function relations() {
-		$relations = array(
-			'objectHasFileAssets' => array(self::HAS_MANY, 'ObjectHasFileAsset', 'FileAsset_id'),
-		);
-                return array_merge($relations, parent::relations());
+		$criteria->compare('id', $this->id);
+		$criteria->compare('name', $this->name, true);
+		$criteria->compare('location', $this->location, true);
+		$criteria->compare('creationDttm', $this->creationDttm, true);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+		));
 	}
 
 	public function pivotModels() {
@@ -60,22 +72,7 @@ abstract class BaseFileAsset extends EAVActiveRecord {
                 			'name' => yii::t('app', 'Name'),
                 			'location' => yii::t('app', 'Location'),
                 			'creationDttm' => yii::t('app', 'Creation Dttm'),
-                        			                        'objectHasFileAssets' => yii::t('app', 'Object Has File Assets'),
+                        			                        'cfdHasFileAssets' => yii::t('app', 'Cfd Has File Assets'),
 		);
-	}
-
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('name', $this->name, true);
-		$criteria->compare('location', $this->location, true);
-		$criteria->compare('creationDttm', $this->creationDttm, true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

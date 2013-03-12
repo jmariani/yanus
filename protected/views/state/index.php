@@ -2,7 +2,6 @@
 
 $this->breadcrumbs = array(
 	State::label(2),
-	Yii::t('app', 'Index'),
 );
 
 $this->menu = array(
@@ -13,7 +12,7 @@ $this->menu = array(
 
 <h1><?php echo GxHtml::encode(State::label(2)); ?></h1>
 
-<?php $this->widget('zii.widgets.CListView', array(
+<?php $this->widget('bootstrap.widgets.TbListView',array(
 	'dataProvider'=>$dataProvider,
 	'itemView'=>'_view',
 )); 

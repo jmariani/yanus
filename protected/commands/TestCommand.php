@@ -11,74 +11,84 @@
  * This process performs the following tasks:
  *  1) Opens the file in Castrol format.
  *  2) Validates the contents of the file.
- *  3) Produces a Native XML file to be processed
+ *  3) Produces a Native XML file to be processed<
  *
  * @author jmariani
  */
 class TestCommand extends CConsoleCommand {
 
     public function run($args) {
-//        $o = Party::model()->findByPk(93);
-//        print_r($o->relations());
-//        // Locators->Phone->Primary
-//        $pl = new PartyLocator();
-//        print_r($pl->scopes());
-////        foreach ($o->Phones as $locator) {
-////            echo $locator->Phone()->id . ' ' . $locator->Phone()->class . PHP_EOL;
-////        }
-//        if (isset($o->PrimaryPhoneLocator->Phone))
-//            echo $o->PrimaryPhoneLocator->Phone . PHP_EOL;
+
+        $p = new EString('pepe');
+        echo $p->generateAttributeLabel();
+        
+        echo yii::app()->string->set('pepe')->generateAttributeLabel();
+
+//        CVarDumper::dump(PartyMail::model()->Type->getList());≤
+//        echo Role::model()->Party()->filterBycode('SUPPLIER')->find()->id;
+
+//        ini_set('auto_detect_line_endings',TRUE);
 //
-//        print_r($o->partyHasRelationships);
-//        $o = new PartyHasRelationship();
-//        CVarDumper::dump($o->relations());
-//        print_r($o->scopes());
-//
-
-//        print_r(Yii::app()->db->getSchema()->getTableNames());
-
-//        $phr = PartyHasRelationship::model()->find('party_id = :id and relatedParty_id = :rpid and type = :type', array(':id' => 94, ':rpid' => 93, ':type' => PartyRelationshipTypeBehavior::SUPPLIER));
-//        print_r($phr->relations());
-//        echo $phr->supplierCodeEAV . PHP_EOL;
-//        echo $phr->supplierCode . PHP_EOL;
-//        $o = Cfd::model()->findByPk(754);
-//        foreach ($o->cfdItems as $item) {
-////            CVarDumper::dump($item->relations());
-//            echo $item->GroupEAV . PHP_EOL;
+//        $fName = '/Users/jmariani/Documents/Office Projects/Castrol/Correos/customerEmails.csv';
+//        $fHandle = fopen($fName, "r");
+//        if (!$fHandle)
+//            return false;
+//        while (($data = fgetcsv($fHandle, 0, ',')) !== FALSE) {
+//            print_r($data);
+////            if (count($data) == 3) {
+////                if ($data[0] == $invoice->CastrolCustomer->code) {
+////                    fclose($fHandle);
+////                    if (!trim($data[2]))
+////                        return false;
+////                    else
+////                        return $data;
+////                }
+////            }
 //        }
-
-        print_r(Cfd::model()->relations());
-
-//        foreach (Cfd::model()->findAll() as $cfd) {
-//            echo $cfd->invoice . PHP_EOL;
-//            echo $cfd->cfdFile . PHP_EOL;
-//            foreach ($cfd->fileAssets as $fa) {
-//                echo $fa->type . PHP_EOL;
-//                echo $fa->fileAsset . PHP_EOL;
-//            }
-//        }
-
-//        print_r(CfdItem::model()->relations());
-//
-//        foreach (CfdItem::model()->findAll() as $cfdItem) {
-//            echo $cfdItem->vehicle . PHP_EOL;
-//            echo $cfdItem->km . PHP_EOL;
-//            $cfdItem->km = 25;
-//            echo $cfdItem->km . PHP_EOL;
-//            echo $cfdItem->kmEAV . PHP_EOL;
-////            $cfdItem->save();
-//        }
+//        fclose($fHandle);
+//        ini_set('auto_detect_line_endings',FALSE);
 
 //        foreach (Party::model()->findAll() as $party) {
-//            echo $party->name . ' ' . $party->primaryPhone . PHP_EOL;
-//            CVarDumper::dump($party->primaryPhone);
+//            echo count($party->paymentMethods);
+////            foreach ($party->partyPaymentMethods as $method) {
+////                echo (count($party->partyPaymentMethods) != 0) . ' ' . $method->method . PHP_EOL;
+////            }
 //        }
-        foreach (cfd::model()->with(array('cfdFile','pdfFile'))->findAll() as $cfd) {
-            echo $cfd->invoice . ' ' . ($cfd->cfdFile !== null ?'Si':'No') . ' ' . ($cfd->pdfFile !== null ?'Si':'No') . PHP_EOL;
-//            print_r($cfd->cfdFile);
-        }
-    }
 
+//        $identifier = Identifier::model()->find('type = :type and value = :value', array(':type' => 'rfc', ':value' => 'NWM9709244W4'));
+//        $name = Name::model()->find('name = :name', array(':name' => 'NUEVA WALMART DE MEXICO S DE RL DE CV'));
+//        $party = Party::model()->identifiedBy($identifier)->namedAs($name)->find();
+//        echo $identifier->type . ' ' . $identifier->value . ' ' . $party->id . ' ' . $party->name . ' ' . ($party->hasRole('SUPPLIER') ? 1 : 0) . ' ' . ($party->hasRole('CUSTOMER') ? 1 : 0) . PHP_EOL;
+//
+//        foreach (Identifier::model()->findAll() as $identifier) {
+//            $party1 = Party::model()->identifiedBy($identifier)->find();
+//            if ($party1) {
+//                $party = Party::model()->identifiedBy($identifier)->namedAs($party1->name)->find();
+//                echo $identifier->type . ' ' . $identifier->value . ' ' . $party->id . ' ' . $party->name . ' ' . ($party->hasRole('SUPPLIER') ? 1 : 0) . ' ' . ($party->hasRole('CUSTOMER') ? 1 : 0) . PHP_EOL;
+//            }
+//        }
+//        foreach (cfd::model()->findAll() as $cfd) {
+//            echo $cfd->vendor->rfc . ' ' . $cfd->vendor->name . PHP_EOL;
+//            echo $cfd->customer->rfc . ' ' . $cfd->customer->name . PHP_EOL;
+//            if ($cfd->cfdFile) echo $cfd->cfdFile->location . PHP_EOL;
+//            echo $cfd->getFilebaseName(false). PHP_EOL;
+//        }
+//        $geo = yii::app()->geocode->query('SCHAFFHAUSEN%2C8200%2CCH', array('language' => 'es'));
+//        CVarDumper::dump($geo);
+//        foreach (Address::model()->findAll() as $address) {
+//            $oAddress = $address->street . ',' . $address->extNbr . ',' .
+//                    //$address->neighbourhood . ',' .
+//                    $address->city . ',' .
+//                    $address->municipality . ',' . $address->zipCode . ',MX';
+//            $geo = yii::app()->geocode->query('MX', array('language' => 'es'));
+////            CVarDumper::dump($geo);
+//        }
+//        $url = "http://maps.google.com/maps/api/geocode/json?address=$address&sensor=false&language=es";
+//        $result = file_get_contents("$url");
+//        $json = json_decode($result);
+
+        yii::app()->end();
+    }
 
 }
 

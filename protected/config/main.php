@@ -4,7 +4,6 @@
  * Main configuration.
  * All properties can be overridden in mode_<mode>.php files
  */
-
 return array(
     // Set yiiPath (relative to Environment.php)
     //$yii=dirname(__FILE__).'/../../framework/yii.php';
@@ -13,7 +12,7 @@ return array(
     'yiitPath' => dirname(__FILE__) . '/../../../../framework/yiit.php',
     // Set YII_DEBUG and YII_TRACE_LEVEL flags
     'yiiDebug' => true,
-    'yiiTraceLevel' => 0,
+    'yiiTraceLevel' => 3,
     // Static function Yii::setPathOfAlias()
     'yiiSetPathOfAlias' => array(
         // uncomment the following to define a path alias
@@ -35,9 +34,13 @@ return array(
         'preload' => array(
             'bootstrap', // preload the bootstrap component
             'chilkat',
+            'efontawesome',
+            'eiconic',
             'log',
             'nusoap',
             'tcpdf',
+            'yanus',
+            'yfont'
         ),
         // application components
         'components' => array(
@@ -55,6 +58,12 @@ return array(
             'chilkat' => array(
                 'class' => 'ext.EChilkatLibrary'
             ),
+            'efontawesome' => array(
+                'class' => 'ext.EFontAwesome.components.EFontAwesome',
+            ),
+            'eiconic' => array(
+                'class' => 'ext.EIconic.components.EIconic',
+            ),
             'errorHandler' => array(
                 // use 'site/error' action to display errors
                 'errorAction' => 'site/error',
@@ -62,9 +71,16 @@ return array(
             'file' => array(
                 'class' => 'application.extensions.file.CFile',
             ),
+            'geocode' => array(
+                'class' => 'application.components.EGoogleGeoCode',
+            ),
             'log' => array(
                 'class' => 'CLogRouter',
                 'routes' => array(
+                    array(
+                        'class' => 'ext.yii-debug-toolbar.YiiDebugToolbarRoute',
+//                        'ipFilters' => array('127.0.0.1', '192.168.1.215'),
+                    ),
                     array(
                         'class' => 'CFileLogRoute',
                         'levels' => 'error, warning, info',
@@ -86,10 +102,10 @@ return array(
 //                        'levels' => 'trace, info',
                         'logFile' => 'simpleWorkflow.log'
                     ),
-                    // uncomment the following to show log messages on web pages
-                    array(
-                        'class' => 'CWebLogRoute',
-                    ),
+                // uncomment the following to show log messages on web pages
+//                    array(
+//                        'class' => 'CWebLogRoute',
+//                    ),
                 ),
             ),
             'nusoap' => array(
@@ -108,6 +124,7 @@ return array(
                 'createTable' => true,
                 'dbEngine' => 'InnoDB',
             ),
+            'string' => array('class' => 'application.components.EString'),
             // adding the simple Workflow source component
             'swSource' => array(
                 'class' => 'application.extensions.simpleWorkflow.SWPhpWorkflowSource',
@@ -134,6 +151,12 @@ return array(
                 // enable cookie-based authentication
                 'allowAutoLogin' => true,
                 'loginUrl' => array('/user/login'),
+            ),
+            'yanus' => array(
+                'class' => 'application.components.yanus', // assuming you extracted bootstrap under extensions
+            ),
+            'yfont' => array(
+                'class' => 'ext.YFont.components.YFont', // assuming you extracted bootstrap under extensions
             ),
 //            'widgetFactory' => array(
 //                'widgets' => array(
@@ -185,6 +208,8 @@ return array(
             'application.extensions.yii-mail.*',
             'application.extensions.simpleWorkflow.*', // Import simpleWorkflow extension
             'application.modules.lookup.models.*',
+            'ext.KeenActiveDataProvider',
+            'ext.RelatedSearchBehavior',
 //            'ext.bootstraplinkpager.*',
         ),
         'modules' => array(
@@ -314,18 +339,25 @@ return array(
 //                    ),
                 ),
             ),
+            'geocode' => array(
+                'class' => 'application.components.EGoogleGeoCode',
+            ),
             'nusoap' => array(
                 'class' => 'ext.ENuSoapLibrary'
             ),
             'phoneFormatter' => array(
                 'class' => 'EPhoneFormatter', // assuming you extracted bootstrap under extensions
             ),
+            'string' => array('class' => 'application.components.EString'),
             // adding the simple Workflow source component
             'swSource' => array(
                 'class' => 'application.extensions.simpleWorkflow.SWPhpWorkflowSource',
             ),
             'tcpdf' => array(
                 'class' => 'ext.ETcPdfLibrary'
+            ),
+            'yanus' => array(
+                'class' => 'application.components.yanus', // assuming you extracted bootstrap under extensions
             ),
         ),
         'params' => 'inherit'

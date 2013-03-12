@@ -10,14 +10,14 @@
  * followed by relations of table "PartyIdentifier" available as properties of the model.
  *
  * @property integer $id
- * @property string $name
  * @property string $value
+ * @property string $type
  * @property string $effDt
  * @property integer $Party_id
  *
  * @property Party $party
  */
-abstract class BasePartyIdentifier extends GxActiveRecord {
+abstract class BasePartyIdentifier extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -32,24 +32,43 @@ abstract class BasePartyIdentifier extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'name';
+		return 'value';
 	}
 
+	public function relations() {
+		$relations = array(
+			'party' => array(self::BELONGS_TO, 'Party', 'Party_id'),
+		);
+                return array_merge($relations, parent::relations());
+	}
 	public function rules() {
 		return array(
 			array('Party_id', 'required'),
 			array('Party_id', 'numerical', 'integerOnly'=>true),
-			array('name, value', 'length', 'max'=>45),
+			array('value, type', 'length', 'max'=>45),
 			array('effDt', 'safe'),
-			array('name, value, effDt', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, name, value, effDt, Party_id', 'safe', 'on'=>'search'),
+			array('value, type, effDt', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, value, type, effDt, Party_id', 'safe', 'on'=>'search'),
 		);
 	}
+	public function search() {
+		$criteria = new CDbCriteria;
 
-	public function relations() {
-		return array(
-			'party' => array(self::BELONGS_TO, 'Party', 'Party_id'),
-		);
+		$criteria->compare('id', $this->id);
+		$criteria->compare('value', $this->value, true);
+		$criteria->compare('type', $this->type, true);
+		$criteria->compare('effDt', $this->effDt, true);
+		$criteria->compare('Party_id', $this->Party_id);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+                        'sort' => array(
+                            'defaultOrder' => array(
+                                $this->representingColumn() => CSort::SORT_ASC
+                            )
+                        )
+		));
 	}
 
 	public function pivotModels() {
@@ -60,26 +79,11 @@ abstract class BasePartyIdentifier extends GxActiveRecord {
 	public function attributeLabels() {
 		return array(
                 			'id' => yii::t('app', 'Id'),
-                			'name' => yii::t('app', 'Name'),
                 			'value' => yii::t('app', 'Value'),
+                			'type' => yii::t('app', 'Type'),
                 			'effDt' => yii::t('app', 'Eff Dt'),
                         			                        'Party_id' => yii::t('app', 'Party'),
                         			                        'party' => yii::t('app', 'Party'),
 		);
-	}
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('name', $this->name, true);
-		$criteria->compare('value', $this->value, true);
-		$criteria->compare('effDt', $this->effDt, true);
-		$criteria->compare('Party_id', $this->Party_id);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

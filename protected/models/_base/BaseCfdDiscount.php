@@ -10,13 +10,13 @@
  * followed by relations of table "CfdDiscount" available as properties of the model.
  *
  * @property integer $id
+ * @property integer $Cfd_id
  * @property string $amt
  * @property string $reason
- * @property integer $Cfd_id
  *
  * @property Cfd $cfd
  */
-abstract class BaseCfdDiscount extends GxActiveRecord {
+abstract class BaseCfdDiscount extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -34,6 +34,12 @@ abstract class BaseCfdDiscount extends GxActiveRecord {
 		return 'amt';
 	}
 
+	public function relations() {
+		$relations = array(
+			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
+		);
+                return array_merge($relations, parent::relations());
+	}
 	public function rules() {
 		return array(
 			array('Cfd_id', 'required'),
@@ -41,14 +47,21 @@ abstract class BaseCfdDiscount extends GxActiveRecord {
 			array('amt', 'length', 'max'=>64),
 			array('reason', 'safe'),
 			array('amt, reason', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, amt, reason, Cfd_id', 'safe', 'on'=>'search'),
+			array('id, Cfd_id, amt, reason', 'safe', 'on'=>'search'),
 		);
 	}
+	public function search() {
+		$criteria = new CDbCriteria;
 
-	public function relations() {
-		return array(
-			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
-		);
+		$criteria->compare('id', $this->id);
+		$criteria->compare('Cfd_id', $this->Cfd_id);
+		$criteria->compare('amt', $this->amt, true);
+		$criteria->compare('reason', $this->reason, true);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+		));
 	}
 
 	public function pivotModels() {
@@ -59,25 +72,10 @@ abstract class BaseCfdDiscount extends GxActiveRecord {
 	public function attributeLabels() {
 		return array(
                 			'id' => yii::t('app', 'Id'),
+                        			                        'Cfd_id' => yii::t('app', 'Cfd'),
                 			'amt' => yii::t('app', 'Amt'),
                 			'reason' => yii::t('app', 'Reason'),
-                        			                        'Cfd_id' => yii::t('app', 'Cfd'),
                         			                        'cfd' => yii::t('app', 'Cfd'),
 		);
-	}
-
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('amt', $this->amt, true);
-		$criteria->compare('reason', $this->reason, true);
-		$criteria->compare('Cfd_id', $this->Cfd_id);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

@@ -1,12 +1,23 @@
 <?php
 
+/*
+ * PENDING_VALIDATION +--> ERROR
+ *                     |--> VALIDATING +--> VALIDATION_ERROR
+ *                                     |--> PENDING_PROCESSING +--> ERROR
+ *                                                             |--> PROCESSING +--> PROCESSING_ERROR
+ *                                                                             |--> PROCESSED
+ *
+ * PENDING_PROCESSING +--> ERROR
+ *                    |--> PROCESSING +--> ERROR
+ *                                    |--> PROCESSED
+ */
+
 return array(
-    'initial' => IncomingInvoiceInterfaceFile::PENDING_VALIDATION,
+    'initial' => IncomingInvoiceInterfaceFile::PENDING_PROCESSING,
     'node' => array(
         array(
             'id' => IncomingInvoiceInterfaceFile::PENDING_VALIDATION,
-//            'label' => yii::t('app', 'Pending Validation'),
-            'label' => yii::t('app', CActiveRecord::generateAttributeLabel(IncomingInvoiceInterfaceFile::PENDING_VALIDATION)),
+            'label' => yii::t('app', yii::app()->string->generateAttributeLabel(IncomingInvoiceInterfaceFile::PENDING_VALIDATION)),
             'transition' => array(
                 IncomingInvoiceInterfaceFile::ERROR,
                 IncomingInvoiceInterfaceFile::VALIDATING,
@@ -14,13 +25,13 @@ return array(
         ),
         array(
             'id' => IncomingInvoiceInterfaceFile::ERROR,
-            'label' => yii::t('app', CActiveRecord::generateAttributeLabel(IncomingInvoiceInterfaceFile::ERROR)),
+            'label' => yii::t('app', yii::app()->string->generateAttributeLabel(IncomingInvoiceInterfaceFile::ERROR)),
 //            'label' => yii::t('app', 'Error'),
 //            'transition' => IncomingInvoiceInterfaceFile::PENDING_VALIDATION
         ),
         array(
             'id' => IncomingInvoiceInterfaceFile::VALIDATING,
-            'label' => yii::t('app', CActiveRecord::generateAttributeLabel(IncomingInvoiceInterfaceFile::VALIDATING)),
+            'label' => yii::t('app', yii::app()->string->generateAttributeLabel(IncomingInvoiceInterfaceFile::VALIDATING)),
 //            'label' => yii::t('app', 'Validating'),
             'transition' => array(
                 IncomingInvoiceInterfaceFile::PENDING_PROCESSING,
@@ -29,13 +40,13 @@ return array(
         ),
         array(
             'id' => IncomingInvoiceInterfaceFile::VALIDATION_ERROR,
-            'label' => yii::t('app', CActiveRecord::generateAttributeLabel(IncomingInvoiceInterfaceFile::VALIDATION_ERROR)),
+            'label' => yii::t('app', yii::app()->string->generateAttributeLabel(IncomingInvoiceInterfaceFile::VALIDATION_ERROR)),
 //            'label' => yii::t('app', 'Validation Error'),
 //            'transition' => IncomingInvoiceInterfaceFile::PENDING_VALIDATION
         ),
         array(
             'id' => IncomingInvoiceInterfaceFile::PENDING_PROCESSING,
-            'label' => yii::t('app', CActiveRecord::generateAttributeLabel(IncomingInvoiceInterfaceFile::PENDING_PROCESSING)),
+            'label' => yii::t('app', yii::app()->string->generateAttributeLabel(IncomingInvoiceInterfaceFile::PENDING_PROCESSING)),
 //            'label' => yii::t('app', 'Pending processing'),
             'transition' => array(
                 IncomingInvoiceInterfaceFile::PROCESSING,
@@ -44,22 +55,22 @@ return array(
         ),
         array(
             'id' => IncomingInvoiceInterfaceFile::PROCESSING,
-            'label' => yii::t('app', CActiveRecord::generateAttributeLabel(IncomingInvoiceInterfaceFile::PROCESSING)),
+            'label' => yii::t('app', yii::app()->string->generateAttributeLabel(IncomingInvoiceInterfaceFile::PROCESSING)),
 //            'label' => yii::t('app', 'Processing'),
             'transition' => array(
-                IncomingInvoiceInterfaceFile::PROCESSING_ERROR,
+                IncomingInvoiceInterfaceFile::ERROR,
                 IncomingInvoiceInterfaceFile::PROCESSED,
             )
         ),
         array(
             'id' => IncomingInvoiceInterfaceFile::PROCESSING_ERROR,
-            'label' => yii::t('app', CActiveRecord::generateAttributeLabel(IncomingInvoiceInterfaceFile::PROCESSING_ERROR)),
+            'label' => yii::t('app', yii::app()->string->generateAttributeLabel(IncomingInvoiceInterfaceFile::PROCESSING_ERROR)),
 //            'label' => yii::t('app', 'Processing Error'),
 //            'transition' => IncomingInvoiceInterfaceFile::PENDING_VALIDATION
         ),
         array(
             'id' => IncomingInvoiceInterfaceFile::PROCESSED,
-            'label' => yii::t('app', CActiveRecord::generateAttributeLabel(IncomingInvoiceInterfaceFile::PROCESSED)),
+            'label' => yii::t('app', yii::app()->string->generateAttributeLabel(IncomingInvoiceInterfaceFile::PROCESSED)),
 //            'label' => yii::t('app', 'Processed'),
 //            'transition' => array(IncomingInvoiceInterfaceFile::PENDING_VALIDATION)
         ),

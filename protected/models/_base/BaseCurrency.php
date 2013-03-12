@@ -7,15 +7,18 @@
  * property or method in class "Currency".
  *
  * Columns in table "Currency" available as properties of the model,
- * and there are no model relations.
+ * followed by relations of table "Currency" available as properties of the model.
  *
  * @property integer $id
- * @property string $name
  * @property string $code
+ * @property string $name
+ * @property string $plural
+ * @property string $symbol
  * @property integer $active
  *
+ * @property Cfd[] $cfds
  */
-abstract class BaseCurrency extends GxActiveRecord {
+abstract class BaseCurrency extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -30,21 +33,38 @@ abstract class BaseCurrency extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'name';
-	}
-
-	public function rules() {
-		return array(
-			array('active', 'numerical', 'integerOnly'=>true),
-			array('name, code', 'length', 'max'=>45),
-			array('name, code, active', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, name, code, active', 'safe', 'on'=>'search'),
-		);
+		return 'code';
 	}
 
 	public function relations() {
-		return array(
+		$relations = array(
+			'cfds' => array(self::HAS_MANY, 'Cfd', 'Currency_id'),
 		);
+                return array_merge($relations, parent::relations());
+	}
+	public function rules() {
+		return array(
+			array('active', 'numerical', 'integerOnly'=>true),
+			array('code, symbol', 'length', 'max'=>45),
+			array('name, plural', 'safe'),
+			array('code, name, plural, symbol, active', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, code, name, plural, symbol, active', 'safe', 'on'=>'search'),
+		);
+	}
+	public function search() {
+		$criteria = new CDbCriteria;
+
+		$criteria->compare('id', $this->id);
+		$criteria->compare('code', $this->code, true);
+		$criteria->compare('name', $this->name, true);
+		$criteria->compare('plural', $this->plural, true);
+		$criteria->compare('symbol', $this->symbol, true);
+		$criteria->compare('active', $this->active);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+		));
 	}
 
 	public function pivotModels() {
@@ -55,27 +75,12 @@ abstract class BaseCurrency extends GxActiveRecord {
 	public function attributeLabels() {
 		return array(
                 			'id' => yii::t('app', 'Id'),
-                			'name' => yii::t('app', 'Name'),
                 			'code' => yii::t('app', 'Code'),
+                			'name' => yii::t('app', 'Name'),
+                			'plural' => yii::t('app', 'Plural'),
+                			'symbol' => yii::t('app', 'Symbol'),
                 			'active' => yii::t('app', 'Active'),
+                        			                        'cfds' => yii::t('app', 'Cfds'),
 		);
-	}
-
-    public function defaultScope() {
-        return array('order' => $this->getTableAlias(false, false) . '.' . BaseCurrency::representingColumn() . ' ASC');
-    }
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('name', $this->name, true);
-		$criteria->compare('code', $this->code, true);
-		$criteria->compare('active', $this->active);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

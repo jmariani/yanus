@@ -1,20 +1,11 @@
 <?php
-
-$this->breadcrumbs = array(
-	$model->label(2) => array('index'),
-	Yii::t('app', 'Manage'),
-);
-
-$this->menu = array(
-		array('label'=>Yii::t('app', 'List') . ' ' . $model->label(2), 'url'=>array('index')),
-		array('label'=>Yii::t('app', 'Create') . ' ' . $model->label(), 'url'=>array('create')),
-	);
-
-Yii::app()->clientScript->registerScript('search', "
+//    $this->layout = '//layouts/column1';
+    $this->breadcrumbs = array($model->label(2),);Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){
 	$('.search-form').toggle();
 	return false;
 });
+
 $('.search-form form').submit(function(){
 	$.fn.yiiGridView.update('state-grid', {
 		data: $(this).serialize()
@@ -23,33 +14,71 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
-
-<h1><?php echo Yii::t('app', 'Manage') . ' ' . GxHtml::encode($model->label(2)); ?></h1>
-
-<p>
-You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&gt; or =) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
-
-<?php echo GxHtml::link(Yii::t('app', 'Advanced Search'), '#', array('class' => 'search-button')); ?><div class="search-form" style="display:none">
-<?php $this->renderPartial('_search', array(
-	'model' => $model,
-)); ?>
+<?php
+$this->menu=array(
+        array('label'=>'<i class="icon icon-file"></i>  Create new ' . $model->label(), 'url'=>array('create'),'itemOptions'=>array('class'=>'')),
+);
+?>
+<?php $box = $this->beginWidget('bootstrap.widgets.TbBox', array(
+	'title' => Yii::t('app', 'Manage') . ' ' . $model->label(2),
+        'headerIcon' => 'icon-list',
+        'headerButtons' => array(
+            array(
+                'class' => 'bootstrap.widgets.TbButtonGroup',
+                'size' => 'mini',
+                'buttons' => array(
+                    array(
+                        'icon' => 'icon-file',
+                        'url' => array('create'),
+                        'htmlOptions' => array(
+                            'rel' => 'tooltip',
+                            'title' => Yii::t('app', 'Create new {model}', array('{model}' => $model->label())),
+                        ),
+                    ),
+                ),
+            ),
+         )
+));?>
+<div class="search-form" style="display:none">
+<?php $this->renderPartial('_search', array('model' => $model,)); ?>
 </div><!-- search-form -->
-
-<?php $this->widget('zii.widgets.grid.CGridView', array(
-	'id' => 'state-grid',
-	'dataProvider' => $model->search(),
-	'filter' => $model,
-	'columns' => array(
+<?php
+$this->widget('bootstrap.widgets.TbGridView',
+    array('id'=>'state-grid',
+    'dataProvider'=>$model->search(),
+    'type'=>'striped bordered condensed',
+    'filter'=>$model,
+    'columns'=>array(
+        array(
+            'type' => 'raw',
+            'name' => 'code',
+            'value' => 'CHtml::link($data->code, array("State/view", "id"=>$data->id));',
+        ),
+//        'code',
 		'name',
-		'code',
 		array(
 				'name'=>'Country_id',
-				'value'=>'GxHtml::valueEx($data->country)',
-				'filter'=>GxHtml::listDataEx(Country::model()->findAllAttributes(null, true)),
+//				'value'=>'GxHtml::valueEx($data->country)',
+                                'value'=>'$data->country->name',
+				'filter'=>GxHtml::listDataEx(Country::model()->findAllAttributes(array('code', 'name'), true), null, 'name'),
 				),
-		array(
-			'class' => 'CButtonColumn',
-		),
-	),
-)); ?>
+                // Uncomment the following lines if you want standard button columns
+                //array(
+                //    'class'=>'bootstrap.widgets.TbButtonColumn',
+                //    'htmlOptions'=>array('style'=>'width: 50px'),
+                //),
+            ),
+            'pager' => array(
+                'class' => 'tbpager', // **use extended CLinkPager class**
+//                'cssFile' => false, //prevent Yii autoloading css
+//                'alignment' => TbPager::ALIGNMENT_CENTER,
+                'displayFirstAndLast' => true,
+//                'header' => false, // hide 'go to page' header
+                'firstPageLabel' => '&lt;&lt;', // change pager button labels
+//                'prevPageLabel' => '&lt;',
+//                'nextPageLabel' => '&gt;',
+                'lastPageLabel' => '&gt;&gt;',
+            ),
+        )
+    );
+?><?php $this->endWidget();?>

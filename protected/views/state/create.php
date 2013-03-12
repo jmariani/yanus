@@ -1,20 +1,11 @@
 <?php
-
-$this->breadcrumbs = array(
-	$model->label(2) => array('index'),
-	Yii::t('app', 'Create'),
-);
-
-$this->menu = array(
-	array('label'=>Yii::t('app', 'List') . ' ' . $model->label(2), 'url' => array('index')),
-	array('label'=>Yii::t('app', 'Manage') . ' ' . $model->label(2), 'url' => array('admin')),
-);
+//    $this->layout = '//layouts/column1';
+    $this->breadcrumbs = array($model->label(2) => array('admin'), Yii::t('app', 'Create'),);
 ?>
-
-<h1><?php echo Yii::t('app', 'Create') . ' ' . GxHtml::encode($model->label()); ?></h1>
-
-<?php
-$this->renderPartial('_form', array(
-		'model' => $model,
-		'buttons' => 'create'));
+<?php $box = $this->beginWidget('bootstrap.widgets.TbBox', array(
+	'title' => Yii::t('app', 'Create') . ' ' . $model->label(),
+        'headerIcon' => 'icon-file',
+));
+$this->renderPartial('_form', array( 'model' => $model, 'mode'=>'create', 'buttons' => 'create'));
 ?>
+<?php $this->endWidget();?>

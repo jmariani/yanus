@@ -1,0 +1,33 @@
+@font-face {
+	font-family: 'yanus';
+	src:url('fonts/yanus.eot');
+	src:url('fonts/yanus.eot?#iefix') format('embedded-opentype'),
+		url('fonts/yanus.svg#yanus') format('svg'),
+		url('fonts/yanus.woff') format('woff'),
+		url('fonts/yanus.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:before {
+	font-family: 'yanus';
+	content: attr(data-icon);
+	speak: none;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Use the following CSS code if you want to have a class per icon */
+[class^="icon-yanus-"]:before, [class*=" icon-yanus-"]:before {
+	font-family: 'yanus';
+	font-style: normal;
+	speak: none;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+.icon-yanus-dollar:before {
+	content: "\e000";
+}

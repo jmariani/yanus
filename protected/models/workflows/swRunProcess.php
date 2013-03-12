@@ -5,7 +5,7 @@ return array(
     'node' => array(
         array(
             'id' => RunProcess::STATUS_RUNNING,
-            'label' => yii::t('yanus', CModel::generateAttributeLabel(RunProcess::STATUS_RUNNING)),
+            'label' => yii::t('yanus', yii::app()->string->generateAttributeLabel(RunProcess::STATUS_RUNNING)),
             'transition' => array(
                 RunProcess::STATUS_SUCCESS,
                  RunProcess::STATUS_ERROR
@@ -13,11 +13,11 @@ return array(
         ),
         array(
             'id' => RunProcess::STATUS_SUCCESS,
-            'label' => yii::t('yanus', CModel::generateAttributeLabel(RunProcess::STATUS_SUCCESS)),
+            'label' => yii::t('yanus', yii::app()->string->generateAttributeLabel(RunProcess::STATUS_SUCCESS)),
         ),
         array(
             'id' => RunProcess::STATUS_ERROR,
-            'label' => yii::t('yanus', CModel::generateAttributeLabel(RunProcess::STATUS_ERROR)),
+            'label' => yii::t('yanus', yii::app()->string->generateAttributeLabel(RunProcess::STATUS_ERROR)),
         ),
     )
 );

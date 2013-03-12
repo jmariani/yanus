@@ -17,8 +17,8 @@ class CfdFileAssetTypeBehavior extends ListBehavior {
 
     public function data() {
         return array(
-            self::CFD => array('text' => yii::t('app', CActiveRecord::generateAttributeLabel(self::CFD))),
-            self::GRAPHIC_VERSION => array('text' => yii::t('app', CActiveRecord::generateAttributeLabel(self::GRAPHIC_VERSION))),
+            self::CFD => array('text' => yii::t('app', yii::app()->string->generateAttributeLabel(self::CFD))),
+            self::GRAPHIC_VERSION => array('text' => yii::t('app', yii::app()->string->generateAttributeLabel(self::GRAPHIC_VERSION))),
         );
     }
 }

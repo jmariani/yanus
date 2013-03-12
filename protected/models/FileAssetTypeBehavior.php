@@ -19,9 +19,9 @@ class FileAssetTypeBehavior extends ListBehavior {
 
     public function data() {
         return array(
-            self::CFD => array('text' => yii::t('app', CActiveRecord::generateAttributeLabel(self::CFD))),
-            self::GRAPHIC_REPRESENTATION => array('text' => yii::t('app', CActiveRecord::generateAttributeLabel(self::GRAPHIC_REPRESENTATION))),
-            self::LOG => array('text' => yii::t('app', CActiveRecord::generateAttributeLabel(self::LOG))),
+            self::CFD => array('text' => yii::t('app', yii::app()->string->generateAttributeLabel(self::CFD))),
+            self::GRAPHIC_REPRESENTATION => array('text' => yii::t('app', yii::app()->string->generateAttributeLabel(self::GRAPHIC_REPRESENTATION))),
+            self::LOG => array('text' => yii::t('app', yii::app()->string->generateAttributeLabel(self::LOG))),
         );
     }
 }

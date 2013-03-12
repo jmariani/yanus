@@ -6,11 +6,6 @@ class CfdAddress extends BaseCfdAddress {
 
     public function behaviors() {
         $behaviors = parent::behaviors();
-//        $behaviors['CTimestampBehavior'] = array(
-//            'class' => 'zii.behaviors.CTimestampBehavior',
-//            'createAttribute' => 'creationDt',
-//            'updateAttribute' => 'updateDt',
-//        );
         $behaviors['Type'] = array(
             'class' => 'AddressTypeBehavior',
             'attribute' => 'type',
@@ -20,20 +15,6 @@ class CfdAddress extends BaseCfdAddress {
 
     public static function model($className = __CLASS__) {
         return parent::model($className);
-    }
-
-//    public function defaultScope() {
-//        return array('order' => $this->getTableAlias(false, false) . '.' . BaseCfdAddress::representingColumn() . ' ASC');
-//    }
-
-    public function rules() {
-        return array(
-            array('Cfd_id, Address_id', 'required'),
-            array('Cfd_id, Address_id', 'numerical', 'integerOnly' => true),
-            array('name, reference', 'safe'),
-            array('name, reference', 'default', 'setOnEmpty' => true, 'value' => null),
-            array('id, name, reference, Cfd_id, Address_id', 'safe', 'on' => 'search'),
-        );
     }
 
     public function scopes() {

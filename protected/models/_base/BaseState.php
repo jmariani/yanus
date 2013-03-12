@@ -10,15 +10,14 @@
  * followed by relations of table "State" available as properties of the model.
  *
  * @property integer $id
- * @property string $name
  * @property string $code
+ * @property string $name
  * @property integer $Country_id
  *
  * @property Address[] $addresses
- * @property RegisterForm[] $registerForms
  * @property Country $country
  */
-abstract class BaseState extends GxActiveRecord {
+abstract class BaseState extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -33,24 +32,43 @@ abstract class BaseState extends GxActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'name';
-	}
-
-	public function rules() {
-		return array(
-			array('name, code, Country_id', 'required'),
-			array('Country_id', 'numerical', 'integerOnly'=>true),
-			array('code', 'length', 'max'=>45),
-			array('id, name, code, Country_id', 'safe', 'on'=>'search'),
-		);
+		return 'code';
 	}
 
 	public function relations() {
-		return array(
+		$relations = array(
 			'addresses' => array(self::HAS_MANY, 'Address', 'State_id'),
-			'registerForms' => array(self::HAS_MANY, 'RegisterForm', 'State_id'),
 			'country' => array(self::BELONGS_TO, 'Country', 'Country_id'),
 		);
+                return array_merge($relations, parent::relations());
+	}
+	public function rules() {
+		return array(
+			array('code, Country_id', 'required'),
+			array('Country_id', 'numerical', 'integerOnly'=>true),
+			array('code', 'length', 'max'=>45),
+			array('name', 'safe'),
+			array('name', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, code, name, Country_id', 'safe', 'on'=>'search'),
+		);
+	}
+	public function search() {
+		$criteria = new CDbCriteria;
+
+		$criteria->compare('id', $this->id);
+		$criteria->compare('code', $this->code, true);
+		$criteria->compare('name', $this->name, true);
+		$criteria->compare('Country_id', $this->Country_id);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+                        'sort' => array(
+                            'defaultOrder' => array(
+                                $this->representingColumn() => CSort::SORT_ASC
+                            )
+                        )
+		));
 	}
 
 	public function pivotModels() {
@@ -61,25 +79,11 @@ abstract class BaseState extends GxActiveRecord {
 	public function attributeLabels() {
 		return array(
                 			'id' => yii::t('app', 'Id'),
-                			'name' => yii::t('app', 'Name'),
                 			'code' => yii::t('app', 'Code'),
+                			'name' => yii::t('app', 'Name'),
                         			                        'Country_id' => yii::t('app', 'Country'),
                         			                        'addresses' => yii::t('app', 'Addresses'),
-                        			                        'registerForms' => yii::t('app', 'Register Forms'),
                         			                        'country' => yii::t('app', 'Country'),
 		);
-	}
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('name', $this->name, true);
-		$criteria->compare('code', $this->code, true);
-		$criteria->compare('Country_id', $this->Country_id);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-		));
 	}
 }

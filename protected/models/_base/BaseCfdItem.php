@@ -19,7 +19,6 @@
  * @property string $amt
  *
  * @property Cfd $cfd
- * @property CfdItemAttribute[] $cfdItemAttributes
  * @property CustomsPermit[] $customsPermits
  */
 abstract class BaseCfdItem extends EAVActiveRecord {
@@ -40,6 +39,13 @@ abstract class BaseCfdItem extends EAVActiveRecord {
 		return 'qty';
 	}
 
+	public function relations() {
+		$relations = array(
+			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
+			'customsPermits' => array(self::MANY_MANY, 'CustomsPermit', 'CfdItem_has_CustomsPermit(CfdItem_id, CustomsPermit_id)'),
+		);
+                return array_merge($relations, parent::relations());
+	}
 	public function rules() {
 		return array(
 			array('Cfd_id, qty, description, unitPrice', 'required'),
@@ -50,14 +56,22 @@ abstract class BaseCfdItem extends EAVActiveRecord {
 			array('id, Cfd_id, qty, uom, productCode, description, unitPrice, amt', 'safe', 'on'=>'search'),
 		);
 	}
+	public function search() {
+		$criteria = new CDbCriteria;
 
-	public function relations() {
-		$relations = array(
-			'cfd' => array(self::BELONGS_TO, 'Cfd', 'Cfd_id'),
-			'cfdItemAttributes' => array(self::HAS_MANY, 'CfdItemAttribute', 'CfdItem_id'),
-			'customsPermits' => array(self::MANY_MANY, 'CustomsPermit', 'CfdItem_has_CustomsPermit(CfdItem_id, CustomsPermit_id)'),
-		);
-                return array_merge($relations, parent::relations());
+		$criteria->compare('id', $this->id);
+		$criteria->compare('Cfd_id', $this->Cfd_id);
+		$criteria->compare('qty', $this->qty, true);
+		$criteria->compare('uom', $this->uom, true);
+		$criteria->compare('productCode', $this->productCode, true);
+		$criteria->compare('description', $this->description, true);
+		$criteria->compare('unitPrice', $this->unitPrice, true);
+		$criteria->compare('amt', $this->amt, true);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+		));
 	}
 
 	public function pivotModels() {
@@ -77,27 +91,7 @@ abstract class BaseCfdItem extends EAVActiveRecord {
                 			'unitPrice' => yii::t('app', 'Unit Price'),
                 			'amt' => yii::t('app', 'Amt'),
                         			                        'cfd' => yii::t('app', 'Cfd'),
-                        			                        'cfdItemAttributes' => yii::t('app', 'Cfd Item Attributes'),
                         			                        'customsPermits' => yii::t('app', 'Customs Permits'),
 		);
-	}
-
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('Cfd_id', $this->Cfd_id);
-		$criteria->compare('qty', $this->qty, true);
-		$criteria->compare('uom', $this->uom, true);
-		$criteria->compare('productCode', $this->productCode, true);
-		$criteria->compare('description', $this->description, true);
-		$criteria->compare('unitPrice', $this->unitPrice, true);
-		$criteria->compare('amt', $this->amt, true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

@@ -7,38 +7,46 @@
 <div class="form">
 
 <?php $ajax = ($this->enable_ajax_validation) ? 'true' : 'false'; ?>
-
-<?php echo '<?php '; ?>
-    /** @var BootActiveForm $form */
-    $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-	'id' => '<?php echo $this->class2id($this->modelClass); ?>-form',
-	'enableAjaxValidation' => <?php echo $ajax; ?>,
-        'htmlOptions'=>array('class'=>'well'),
+<?php
+echo <<< 'EOT'
+<?php $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+    'id' => '
+EOT;
+echo $this->class2id($this->modelClass);
+echo <<< 'EOT'
+', 'enableAjaxValidation' =>
+EOT;
+echo $ajax . ', ';
+echo <<< 'EOT'
+        //'htmlOptions'=>array('class'=>'well'),
         'type' => 'horizontal',
     ));
-<?php echo '?>'; ?>
-
-
-<div class="flash-notice"><?php echo "<?php echo Yii::t('app', 'Fields with'); ?> <span class=\"required\">*</span> <?php echo Yii::t('app', 'are required'); ?>"; ?>.</div>
-<?php echo "<?php echo \$form->errorSummary(\$model); ?>\n"; ?>
-
+?>
+EOT;
+echo PHP_EOL;
+?>
+<?php
+echo <<< 'EOT'
+<?php echo $form->errorSummary($model); ?>
+EOT;
+?>
 <?php foreach ($this->tableSchema->columns as $column): ?>
 <?php if (!$column->autoIncrement): ?>
-<!--		<div class="row">-->
-<!--		<?php // echo "<?php echo " . $this->generateActiveLabel($this->modelClass, $column) . "; ?>\n"; ?>-->
-		<?php echo "<?php " . $this->generateActiveBootField($this->modelClass, $column) . "; ?>\n"; ?>
-<!--		<?php // echo "<?php echo \$form->error(\$model,'{$column->name}'); ?>\n"; ?>-->
-<!--		</div> row -->
+<?php echo "<?php " . $this->generateActiveBootField($this->modelClass, $column) . "; ?>\n"; ?>
 <?php endif; ?>
 <?php endforeach; ?>
-
-	<div class="form-actions">
-		<?php echo "<?php \$this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'=>'submit',
-			'type'=>'primary',
-			'label'=>\$model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Save'),
-		)); ?>\n"; ?>
-	</div>
+<div class="form-actions well well-small">
+<?php
+echo <<< 'EOT'
+<?php $this->widget('bootstrap.widgets.TbButton',
+    array(
+        'buttonType'=>'submit',
+        'type'=>'primary',
+        'label'=> $model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Save'),
+    )); ?>
+EOT;
+?>
+</div>
 
 <?php echo "<?php \$this->endWidget(); ?>\n"; ?>
 

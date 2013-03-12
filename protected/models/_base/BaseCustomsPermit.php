@@ -15,72 +15,72 @@
  * @property string $office
  *
  * @property CfdItem[] $cfdItems
- * @property Cfd[] $cfds
  */
-abstract class BaseCustomsPermit extends GxActiveRecord {
+abstract class BaseCustomsPermit extends EAVActiveRecord {
 
-    public static function model($className = __CLASS__) {
-        return parent::model($className);
-    }
+	public static function model($className=__CLASS__) {
+		return parent::model($className);
+	}
 
-    public function tableName() {
-        return 'CustomsPermit';
-    }
+	public function tableName() {
+		return 'CustomsPermit';
+	}
 
-    public static function label($n = 1) {
+	public static function label($n = 1) {
         return Yii::t('app', 'Customs Permit|Customs Permits', $n);
-    }
+	}
 
-    public static function representingColumn() {
-        return 'nbr';
-    }
+	public static function representingColumn() {
+		return 'nbr';
+	}
 
-    public function rules() {
-        return array(
-            array('nbr, dt', 'required'),
-            array('nbr', 'length', 'max' => 45),
-            array('office', 'safe'),
-            array('office', 'default', 'setOnEmpty' => true, 'value' => null),
-            array('id, nbr, dt, office', 'safe', 'on' => 'search'),
-        );
-    }
+	public function relations() {
+		$relations = array(
+			'cfdItems' => array(self::MANY_MANY, 'CfdItem', 'CfdItem_has_CustomsPermit(CustomsPermit_id, CfdItem_id)'),
+		);
+                return array_merge($relations, parent::relations());
+	}
+	public function rules() {
+		return array(
+			array('nbr', 'required'),
+			array('nbr', 'length', 'max'=>45),
+			array('dt, office', 'safe'),
+			array('dt, office', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, nbr, dt, office', 'safe', 'on'=>'search'),
+		);
+	}
+	public function search() {
+		$criteria = new CDbCriteria;
 
-    public function relations() {
-        return array(
-            'cfdItems' => array(self::MANY_MANY, 'CfdItem', 'CfdItem_has_CustomsPermit(CustomsPermit_id, CfdItem_id)'),
-            'cfds' => array(self::MANY_MANY, 'Cfd', 'Cfd_has_CustomsPermit(CustomsPermit_id, Cfd_id)'),
-        );
-    }
+		$criteria->compare('id', $this->id);
+		$criteria->compare('nbr', $this->nbr, true);
+		$criteria->compare('dt', $this->dt, true);
+		$criteria->compare('office', $this->office, true);
 
-    public function pivotModels() {
-        return array(
-            'cfdItems' => 'CfdItemHasCustomsPermit',
-            'cfds' => 'CfdHasCustomsPermit',
-        );
-    }
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+                        'sort' => array(
+                            'defaultOrder' => array(
+                                $this->representingColumn() => CSort::SORT_ASC
+                            )
+                        )
+		));
+	}
 
-    public function attributeLabels() {
-        return array(
-            'id' => yii::t('app', 'Id'),
-            'nbr' => yii::t('app', 'Nbr'),
-            'dt' => yii::t('app', 'Dt'),
-            'office' => yii::t('app', 'Office'),
-            'cfdItems' => yii::t('app', 'Cfd Items'),
-            'cfds' => yii::t('app', 'Cfds'),
-        );
-    }
+	public function pivotModels() {
+		return array(
+			'cfdItems' => 'CfdItemHasCustomsPermit',
+		);
+	}
 
-    public function search() {
-        $criteria = new CDbCriteria;
-
-        $criteria->compare('id', $this->id);
-        $criteria->compare('nbr', $this->nbr, true);
-        $criteria->compare('dt', $this->dt, true);
-        $criteria->compare('office', $this->office, true);
-
-        return new CActiveDataProvider($this, array(
-                    'criteria' => $criteria,
-                ));
-    }
-
+	public function attributeLabels() {
+		return array(
+                			'id' => yii::t('app', 'Id'),
+                			'nbr' => yii::t('app', 'Nbr'),
+                			'dt' => yii::t('app', 'Dt'),
+                			'office' => yii::t('app', 'Office'),
+                        			                        'cfdItems' => yii::t('app', 'Cfd Items'),
+		);
+	}
 }

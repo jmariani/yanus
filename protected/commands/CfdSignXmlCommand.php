@@ -11,11 +11,34 @@
  * @author jmariani
  */
 class CfdSignXmlCommand extends CConsoleCommand {
+
     public function run($args) {
-        yii::trace('Start run', __METHOD__);
-        $cfds = Cfd::model()->findAll('status = :status', array(':status' => 'swCfd/' . cfd::STATUS_XML_CREATED));
-        foreach ($cfds as $cfd) {
-            $this->signXml($cfd);
+        try {
+            $cfd = Cfd::model()->findByPk($args[0]);
+            if (!$cfd)
+                throw new Exception(yii::t('yanus', 'Cannot find CFD with id "{id}"', array('{id}' => $args[0])));
+            try {
+                if (!$cfd->cfdFile)
+                    throw new Exception(yii::t('yanus', 'CFD "{id}" has no XML file attached.', array('{id}' => $cfd->invoice)));
+                $cfd->swNextStatus(Cfd::STATUS_SIGNING_XML);
+                $cfd->save();
+                $xmlFile = $cfd->cfdFile->location;
+                $xml = @simplexml_load_file($xmlFile);
+                if (!$xml)
+                    throw new Exception(yii::t('yanus', 'Failed to load XML file "{file}"', array('{file}' => $xmlFile)));
+                $cfd->originalString = $cfd->createOriginalString($xml);
+                $cfd->seal = $cfd->createSignature(simplexml_load_string($xml->saveXML()));
+                $xml->addAttribute('sello', $cfd->seal);
+                $xml->saveXML($xmlFile);
+                $cfd->swNextStatus(cfd::STATUS_XML_SIGNED);
+                $cfd->save();
+            } catch (Exception $e) {
+                echo $e->getMessage() . PHP_EOL;
+                $cfd->swNextStatus(cfd::STATUS_XML_SIGNATURE_ERROR);
+                $cfd->save();
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage() . PHP_EOL;
         }
     }
 
@@ -30,7 +53,8 @@ class CfdSignXmlCommand extends CConsoleCommand {
 
                 $xmlFile = $cfd->cfdFile->location;
                 $xml = @simplexml_load_file($xmlFile);
-                if (!$xml) throw new Exception(yii::t('yanus', 'Failed to load XML file "{file}"', array('{file}' => $xmlFile)));
+                if (!$xml)
+                    throw new Exception(yii::t('yanus', 'Failed to load XML file "{file}"', array('{file}' => $xmlFile)));
                 // Get original string
                 $cfd->originalString = $cfd->createOriginalString($xml);
                 $cfd->seal = $cfd->createSignature(simplexml_load_string($xml->saveXML()), $cfd->satCertificate);
@@ -53,6 +77,7 @@ class CfdSignXmlCommand extends CConsoleCommand {
 //            $log->log($e->getMessage(), CLogger::LEVEL_ERROR);
         }
     }
+
 }
 
 ?>

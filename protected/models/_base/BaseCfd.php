@@ -17,13 +17,10 @@
  * @property string $dttm
  * @property string $seal
  * @property string $paymentType
- * @property string $paymentTerm
  * @property string $exchangeRate
- * @property string $currency
- * @property integer $Currency_id
  * @property string $voucherType
- * @property string $paymentMethod
  * @property string $expeditionPlace
+ * @property string $paymentMethod
  * @property string $paymentAcctNbr
  * @property integer $sourceFolio
  * @property string $sourceSerial
@@ -36,28 +33,29 @@
  * @property string $updateDt
  * @property string $originalString
  * @property string $cbb
- * @property integer $SatCertificate_id
  * @property string $errorMsg
- * @property integer $PaymentTerm_id
  * @property string $addenda
  * @property string $status
  * @property string $subTotal
  * @property string $total
  * @property string $tax
  * @property string $withHolding
+ * @property string $discount
+ * @property integer $Currency_id
+ * @property integer $PaymentTerm_id
+ * @property integer $SatCertificate_id
  *
- * @property Currency $currency0
- * @property PaymentTerm $paymentTerm0
  * @property SatCertificate $satCertificate
+ * @property Currency $currency
+ * @property PaymentTerm $paymentTerm
  * @property CfdAddress[] $cfdAddresses
- * @property CfdAttribute[] $cfdAttributes
  * @property CfdDiscount[] $cfdDiscounts
  * @property CfdItem[] $cfdItems
- * @property CfdNote[] $cfdNotes
+ * @property CfdParty[] $cfdParties
  * @property CfdTax[] $cfdTaxes
  * @property CfdTaxRegime[] $cfdTaxRegimes
- * @property CustomsPermit[] $customsPermits
- * @property CfdHasParty[] $cfdHasParties
+ * @property Annotation[] $annotations
+ * @property CfdHasFileAsset[] $cfdHasFileAssets
  * @property SatStamp[] $satStamps
  */
 abstract class BaseCfd extends EAVActiveRecord {
@@ -75,46 +73,88 @@ abstract class BaseCfd extends EAVActiveRecord {
 	}
 
 	public static function representingColumn() {
-		return 'version';
-	}
-
-	public function rules() {
-		return array(
-			array('version', 'required'),
-			array('folio, Currency_id, sourceFolio, approvalNbr, approvalYear, SatCertificate_id, PaymentTerm_id', 'numerical', 'integerOnly'=>true),
-			array('version, voucherType', 'length', 'max'=>45),
-			array('serial, sourceSerial', 'length', 'max'=>25),
-			array('exchangeRate, sourceAmt, subTotal, total, tax, withHolding', 'length', 'max'=>64),
-			array('md5', 'length', 'max'=>32),
-			array('status', 'length', 'max'=>255),
-			array('invoice, dttm, seal, paymentType, paymentTerm, currency, paymentMethod, expeditionPlace, paymentAcctNbr, sourceDttm, creationDt, updateDt, originalString, cbb, errorMsg, addenda', 'safe'),
-			array('invoice, serial, folio, dttm, seal, paymentType, paymentTerm, exchangeRate, currency, Currency_id, voucherType, paymentMethod, expeditionPlace, paymentAcctNbr, sourceFolio, sourceSerial, sourceDttm, sourceAmt, approvalNbr, approvalYear, md5, creationDt, updateDt, originalString, cbb, SatCertificate_id, errorMsg, PaymentTerm_id, addenda, status, subTotal, total, tax, withHolding', 'default', 'setOnEmpty' => true, 'value' => null),
-			array('id, invoice, version, serial, folio, dttm, seal, paymentType, paymentTerm, exchangeRate, currency, Currency_id, voucherType, paymentMethod, expeditionPlace, paymentAcctNbr, sourceFolio, sourceSerial, sourceDttm, sourceAmt, approvalNbr, approvalYear, md5, creationDt, updateDt, originalString, cbb, SatCertificate_id, errorMsg, PaymentTerm_id, addenda, status, subTotal, total, tax, withHolding', 'safe', 'on'=>'search'),
-		);
+		return 'invoice';
 	}
 
 	public function relations() {
 		$relations = array(
-			'currency0' => array(self::BELONGS_TO, 'Currency', 'Currency_id'),
-			'paymentTerm0' => array(self::BELONGS_TO, 'PaymentTerm', 'PaymentTerm_id'),
 			'satCertificate' => array(self::BELONGS_TO, 'SatCertificate', 'SatCertificate_id'),
+			'currency' => array(self::BELONGS_TO, 'Currency', 'Currency_id'),
+			'paymentTerm' => array(self::BELONGS_TO, 'PaymentTerm', 'PaymentTerm_id'),
 			'cfdAddresses' => array(self::HAS_MANY, 'CfdAddress', 'Cfd_id'),
-			'cfdAttributes' => array(self::HAS_MANY, 'CfdAttribute', 'Cfd_id'),
 			'cfdDiscounts' => array(self::HAS_MANY, 'CfdDiscount', 'Cfd_id'),
 			'cfdItems' => array(self::HAS_MANY, 'CfdItem', 'Cfd_id'),
-			'cfdNotes' => array(self::HAS_MANY, 'CfdNote', 'Cfd_id'),
+			'cfdParties' => array(self::HAS_MANY, 'CfdParty', 'Cfd_id'),
 			'cfdTaxes' => array(self::HAS_MANY, 'CfdTax', 'Cfd_id'),
 			'cfdTaxRegimes' => array(self::HAS_MANY, 'CfdTaxRegime', 'Cfd_id'),
-			'customsPermits' => array(self::MANY_MANY, 'CustomsPermit', 'Cfd_has_CustomsPermit(Cfd_id, CustomsPermit_id)'),
-			'cfdHasParties' => array(self::HAS_MANY, 'CfdHasParty', 'Cfd_id'),
+			'annotations' => array(self::MANY_MANY, 'Annotation', 'Cfd_has_Annotation(Cfd_id, Annotation_id)'),
+			'cfdHasFileAssets' => array(self::HAS_MANY, 'CfdHasFileAsset', 'Cfd_id'),
 			'satStamps' => array(self::HAS_MANY, 'SatStamp', 'Cfd_id'),
 		);
                 return array_merge($relations, parent::relations());
 	}
+	public function rules() {
+		return array(
+			array('Currency_id, PaymentTerm_id, SatCertificate_id', 'required'),
+			array('folio, sourceFolio, approvalNbr, approvalYear, Currency_id, PaymentTerm_id, SatCertificate_id', 'numerical', 'integerOnly'=>true),
+			array('version, voucherType', 'length', 'max'=>45),
+			array('serial, sourceSerial', 'length', 'max'=>25),
+			array('exchangeRate, sourceAmt, subTotal, total, tax, withHolding, discount', 'length', 'max'=>64),
+			array('md5', 'length', 'max'=>32),
+			array('status', 'length', 'max'=>255),
+			array('invoice, dttm, seal, paymentType, expeditionPlace, paymentMethod, paymentAcctNbr, sourceDttm, creationDt, updateDt, originalString, cbb, errorMsg, addenda', 'safe'),
+			array('invoice, version, serial, folio, dttm, seal, paymentType, exchangeRate, voucherType, expeditionPlace, paymentMethod, paymentAcctNbr, sourceFolio, sourceSerial, sourceDttm, sourceAmt, approvalNbr, approvalYear, md5, creationDt, updateDt, originalString, cbb, errorMsg, addenda, status, subTotal, total, tax, withHolding, discount', 'default', 'setOnEmpty' => true, 'value' => null),
+			array('id, invoice, version, serial, folio, dttm, seal, paymentType, exchangeRate, voucherType, expeditionPlace, paymentMethod, paymentAcctNbr, sourceFolio, sourceSerial, sourceDttm, sourceAmt, approvalNbr, approvalYear, md5, creationDt, updateDt, originalString, cbb, errorMsg, addenda, status, subTotal, total, tax, withHolding, discount, Currency_id, PaymentTerm_id, SatCertificate_id', 'safe', 'on'=>'search'),
+		);
+	}
+	public function search() {
+		$criteria = new CDbCriteria;
+
+		$criteria->compare('id', $this->id);
+		$criteria->compare('invoice', $this->invoice, true);
+		$criteria->compare('version', $this->version, true);
+		$criteria->compare('serial', $this->serial, true);
+		$criteria->compare('folio', $this->folio);
+		$criteria->compare('dttm', $this->dttm, true);
+		$criteria->compare('seal', $this->seal, true);
+		$criteria->compare('paymentType', $this->paymentType, true);
+		$criteria->compare('exchangeRate', $this->exchangeRate, true);
+		$criteria->compare('voucherType', $this->voucherType, true);
+		$criteria->compare('expeditionPlace', $this->expeditionPlace, true);
+		$criteria->compare('paymentMethod', $this->paymentMethod, true);
+		$criteria->compare('paymentAcctNbr', $this->paymentAcctNbr, true);
+		$criteria->compare('sourceFolio', $this->sourceFolio);
+		$criteria->compare('sourceSerial', $this->sourceSerial, true);
+		$criteria->compare('sourceDttm', $this->sourceDttm, true);
+		$criteria->compare('sourceAmt', $this->sourceAmt, true);
+		$criteria->compare('approvalNbr', $this->approvalNbr);
+		$criteria->compare('approvalYear', $this->approvalYear);
+		$criteria->compare('md5', $this->md5, true);
+		$criteria->compare('creationDt', $this->creationDt, true);
+		$criteria->compare('updateDt', $this->updateDt, true);
+		$criteria->compare('originalString', $this->originalString, true);
+		$criteria->compare('cbb', $this->cbb, true);
+		$criteria->compare('errorMsg', $this->errorMsg, true);
+		$criteria->compare('addenda', $this->addenda, true);
+		$criteria->compare('status', $this->status, true);
+		$criteria->compare('subTotal', $this->subTotal, true);
+		$criteria->compare('total', $this->total, true);
+		$criteria->compare('tax', $this->tax, true);
+		$criteria->compare('withHolding', $this->withHolding, true);
+		$criteria->compare('discount', $this->discount, true);
+		$criteria->compare('Currency_id', $this->Currency_id);
+		$criteria->compare('PaymentTerm_id', $this->PaymentTerm_id);
+		$criteria->compare('SatCertificate_id', $this->SatCertificate_id);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+		));
+	}
 
 	public function pivotModels() {
 		return array(
-			'customsPermits' => 'CfdHasCustomsPermit',
+			'annotations' => 'CfdHasAnnotation',
 		);
 	}
 
@@ -128,13 +168,10 @@ abstract class BaseCfd extends EAVActiveRecord {
                 			'dttm' => yii::t('app', 'Dttm'),
                 			'seal' => yii::t('app', 'Seal'),
                 			'paymentType' => yii::t('app', 'Payment Type'),
-                			'paymentTerm' => yii::t('app', 'Payment Term'),
                 			'exchangeRate' => yii::t('app', 'Exchange Rate'),
-                			'currency' => yii::t('app', 'Currency'),
-                        			                        'Currency_id' => yii::t('app', 'Currency'),
                 			'voucherType' => yii::t('app', 'Voucher Type'),
-                			'paymentMethod' => yii::t('app', 'Payment Method'),
                 			'expeditionPlace' => yii::t('app', 'Expedition Place'),
+                			'paymentMethod' => yii::t('app', 'Payment Method'),
                 			'paymentAcctNbr' => yii::t('app', 'Payment Acct Nbr'),
                 			'sourceFolio' => yii::t('app', 'Source Folio'),
                 			'sourceSerial' => yii::t('app', 'Source Serial'),
@@ -147,75 +184,29 @@ abstract class BaseCfd extends EAVActiveRecord {
                 			'updateDt' => yii::t('app', 'Update Dt'),
                 			'originalString' => yii::t('app', 'Original String'),
                 			'cbb' => yii::t('app', 'Cbb'),
-                        			                        'SatCertificate_id' => yii::t('app', 'Sat Certificate'),
                 			'errorMsg' => yii::t('app', 'Error Msg'),
-                        			                        'PaymentTerm_id' => yii::t('app', 'Payment Term'),
                 			'addenda' => yii::t('app', 'Addenda'),
                 			'status' => yii::t('app', 'Status'),
                 			'subTotal' => yii::t('app', 'Sub Total'),
                 			'total' => yii::t('app', 'Total'),
                 			'tax' => yii::t('app', 'Tax'),
                 			'withHolding' => yii::t('app', 'With Holding'),
-                        			                        'currency0' => yii::t('app', 'Currency0'),
-                        			                        'paymentTerm0' => yii::t('app', 'Payment Term0'),
+                			'discount' => yii::t('app', 'Discount'),
+                        			                        'Currency_id' => yii::t('app', 'Currency'),
+                        			                        'PaymentTerm_id' => yii::t('app', 'Payment Term'),
+                        			                        'SatCertificate_id' => yii::t('app', 'Sat Certificate'),
                         			                        'satCertificate' => yii::t('app', 'Sat Certificate'),
+                        			                        'currency' => yii::t('app', 'Currency'),
+                        			                        'paymentTerm' => yii::t('app', 'Payment Term'),
                         			                        'cfdAddresses' => yii::t('app', 'Cfd Addresses'),
-                        			                        'cfdAttributes' => yii::t('app', 'Cfd Attributes'),
                         			                        'cfdDiscounts' => yii::t('app', 'Cfd Discounts'),
                         			                        'cfdItems' => yii::t('app', 'Cfd Items'),
-                        			                        'cfdNotes' => yii::t('app', 'Cfd Notes'),
+                        			                        'cfdParties' => yii::t('app', 'Cfd Parties'),
                         			                        'cfdTaxes' => yii::t('app', 'Cfd Taxes'),
                         			                        'cfdTaxRegimes' => yii::t('app', 'Cfd Tax Regimes'),
-                        			                        'customsPermits' => yii::t('app', 'Customs Permits'),
-                        			                        'cfdHasParties' => yii::t('app', 'Cfd Has Parties'),
+                        			                        'annotations' => yii::t('app', 'Annotations'),
+                        			                        'cfdHasFileAssets' => yii::t('app', 'Cfd Has File Assets'),
                         			                        'satStamps' => yii::t('app', 'Sat Stamps'),
 		);
-	}
-
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('id', $this->id);
-		$criteria->compare('invoice', $this->invoice, true);
-		$criteria->compare('version', $this->version, true);
-		$criteria->compare('serial', $this->serial, true);
-		$criteria->compare('folio', $this->folio);
-		$criteria->compare('dttm', $this->dttm, true);
-		$criteria->compare('seal', $this->seal, true);
-		$criteria->compare('paymentType', $this->paymentType, true);
-		$criteria->compare('paymentTerm', $this->paymentTerm, true);
-		$criteria->compare('exchangeRate', $this->exchangeRate, true);
-		$criteria->compare('currency', $this->currency, true);
-		$criteria->compare('Currency_id', $this->Currency_id);
-		$criteria->compare('voucherType', $this->voucherType, true);
-		$criteria->compare('paymentMethod', $this->paymentMethod, true);
-		$criteria->compare('expeditionPlace', $this->expeditionPlace, true);
-		$criteria->compare('paymentAcctNbr', $this->paymentAcctNbr, true);
-		$criteria->compare('sourceFolio', $this->sourceFolio);
-		$criteria->compare('sourceSerial', $this->sourceSerial, true);
-		$criteria->compare('sourceDttm', $this->sourceDttm, true);
-		$criteria->compare('sourceAmt', $this->sourceAmt, true);
-		$criteria->compare('approvalNbr', $this->approvalNbr);
-		$criteria->compare('approvalYear', $this->approvalYear);
-		$criteria->compare('md5', $this->md5, true);
-		$criteria->compare('creationDt', $this->creationDt, true);
-		$criteria->compare('updateDt', $this->updateDt, true);
-		$criteria->compare('originalString', $this->originalString, true);
-		$criteria->compare('cbb', $this->cbb, true);
-		$criteria->compare('SatCertificate_id', $this->SatCertificate_id);
-		$criteria->compare('errorMsg', $this->errorMsg, true);
-		$criteria->compare('PaymentTerm_id', $this->PaymentTerm_id);
-		$criteria->compare('addenda', $this->addenda, true);
-		$criteria->compare('status', $this->status, true);
-		$criteria->compare('subTotal', $this->subTotal, true);
-		$criteria->compare('total', $this->total, true);
-		$criteria->compare('tax', $this->tax, true);
-		$criteria->compare('withHolding', $this->withHolding, true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
-		));
 	}
 }

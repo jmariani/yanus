@@ -74,6 +74,7 @@ class GxHtml extends CHtml {
 	 * @param string $groupField The attribute name for list option group names. If empty, no group will be generated.
 	 * @return array The list data that can be used in {@link dropDownList}, {@link listBox}, etc.
 	 */
+        //   'filter'=>GxHtml::listDataEx(Country::model()->findAllAttributes(null, true)),
 	public static function listDataEx($models, $valueField = null, $textField = null, $groupField = '') {
 		$listData = array();
 		if ($groupField === '') {

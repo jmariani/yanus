@@ -4,26 +4,27 @@
  * - $this: the CrudCode object
  */
 ?>
+
 <?php
-echo "<?php\n
-\$this->breadcrumbs = array(
-	\$model->label(2) => array('index'),
-	GxHtml::valueEx(\$model) => array('view', 'id' => GxActiveRecord::extractPkValue(\$model, true)),
-	Yii::t('app', 'Update'),
-);\n";
+echo <<< 'EOT'
+<?php
+//    $this->layout = '//layouts/column1';
+    // $this->breadcrumbs = array($model->label(2) => array('admin'), Yii::t('app', 'Create'),);
+    $this->breadcrumbs = array($model->label(2) => array('admin'), GxHtml::valueEx($model) => array('view', 'id' => GxActiveRecord::extractPkValue($model, true)), Yii::t('app', 'Update'),);
 ?>
-
-$this->menu = array(
-	array('label' => Yii::t('app', 'List') . ' ' . $model->label(2), 'url'=>array('index')),
-	array('label' => Yii::t('app', 'Create') . ' ' . $model->label(), 'url'=>array('create')),
-	array('label' => Yii::t('app', 'View') . ' ' . $model->label(), 'url'=>array('view', 'id' => GxActiveRecord::extractPkValue($model, true))),
-	array('label' => Yii::t('app', 'Manage') . ' ' . $model->label(2), 'url'=>array('admin')),
-);
+EOT;
+echo PHP_EOL;
 ?>
-
-<h1><?php echo '<?php'; ?> echo Yii::t('app', 'Update') . ' ' . GxHtml::encode($model->label()) . ' ' . GxHtml::encode(GxHtml::valueEx($model)); ?></h1>
-
-<?php echo "<?php\n"; ?>
-$this->renderPartial('_form', array(
-		'model' => $model));
+<?php echo <<<'EOT'
+<?php $box = $this->beginWidget('bootstrap.widgets.TbBox', array(
+	'title' => Yii::t('app', 'Update') . ' ' . $model->label()  . ' ' . GxHtml::encode(GxHtml::valueEx($model)),
+        'headerIcon' => 'icon-edit',
+));
+$this->renderPartial('_form', array('model' => $model, 'mode'=>'update', 'buttons' => 'update'));
+?>
+EOT;
+echo PHP_EOL;
+echo <<<'EOT'
+<?php $this->endWidget();?>
+EOT;
 ?>

@@ -33,7 +33,7 @@
         'headerIcon' => 'icon-home',
 	// when displaying a table, if we include bootstra-widget-table class
 	// the table will be 0-padding to the box
-	'htmlOptions' => array('class'=>'bootstrap-widget-table')
+//	'htmlOptions' => array('class'=>'bootstrap-widget-table')
 ));?>
 
 <?php
@@ -44,8 +44,8 @@ $this->widget('bootstrap.widgets.TbMenu', array(
         array('label'=> Yii::t('app', 'Billing'), 'itemOptions'=>array('class'=>'nav-header')),
         array('label'=> yii::t('app', 'Manage' . ' ' . Cfd::label(2)), 'url'=>Yii::app()->baseUrl . "/cfd", //'itemOptions'=>array('class'=>'active')
         'icon' => 'icon-qrcode'),
-        array('label'=> yii::t('app', 'Manage' . ' ' . CustomsPermit::label(2)), 'url'=>Yii::app()->baseUrl . '/customsPermit'),
-        array('label'=> yii::t('app', 'Manage' . ' ' . PaymentTerm::label(2)), 'url'=>'#'),
+        array('label'=> yii::t('app', 'Manage' . ' ' . CustomsPermit::label(2)), 'url'=>Yii::app()->baseUrl . '/customsPermit', 'icon' => 'icon-list'),
+        array('label'=> yii::t('app', 'Manage' . ' ' . PaymentTerm::label(2)), 'url'=>'#', 'icon' => 'icon-list'),
 
         array('label'=> Yii::t('app', 'Customers'), 'itemOptions'=>array('class'=>'nav-header')),
         array('label'=> yii::t('app', 'Manage Invoice Notification Mail Addresses'), 'url'=>Yii::app()->baseUrl . '/party', 'icon' => 'icon-envelope'),
@@ -55,6 +55,10 @@ $this->widget('bootstrap.widgets.TbMenu', array(
         array('label'=> yii::t('app', 'Manage' . ' ' . PemexPreInvoice::label(2)), 'url'=>Yii::app()->baseUrl . '/pemexPreInvoice', 'icon' => 'icon-file'),
 
         array('label'=> yii::t('app', 'Settings'), 'itemOptions'=>array('class'=>'nav-header')),
+        array('label'=> yii::t('app', 'Manage' . ' ' . Country::label(2)), 'url'=>Yii::app()->baseUrl . "/country", 'icon' => 'icon-list'),
+        array('label'=> yii::t('app', 'Manage' . ' ' . Currency::label(2)), 'url'=>Yii::app()->baseUrl . "/currency", 'icon' => 'icon-list'),
+        array('label'=> yii::t('app', 'Manage' . ' ' . State::label(2)), 'url'=>Yii::app()->baseUrl . "/state", 'icon' => 'icon-list'),
+
         array('label'=>'Settings', 'url'=>'#', 'icon' => 'icon-wrench'),
         '',
         array('label'=>'Help', 'url'=>'#'),

@@ -24,7 +24,7 @@ return array(
     // This is the specific Web application configuration for this mode.
     // Supplied config elements will be merged into the main config array.
     'configWeb' => array(
-        'theme' => 'yanus',
+        'theme' => 'yabound',
         // Application components
         'components' => array(
             // Database
@@ -36,6 +36,8 @@ return array(
                 'password' => 'toor',
                 'charset' => 'utf8',
                 'tablePrefix' => '',
+                'enableProfiling' => true,
+                'enableParamLogging'=>true,
             ),
             // Mail
             'mail' => array(

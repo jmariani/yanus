@@ -8,14 +8,11 @@ class IncomingInvoiceInterfaceFile extends BaseIncomingInvoiceInterfaceFile {
     const VALIDATING = 'Validating';
     const VALID = 'Valid';
     const PROCESSED = 'Processed';
-
     const PENDING_PROCESSING = 'PendingProcessing';
     const PROCESSING = 'Processing';
-
     const ERROR = 'Error';
     const PROCESSING_ERROR = 'ProcessingError';
     const VALIDATION_ERROR = 'ValidationError';
-
     const SCENARIO_VALIDATE = 'validate';
     const SCENARIO_PROCESS = 'process';
     const SCENARIO_UPLOAD = 'upload';
@@ -27,7 +24,26 @@ class IncomingInvoiceInterfaceFile extends BaseIncomingInvoiceInterfaceFile {
     public function behaviors() {
         $behaviors = parent::behaviors();
         $behaviors['swBehavior'] = array('class' => 'application.extensions.simpleWorkflow.SWActiveRecordBehavior', 'transitionBeforeSave' => true, 'enableEvent' => false);
+        $behaviors['CTimestampBehavior'] = array(
+            'class' => 'zii.behaviors.CTimestampBehavior',
+            'createAttribute' => 'receptionDttm',
+            'updateAttribute' => null
+        );
+
         return $behaviors;
+    }
+
+    /**
+     * byFileName
+     * Named scope to filter by fileName
+     * @param string fileName
+     * @return Owner
+     */
+    public function byFileName($fileName) {
+        $criteria = new CDbCriteria();
+        $criteria->compare('fileName', $fileName);
+        $criteria = $this->getDbCriteria()->mergeWith($criteria);
+        return $this;
     }
 
     public function getFilePath() {
@@ -35,7 +51,8 @@ class IncomingInvoiceInterfaceFile extends BaseIncomingInvoiceInterfaceFile {
         // Get path name
         $path = SystemConfig::getValue(SystemConfig::INCOMING_INVOICE_INTERFACE_FILE_PATH);
         // Check if exists
-        if (!file_exists($path)) mkdir($path, 0777, true);
+        if (!file_exists($path))
+            mkdir($path, 0777, true);
         return $path;
     }
 
@@ -79,7 +96,8 @@ class IncomingInvoiceInterfaceFile extends BaseIncomingInvoiceInterfaceFile {
                 // if SystemConfig::LOG_PATH is not defined, use Yii log path.
             }
             // create folder if doesn't exists
-            if (!file_exists($logPath)) mkdir($logPath, 0777, true);
+            if (!file_exists($logPath))
+                mkdir($logPath, 0777, true);
             $this->logFileLocation = $logPath . DIRECTORY_SEPARATOR . YFileHelper::getName($this->fileName) . '.log';
         }
         yii::log($msg, $level, __CLASS__);
@@ -89,13 +107,12 @@ class IncomingInvoiceInterfaceFile extends BaseIncomingInvoiceInterfaceFile {
     public function rules() {
         $rules = array();
 //        $rules[] = array('fileName', 'file', 'on' => 'upload');
-        $rules[] = array('status',  'SWValidator','enableSwValidation'=>true,);
-        $rules[] = array('receptionDttm', 'default', 'value' => new CDbExpression('NOW()'), 'on' => 'update,insert,upload');
-        $rules[] = array('validationDttm', 'default', 'value' => new CDbExpression('NOW()'), 'on' => 'sw:' . IncomingInvoiceInterfaceFile::PENDING_VALIDATION . '_' . IncomingInvoiceInterfaceFile::VALID);
-//        $rules[] = array('id', 'ext.validators.GamaIncomingInvoiceInterfaceFileValidator');
-        $rules[] = array('validationDttm', 'default', 'value' => new CDbExpression('null'), 'on' => array('upload', 'sw:' . IncomingInvoiceInterfaceFile::VALID . '_' . IncomingInvoiceInterfaceFile::PENDING_VALIDATION));
+        $rules[] = array('status', 'SWValidator', 'enableSwValidation' => true,);
+//        $rules[] = array('receptionDttm', 'default', 'value' => new CDbExpression('NOW()'), 'on' => 'update,insert,upload');
+//        $rules[] = array('validationDttm', 'default', 'value' => new CDbExpression('NOW()'), 'on' => 'sw:' . IncomingInvoiceInterfaceFile::PENDING_VALIDATION . '_' . IncomingInvoiceInterfaceFile::VALID);
+////        $rules[] = array('id', 'ext.validators.GamaIncomingInvoiceInterfaceFileValidator');
+//        $rules[] = array('validationDttm', 'default', 'value' => new CDbExpression('null'), 'on' => array('upload', 'sw:' . IncomingInvoiceInterfaceFile::VALID . '_' . IncomingInvoiceInterfaceFile::PENDING_VALIDATION));
 //        $rules[] = array('status', 'SWValidator');
-
 //        $rules[] = array('IncomingInvoiceInterfaceFileStatus_id', 'default', 'value'
 //            => IncomingInvoiceInterfaceFileStatus::model()->find('code = :code', array(':code' => IncomingInvoiceInterfaceFileStatus::PENDING))->id,
 //            'on' => 'insert,upload');
@@ -147,6 +164,7 @@ class IncomingInvoiceInterfaceFile extends BaseIncomingInvoiceInterfaceFile {
 //            $console->runCommand($cmd, array('"' . $this->fileLocation . '"'), false);
 //        }
     }
+
     public function runValidation() {
 
         // Run validation command.
@@ -156,4 +174,5 @@ class IncomingInvoiceInterfaceFile extends BaseIncomingInvoiceInterfaceFile {
         $console = new CConsole();
         $console->runCommand($cmd, array('validate', '--modelId=' . $this->id), CConsole::RUN_SYNC);
     }
+
 }

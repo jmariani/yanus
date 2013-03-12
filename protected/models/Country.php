@@ -2,22 +2,29 @@
 
 Yii::import('application.models._base.BaseCountry');
 
-class Country extends BaseCountry
-{
-	public static function model($className=__CLASS__) {
-		return parent::model($className);
-	}
-    public function beforeSave() {
-        // Code must be uppercase
-        $this->code = trim(mb_strtoupper($this->code));
-        $this->name = trim(mb_convert_case($this->name, MB_CASE_TITLE));
-        return parent::beforeSave();
+class Country extends BaseCountry {
+
+    public static function model($className = __CLASS__) {
+        return parent::model($className);
     }
 
-    public function scopes() {
-        $scopes = parent::scopes();
-        $scopes['active'] = array('condition' => 'active = 1');
-        $scopes['automobileCountryOfOrigin'] = array('condition' => 'useAsAutomobileCountryOfOrigin = 1');
-        return $scopes;
+    public function search() {
+        $criteria = new CDbCriteria;
+
+        $criteria->compare('id', $this->id);
+        $criteria->compare('code', $this->code, true);
+        $criteria->compare('name', $this->name, true);
+        $criteria->compare('active', $this->active);
+
+        return new CActiveDataProvider($this, array(
+                    'criteria' => $criteria,
+                    'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+                    'sort' => array(
+                        'defaultOrder' => array(
+                            'code' => CSort::SORT_ASC
+                        )
+                    )
+                ));
     }
+
 }

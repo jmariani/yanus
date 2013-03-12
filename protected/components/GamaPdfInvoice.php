@@ -48,32 +48,6 @@ class GamaPdfInvoice extends TCPDF {
     private $cbb;
 
     public function Header() {
-//        $primaryAddress = false;
-//        $invoicedFrom = false;
-//        $soldTo = false;
-//        $shipTo = false;
-//
-//        // Get vendor attributes
-//        $vendorAttr = $this->invoice->vendorParty->getAttributesAssocArray();
-//        // Get customer attributes
-//        $customerAttr = $this->invoice->customerParty->getAttributesAssocArray();
-//
-//        // Get addresses.
-//        foreach ($this->invoice->cfdAddresses as $invoiceAddress) {
-//            switch ($invoiceAddress->type) {
-//                case AddressTypeBehavior::FISCAL:
-//                    $primaryAddress = $invoiceAddress;
-//                    break;
-//                case AddressTypeBehavior::BILL_TO:
-//                    $soldTo = $invoiceAddress;
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-
-        // get RFC
-
         $this->setCellPaddings(0.5, '', 0.5);
 
         // CFDI SIGN

@@ -13,7 +13,7 @@
  * @property integer $CustomsPermit_id
  *
  */
-abstract class BaseCfdItemHasCustomsPermit extends GxActiveRecord {
+abstract class BaseCfdItemHasCustomsPermit extends EAVActiveRecord {
 
 	public static function model($className=__CLASS__) {
 		return parent::model($className);
@@ -34,6 +34,11 @@ abstract class BaseCfdItemHasCustomsPermit extends GxActiveRecord {
 		);
 	}
 
+	public function relations() {
+		$relations = array(
+		);
+                return array_merge($relations, parent::relations());
+	}
 	public function rules() {
 		return array(
 			array('CfdItem_id, CustomsPermit_id', 'required'),
@@ -41,10 +46,16 @@ abstract class BaseCfdItemHasCustomsPermit extends GxActiveRecord {
 			array('CfdItem_id, CustomsPermit_id', 'safe', 'on'=>'search'),
 		);
 	}
+	public function search() {
+		$criteria = new CDbCriteria;
 
-	public function relations() {
-		return array(
-		);
+		$criteria->compare('CfdItem_id', $this->CfdItem_id);
+		$criteria->compare('CustomsPermit_id', $this->CustomsPermit_id);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' => $criteria,
+                        'pagination' => array('pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize'])),
+		));
 	}
 
 	public function pivotModels() {
@@ -57,16 +68,5 @@ abstract class BaseCfdItemHasCustomsPermit extends GxActiveRecord {
                         			                        'CfdItem_id' => yii::t('app', 'Cfd Item'),
                         			                        'CustomsPermit_id' => yii::t('app', 'Customs Permit'),
 		);
-	}
-
-	public function search() {
-		$criteria = new CDbCriteria;
-
-		$criteria->compare('CfdItem_id', $this->CfdItem_id);
-		$criteria->compare('CustomsPermit_id', $this->CustomsPermit_id);
-
-		return new CActiveDataProvider($this, array(
-			'criteria' => $criteria,
-		));
 	}
 }
