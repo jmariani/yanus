@@ -213,10 +213,6 @@ return array(
 //            'ext.bootstraplinkpager.*',
         ),
         'modules' => array(
-            'ataintegrant',
-            'erp' => array(
-//            'install' => true,
-            ),
             // uncomment the following to enable the Gii tool
             'gii' => array(
                 'class' => 'system.gii.GiiModule',
@@ -230,7 +226,6 @@ return array(
                     'application.gii'
                 ),
             ),
-            'institutional',
             'lookup' => array(
                 'class' => 'application.modules.lookup.LookupModule',
             ),

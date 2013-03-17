@@ -29,13 +29,19 @@
 	  //$cs->registerCssFile($baseUrl.'/css/style-blue.css');
 	  ?>
       <!-- styles for style switcher -->
+    <?php
+        $cs->registerCssFile($baseUrl.'/css/style-castrol.css');
+    ?>
+<!--
       	<link rel="stylesheet" type="text/css" href="<?php echo $baseUrl;?>/css/style-castrol.css" />
+
         <link rel="alternate stylesheet" type="text/css" media="screen" title="style2" href="<?php echo $baseUrl;?>/css/style-brown.css" />
         <link rel="alternate stylesheet" type="text/css" media="screen" title="style3" href="<?php echo $baseUrl;?>/css/style-green.css" />
         <link rel="alternate stylesheet" type="text/css" media="screen" title="style4" href="<?php echo $baseUrl;?>/css/style-grey.css" />
         <link rel="alternate stylesheet" type="text/css" media="screen" title="style5" href="<?php echo $baseUrl;?>/css/style-orange.css" />
         <link rel="alternate stylesheet" type="text/css" media="screen" title="style6" href="<?php echo $baseUrl;?>/css/style-purple.css" />
         <link rel="alternate stylesheet" type="text/css" media="screen" title="style7" href="<?php echo $baseUrl;?>/css/style-red.css" />
+        -->
 	  <?php
 //	  $cs->registerScriptFile($baseUrl.'/js/bootstrap.min.js');
 	  $cs->registerScriptFile($baseUrl.'/js/respond.min.js');
@@ -55,6 +61,19 @@
 <!-- Require the navigation -->
 <?php require_once('tpl_navigation.php')?>
 </section><!-- /#navigation-main -->
+        <?php
+if( YII_DEBUG )
+{
+  $this->widget( 'ext.environmentindicator.ei', array( 'text' => Yii::app()->params['mode'] ) );
+}
+else
+{
+  if( ! Yii::app()->user->isGuest )
+  {
+    $this->widget( 'ext.environmentindicator.ei', array( 'text' => 'PRODUCTION ENVIRONMENT', 'color' => '#f00', 'position' => 'left' ) );
+  }
+}
+?>
 <section class="main-body">
     <div class="container-fluid">
             <!-- Include content pages -->

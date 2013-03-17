@@ -19,7 +19,12 @@ class ExampleEnvironment extends Environment
 	/**
 	 * @var string config dir, relative to Environment.php
 	 */
-	protected $configDir = '../some/alternative/path/';
+	protected $configDir = '../../../config/';
+
+	/**
+	 * @var string path to file that might override environment variable
+	 */
+	protected $modeFile = '../../../config/mode.php';
 
 	/**
 	 * Extend Environment class and merge parent array if you want to modify/extend these
@@ -28,7 +33,7 @@ class ExampleEnvironment extends Environment
 	function getValidModes()
 	{
 		return array_merge(parent::getValidModes(), array(
-			250 => 'QUALITY_ENSURANCE',
+			250 => 'QUALITY_ASSURANCE',
 		));
 	}
 }

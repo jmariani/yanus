@@ -3,7 +3,7 @@
 /**
  * @name Environment
  * @author Marco van 't Wout | Tremani
- * @version 3.1
+ * @version 3.2
  *
  * =Environment-class=
  *
@@ -59,8 +59,9 @@
  *    # Create a file `mode.php` in the config directory of your application.
  *    # Set the contents of the file to: DEVELOPMENT
  *
- * Q: After setting environment var, I get "Environment cannot be determined" when accessing the web application.
- * A: Make sure that where the Apache process starts, it can access the environment variable (by setting it as a system/global var).
+ * Problems?
+ *  * Q: After setting environment var, I get "Environment cannot be determined" when accessing the web application.
+ *  * A: Make sure that where the Apache process starts, it can access the environment variable (by setting it as a system/global var).
  *
  * ===Index.php usage example:===
  *
@@ -263,26 +264,14 @@ class Environment
 	}
 
 	/**
-	 * Set current environment mode depending on environment variable.
-	 * Also checks if there is a mode file that might override this environment.
-	 * Override this function if you want to change this method.
+	 * Set environment mode, if valid mode can be determined.
 	 * @param string $mode if left empty, determine automatically
 	 */
 	protected function setMode($mode = null)
 	{
-		// If not overridden
-		if ($mode === null)
-		{
-			$modeFilePath = dirname(__FILE__).DIRECTORY_SEPARATOR.$this->modeFile;
-			if (file_exists($modeFilePath)) {
-				// Is there a mode file?
-				$mode = trim(file_get_contents($modeFilePath));
-			} else {
-				// Else, return mode based on environment var
-				$mode = getenv($this->envVar);
-				if ($mode === false)
-					throw new Exception('"Environment mode cannot be determined, see class for instructions.');
-			}
+		// If not overridden, determine automatically
+		if ($mode === null) {
+			$mode = $this->determineMode();
 		}
 
 		// Check if mode is valid
@@ -291,6 +280,27 @@ class Environment
 			throw new Exception('Invalid environment mode supplied or selected.');
 
 		$this->mode = $mode;
+	}
+
+	/**
+	 * Determine current environment mode depending on environment variable.
+	 * Also checks if there is a mode file that might override this environment.
+	 * Override this function if you want to implement your own method.
+	 * @return string mode
+	 */
+	protected function determineMode()
+	{
+		$modeFilePath = dirname(__FILE__).DIRECTORY_SEPARATOR.$this->modeFile;
+		if (file_exists($modeFilePath)) {
+			// Is there a mode file?
+			$mode = trim(file_get_contents($modeFilePath));
+		} else {
+			// Else, return mode based on environment var
+			$mode = getenv($this->envVar);
+			if ($mode === false)
+				throw new Exception('"Environment mode cannot be determined, see class for instructions.');
+		}
+		return $mode;
 	}
 
 	/**
